@@ -1,0 +1,81 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vpype-plotty"
+version = "0.1.0"
+description = "vpype plugin for ploTTY plotter management integration"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "bkuri", email = "ben@kurita.org"}
+]
+keywords = ["plotter", "vpype", "plotty", "axidraw", "generative-art"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Artistic",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Artistic Software",
+    "Topic :: Multimedia :: Graphics",
+]
+
+dependencies = [
+    "vpype>=1.14.0",
+    "click>=8.0.0",
+    "pydantic>=2.0",
+    "platformdirs>=4.0.0",
+    "pyyaml>=6.0.2",
+]
+
+[project.optional-dependencies]
+plotty = ["plotty>=1.0.0"]
+dev = [
+    "pytest>=8.3.2",
+    "pytest-cov>=4.0.0",
+    "black>=24.10.0",
+    "ruff>=0.6.8",
+    "mypy>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/bkuri/vpype-plotty"
+Documentation = "https://github.com/bkuri/vpype-plotty/docs"
+Repository = "https://github.com/bkuri/vpype-plotty"
+"Bug Tracker" = "https://github.com/bkuri/vpype-plotty/issues"
+
+[project.entry-points."vpype.plugins"]
+plotty-add = "vpype_plotty.commands:plotty_add"
+plotty-queue = "vpype_plotty.commands:plotty_queue"
+plotty-status = "vpype_plotty.commands:plotty_status"
+plotty-list = "vpype_plotty.commands:plotty_list"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=vpype_plotty --cov-report=html --cov-report=term-missing"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

@@ -1,0 +1,6 @@
+"""Test SVG fixture for testing."""
+
+<svg width="210mm" height="297mm" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">
+  <path d="M 50 50 L 100 50 L 100 100 L 50 100 Z" fill="none" stroke="black" stroke-width="0.5"/>
+  <circle cx="150" cy="150" r="30" fill="none" stroke="black" stroke-width="0.5"/>
+</svg>
