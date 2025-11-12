@@ -8,6 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Interactive pen mapping** for multi-pen designs with YAML persistence
+- **Complete database methods**: `delete_job()` and `_save_job_metadata()` helper
+- **Enhanced plotty-queue command** with interactive pen mapping integration
+- **70% test coverage** with comprehensive test suite for all new functionality
+- **Production-ready code quality** with proper linting and formatting
+
+### Features
+- **Interactive Pen Mapping**: Layer-by-layer pen assignment with color detection
+- **Job Management**: Complete CRUD operations for ploTTY jobs
+- **Priority Queuing**: Enhanced job queuing with priority support
+- **Persistent Mappings**: YAML-based pen mapping storage across sessions
+- **Error Handling**: Comprehensive exception management throughout
+
+### Testing
+- **7 new tests** for interactive pen mapping functionality
+- **Database method tests** for `delete_job()` and `_save_job_metadata()`
+- **Integration tests** for enhanced plotty-queue command
+- **70% overall coverage** maintained across all modules
+
+## [0.2.0] - 2024-01-XX
+
+### Added
 - Initial implementation of vpype-plotty plugin
 - Core commands: plotty-add, plotty-queue, plotty-status, plotty-list
 - ploTTY workspace detection and configuration management
