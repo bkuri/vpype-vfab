@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Integration tests** for enhanced plotty-queue command
 - **70% overall coverage** maintained across all modules
 
-## [0.2.0] - 2024-01-XX
+## [0.2.0] - 2025-11-12
 
 ### Added
 - Initial implementation of vpype-plotty plugin
@@ -62,7 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test coverage reporting with pytest-cov
 - Automated testing on Python 3.11, 3.12, and 3.13
 
-## [0.1.0] - 2024-01-XX
+## [0.1.0] - 2025-11-12
 
 ### Added
 - Initial release of vpype-plotty
