@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vpype-plotty"
-version = "0.1.0"
+version = "0.3.0"
 description = "vpype plugin for ploTTY plotter management integration"
 readme = "README.md"
 license = {text = "MIT"}
@@ -32,13 +32,17 @@ dependencies = [
     "pydantic>=2.0",
     "platformdirs>=4.0.0",
     "pyyaml>=6.0.2",
+    "websockets>=12.0",
+    "fastapi>=0.104.0",
 ]
 
 [project.optional-dependencies]
-plotty = ["plotty>=1.0.0"]
+plotty = ["plotty>=1.1.0"]
+monitoring = ["rich>=13.0.0"]
 dev = [
     "pytest>=8.3.2",
     "pytest-cov>=4.0.0",
+    "pytest-asyncio>=0.23.0",
     "black>=24.10.0",
     "ruff>=0.6.8",
     "mypy>=1.0.0",
@@ -55,6 +59,7 @@ plotty-add = "vpype_plotty.commands:plotty_add"
 plotty-queue = "vpype_plotty.commands:plotty_queue"
 plotty-status = "vpype_plotty.commands:plotty_status"
 plotty-list = "vpype_plotty.commands:plotty_list"
+plotty-monitor = "vpype_plotty.commands:plotty_monitor"
 
 [tool.setuptools.packages.find]
 where = ["."]

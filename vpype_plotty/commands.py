@@ -48,60 +48,58 @@ def _interactive_pen_mapping(document, job_name: str, workspace: str = None) -> 
 
     # Check if document has multiple layers
     if len(document.layers) <= 1:
-        click.echo("Document has only one layer. Using default pen (1).")
-        return {1: 1}
+        click.echo("Document has only one layer. Using pen 1.")
+        return {0: 1}
 
-    click.echo(f"Found {len(document.layers)} layers in document:")
+    # Display layer information
+    click.echo(f"Found {len(document.layers)} layers:")
+    for i, layer in enumerate(document.layers):
+        layer_id = layer.id
+        path_count = len(layer)
+        click.echo(f"  Layer {layer_id}: {path_count} paths")
 
-    # Display layers and prompt for pen assignments
-    for layer_id in sorted(document.layers.keys()):
-        layer = document.layers[layer_id]
-        layer_color = layer.property(vpype.METADATA_FIELD_COLOR)
+    click.echo()
 
-        # Display layer info
-        click.echo(f"\nLayer {layer_id}:")
-        click.echo(f"  Color: {layer_color or 'Default'}")
-        click.echo(f"  Paths: {len(layer)}")
+    # Map each layer to a pen
+    for i, layer in enumerate(document.layers):
+        layer_id = layer.id
+        path_count = len(layer)
 
         # Check for existing mapping
-        existing_pen = existing_mappings.get(str(layer_color), None)
-        if existing_pen:
-            default_prompt = f"Enter pen number (1-8) [default: {existing_pen}]: "
+        mapping_key = f"{job_name}_layer_{layer_id}"
+        if mapping_key in existing_mappings:
+            suggested_pen = existing_mappings[mapping_key]
         else:
-            default_prompt = "Enter pen number (1-8): "
+            suggested_pen = (i % 4) + 1  # Cycle through pens 1-4
 
-        # Get pen assignment from user
+        # Get user input
         while True:
-            pen_input = click.prompt(
-                default_prompt, default=existing_pen or 1, type=int
-            )
+            try:
+                pen_input = click.prompt(
+                    f"Layer {layer_id} ({path_count} paths) → Pen number",
+                    default=suggested_pen,
+                    type=int,
+                )
+                if 1 <= pen_input <= 4:  # Assuming 4 pens max
+                    pen_mapping[layer_id] = pen_input
+                    break
+                else:
+                    click.echo("⚠ Pen number must be between 1 and 4")
+            except (click.Abort, KeyboardInterrupt):
+                click.echo("\n❌ Pen mapping cancelled")
+                return {}
 
-            if 1 <= pen_input <= 8:
-                pen_mapping[layer_id] = pen_input
-                break
-            else:
-                click.echo("⚠ Pen number must be between 1 and 8")
+    # Save mappings for future use
+    for layer_id, pen_num in pen_mapping.items():
+        mapping_key = f"{job_name}_layer_{layer_id}"
+        existing_mappings[mapping_key] = pen_num
 
-        # Save mapping for this color
-        if layer_color:
-            existing_mappings[str(layer_color)] = pen_mapping[layer_id]
-
-    # Save updated pen mappings
     try:
         with open(pen_mapping_file, "w") as f:
             yaml.dump(existing_mappings, f, default_flow_style=False)
-        click.echo(f"\n✓ Pen mappings saved to {pen_mapping_file}")
-    except (yaml.YAMLError, OSError) as e:
+        click.echo(f"\n💾 Pen mappings saved to {pen_mapping_file}")
+    except OSError as e:
         click.echo(f"⚠ Warning: Could not save pen mappings: {e}", err=True)
-
-    # Display final mapping
-    click.echo("\nFinal Pen Mapping:")
-    for layer_id, pen_num in pen_mapping.items():
-        layer = document.layers[layer_id]
-        layer_color = layer.property(vpype.METADATA_FIELD_COLOR)
-        click.echo(
-            f"  Layer {layer_id} (color: {layer_color or 'Default'}) → Pen {pen_num}"
-        )
 
     return pen_mapping
 
@@ -110,52 +108,159 @@ def _interactive_pen_mapping(document, job_name: str, workspace: str = None) -> 
 @click.option(
     "--name",
     "-n",
-    help="Job name (defaults to auto-generated)",
+    help="Job name (auto-generated if not provided)",
 )
 @click.option(
     "--preset",
     "-p",
-    default="fast",
+    default="default",
+    help="Optimization preset (fast, default, hq)",
     type=click.Choice(["fast", "default", "hq"]),
-    help="Optimization preset",
 )
 @click.option(
-    "--paper",
-    default="A4",
-    help="Paper size",
+    "--queue",
+    "-q",
+    is_flag=True,
+    help="Add job to queue after creation",
 )
 @click.option(
-    "--queue/--no-queue",
-    default=False,
-    help="Automatically queue job after adding",
+    "--priority",
+    type=int,
+    default=1,
+    help="Job priority (1=highest)",
 )
 @click.option(
     "--workspace",
     help="ploTTY workspace path",
 )
+@click.option(
+    "--pen-mapping",
+    is_flag=True,
+    help="Interactive pen mapping for multi-layer designs",
+)
 @vpype_cli.global_processor
-def plotty_add(document, name, preset, paper, queue, workspace):
-    """Add current document to ploTTY job queue."""
+def plotty_add(
+    document,
+    name,
+    preset,
+    queue,
+    priority,
+    workspace,
+    pen_mapping,
+):
+    """Add document to ploTTY job system."""
     try:
-        # Initialize ploTTY integration
-        plotty = PlottyIntegration(workspace)
+        # Validate preset
+        validate_preset(preset)
 
         # Generate job name if not provided
         if not name:
-            name = generate_job_name(document)
+            name = generate_job_name()
 
-        # Validate preset
-        preset = validate_preset(preset)
+        # Handle pen mapping for multi-layer designs
+        if pen_mapping and len(document.layers) > 1:
+            pen_map = _interactive_pen_mapping(document, name, workspace)
+            if not pen_map:
+                click.echo("❌ Pen mapping failed - aborting job creation")
+                return document
+        else:
+            pen_map = None
+
+        # Initialize ploTTY integration
+        plotty = PlottyIntegration(workspace)
 
         # Add job to ploTTY
-        job_id = plotty.add_job(document, name, preset, paper)
+        job_id = plotty.add_job(
+            document=document,
+            name=name,
+            preset=preset,
+            priority=priority,
+            pen_mapping=pen_map,
+        )
 
-        click.echo(f"✓ Added job '{job_id}' to ploTTY")
+        click.echo(f"✅ Job '{name}' added to ploTTY (ID: {job_id[:8]})")
+
+        # Try to broadcast to ploTTY WebSocket if available
+        try:
+            # Import WebSocket client
+            from .websocket.client import PlottyWebSocketClient
+            from .websocket.schemas import VpypePlottyMessage
+
+            # Create WebSocket client
+            ws_client = PlottyWebSocketClient()
+
+            # Try to connect and broadcast
+            import asyncio
+
+            async def broadcast_job_creation():
+                if await ws_client.connect():
+                    try:
+                        # Create job creation message (for future WebSocket broadcasting)
+                        _ = VpypePlottyMessage(
+                            job_id=job_id,
+                            from_state="new",
+                            to_state="created",
+                            reason=f"Created by vpype-plotty with preset '{preset}'",
+                            source="vpype-plotty",
+                            vpype_version=(
+                                vpype.__version__
+                                if hasattr(vpype, "__version__")
+                                else "unknown"
+                            ),
+                            layer_count=len(document.layers),
+                            total_distance=sum(
+                                (
+                                    sum(
+                                        layer.geometry.length()
+                                        for layer in document.layers
+                                    )
+                                    if hasattr(layer, "geometry")
+                                    else 0
+                                )
+                                for layer in document.layers
+                            ),
+                            metadata={
+                                "name": name,
+                                "preset": preset,
+                                "priority": priority,
+                                "pen_mapping": pen_map is not None,
+                                "workspace": workspace,
+                            },
+                        )
+
+                        # Subscribe to jobs channel
+                        await ws_client.subscribe(["jobs"])
+
+                        # Broadcast message (note: this would need server-side broadcasting)
+                        # For now, just indicate WebSocket is available
+                        click.echo(
+                            "📡 ploTTY WebSocket connected - real-time monitoring available"
+                        )
+
+                        await ws_client.disconnect()
+
+                    except Exception as ws_e:
+                        # Don't fail the command if WebSocket broadcast fails
+                        click.echo(f"⚠ WebSocket broadcast failed: {ws_e}")
+                else:
+                    click.echo(
+                        "ℹ ploTTY WebSocket not available - use 'plotty-monitor' for status"
+                    )
+
+            # Run broadcast in background
+            asyncio.run(broadcast_job_creation())
+
+        except ImportError:
+            # WebSocket not available
+            click.echo("ℹ ploTTY WebSocket integration not available")
+        except Exception as ws_e:
+            # Any other WebSocket error
+            click.echo(f"⚠ WebSocket integration error: {ws_e}")
 
         # Queue job if requested
         if queue:
-            plotty.queue_job(job_id)
-            click.echo(f"✓ Queued job '{job_id}' for plotting")
+            plotty.queue_job(job_id, priority)
+            click.echo(f"🚀 Job queued with priority {priority}")
 
         return document
 
@@ -169,59 +274,35 @@ def plotty_add(document, name, preset, paper, queue, workspace):
     "--name",
     "-n",
     required=True,
-    help="Job name to queue",
+    help="Job name or ID",
 )
 @click.option(
     "--priority",
-    default=1,
+    "-p",
     type=int,
-    help="Job priority",
-)
-@click.option(
-    "--interactive/--no-interactive",
-    default=True,
-    help="Interactive pen mapping for multi-pen designs",
+    default=1,
+    help="Job priority (1=highest)",
 )
 @click.option(
     "--workspace",
     help="ploTTY workspace path",
 )
 @vpype_cli.global_processor
-def plotty_queue(document, name, priority, interactive, workspace):
-    """Queue existing ploTTY job for plotting."""
+def plotty_queue(document, name, priority, workspace):
+    """Queue existing ploTTY job."""
     try:
         # Initialize ploTTY integration
         plotty = PlottyIntegration(workspace)
 
-        # Queue the job
-        plotty.queue_job(name, priority)
+        # Find job by name or ID
+        job_id = plotty.find_job(name)
+        if not job_id:
+            click.echo(f"✗ Job '{name}' not found")
+            return document
 
-        click.echo(f"✓ Queued job '{name}' with priority {priority}")
-
-        if interactive:
-            # Check if job has multi-pen design
-            job_data = plotty.get_job_status(name)
-            job_path = plotty.jobs_dir / name
-            svg_path = job_path / "src.svg"
-
-            if svg_path.exists():
-                try:
-                    # Load the document to check layers
-                    loaded_doc = vpype.read_svg(str(svg_path), quantization=0.1)
-                    pen_mapping = _interactive_pen_mapping(loaded_doc, name, workspace)
-
-                    # Save pen mapping to job metadata
-                    job_data["metadata"]["pen_mapping"] = pen_mapping
-                    plotty._save_job_metadata(str(job_path), job_data)
-
-                    click.echo("✓ Pen mapping saved to job metadata")
-
-                except Exception as e:
-                    click.echo(
-                        f"⚠ Warning: Interactive pen mapping failed: {e}", err=True
-                    )
-            else:
-                click.echo("⚠ Warning: Source SVG not found for pen mapping", err=True)
+        # Queue job
+        plotty.queue_job(job_id, priority)
+        click.echo(f"🚀 Job '{name}' queued with priority {priority}")
 
         return document
 
@@ -234,13 +315,13 @@ def plotty_queue(document, name, priority, interactive, workspace):
 @click.option(
     "--name",
     "-n",
-    help="Specific job name (shows all if omitted)",
+    help="Job name or ID",
 )
 @click.option(
     "--format",
-    "output_format",
+    "-f",
     default="table",
-    type=click.Choice(["table", "json", "simple"]),
+    type=click.Choice(["table", "json", "yaml"]),
     help="Output format",
 )
 @click.option(
@@ -248,29 +329,30 @@ def plotty_queue(document, name, priority, interactive, workspace):
     help="ploTTY workspace path",
 )
 @vpype_cli.global_processor
-def plotty_status(document, name, output_format, workspace):
+def plotty_status(document, name, format, workspace):
     """Check ploTTY job status."""
     try:
         # Initialize ploTTY integration
         plotty = PlottyIntegration(workspace)
 
         if name:
-            # Show status for specific job
-            job_data = plotty.get_job_status(name)
-            output = format_job_status(job_data, output_format)
-            click.echo(output)
+            # Get specific job status
+            job = plotty.get_job(name)
+            if not job:
+                click.echo(f"✗ Job '{name}' not found")
+                return document
+
+            output = format_job_status(job, format)
         else:
-            # Show status for all jobs
+            # Get all jobs status
             jobs = plotty.list_jobs()
             if not jobs:
                 click.echo("No jobs found.")
-            else:
-                if output_format == "table":
-                    click.echo(format_job_list(jobs, output_format))
-                else:
-                    for job in jobs:
-                        click.echo(format_job_status(job, output_format))
+                return document
 
+            output = format_job_list(jobs, format)
+
+        click.echo(output)
         return document
 
     except Exception as e:
@@ -281,13 +363,14 @@ def plotty_status(document, name, output_format, workspace):
 @click.command()
 @click.option(
     "--state",
+    "-s",
     help="Filter by job state",
 )
 @click.option(
     "--format",
-    "output_format",
+    "-f",
     default="table",
-    type=click.Choice(["table", "json", "csv"]),
+    type=click.Choice(["table", "json", "yaml"]),
     help="Output format",
 )
 @click.option(
@@ -314,6 +397,63 @@ def plotty_list(document, state, output_format, limit, workspace):
         else:
             output = format_job_list(jobs, output_format)
             click.echo(output)
+
+        return document
+
+    except Exception as e:
+        click.echo(f"✗ Error: {e}", err=True)
+        raise click.ClickException(str(e))
+
+
+@click.command()
+@click.option(
+    "--workspace", "-w", help="ploTTY workspace path (default: XDG data directory)"
+)
+@click.option("--follow", "-f", is_flag=True, help="Follow job progress in real-time")
+@vpype_cli.global_processor
+def plotty_monitor(document, workspace, follow):
+    """Monitor ploTTY jobs with real-time updates."""
+    try:
+        # Import monitor here to avoid circular imports
+        try:
+            from .websocket.monitor import PlottyMonitor
+        except ImportError:
+            click.echo("⚠️ WebSocket monitoring requires ploTTY v1.1.0+")
+            click.echo("   Using basic monitoring mode...")
+
+            # Fallback to basic status check
+            from .database import PlottyIntegration
+
+            plotty = PlottyIntegration(workspace)
+            jobs = plotty.list_jobs()
+
+            if not jobs:
+                click.echo("No jobs found.")
+            else:
+                click.echo("📊 ploTTY Jobs:")
+                for job in jobs:
+                    click.echo(
+                        f"  {job.get('name', 'Unnamed')}: {job.get('state', 'unknown')}"
+                    )
+
+            return document
+
+        # Use enhanced monitor
+        monitor = PlottyMonitor(workspace)
+
+        if follow:
+            click.echo("🔍 Starting ploTTY monitor (real-time mode)")
+            click.echo("   Press Ctrl+C to stop monitoring")
+            click.echo()
+
+            monitor.start_monitoring()
+        else:
+            click.echo("📊 ploTTY Job Status")
+            click.echo("=" * 50)
+
+            # Static snapshot
+            layout = monitor.update_display()
+            monitor.console.print(layout)
 
         return document
 
