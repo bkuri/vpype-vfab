@@ -39,7 +39,7 @@ class TestCommands:
             )
 
             assert result.returncode == 0
-            assert "Added job 'test_job'" in result.stdout
+            assert "Job 'test_job' added to ploTTY" in result.stdout
 
     def test_plotty_add_with_queue(self):
         """Test plotty-add command with queue option."""
@@ -65,8 +65,8 @@ class TestCommands:
             )
 
             assert result.returncode == 0
-            assert "Added job 'test_job'" in result.stdout
-            assert "Queued job 'test_job'" in result.stdout
+            assert "Job 'test_job' added to ploTTY" in result.stdout
+            assert "queued" in result.stdout.lower()
 
     def test_plotty_add_auto_name(self):
         """Test plotty-add command with auto-generated name."""
@@ -82,7 +82,7 @@ class TestCommands:
             )
 
             assert result.returncode == 0
-            assert "Added job 'vpype_job_" in result.stdout
+            assert "Job 'vpype_job_" in result.stdout
 
     def test_plotty_add_invalid_preset(self):
         """Test plotty-add command with invalid preset."""
@@ -149,7 +149,7 @@ class TestCommands:
             )
 
             assert result.returncode == 0
-            assert "Queued job 'test_job'" in result.stdout
+            assert "Job 'test_job' queued" in result.stdout
 
     def test_plotty_queue_with_priority(self):
         """Test plotty-queue command with priority."""
@@ -335,8 +335,8 @@ class TestCommands:
 
             pen_mapping = _interactive_pen_mapping(document, "test_job", temp_dir)
 
-            # Should return default mapping for single layer
-            assert pen_mapping == {1: 1}
+            # Should return default mapping for single layer (layer 0 when no layers)
+            assert pen_mapping == {0: 1}
 
     def test_plotty_queue_with_interactive_pen_mapping(self):
         """Test plotty-queue command with interactive pen mapping enabled."""

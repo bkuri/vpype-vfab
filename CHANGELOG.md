@@ -5,27 +5,80 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.0] - 2025-11-12
 
-### Added
-- **Interactive pen mapping** for multi-pen designs with YAML persistence
-- **Complete database methods**: `delete_job()` and `_save_job_metadata()` helper
-- **Enhanced plotty-queue command** with interactive pen mapping integration
-- **70% test coverage** with comprehensive test suite for all new functionality
-- **Production-ready code quality** with proper linting and formatting
+### 🚀 Major Features
+- **🌐 Complete WebSocket Integration**: Real-time ploTTY monitoring and communication
+- **📡 ploTTY Protocol Compatibility**: Full support for ploTTY v1.1.0 WebSocket protocol
+- **🎯 plotty-monitor Command**: New real-time monitoring interface with Rich UI
+- **⚡ Async Architecture**: Non-blocking WebSocket operations throughout
 
-### Features
-- **Interactive Pen Mapping**: Layer-by-layer pen assignment with color detection
-- **Job Management**: Complete CRUD operations for ploTTY jobs
-- **Priority Queuing**: Enhanced job queuing with priority support
-- **Persistent Mappings**: YAML-based pen mapping storage across sessions
-- **Error Handling**: Comprehensive exception management throughout
+### WebSocket Client Infrastructure
+- **PlottyWebSocketClient**: Full-featured async WebSocket client with connection management
+- **Message Schemas**: Complete ploTTY protocol compatibility with Pydantic validation
+- **Channel System**: Support for jobs, devices, system, and all channels
+- **Error Handling**: Graceful fallback when ploTTY WebSocket unavailable
 
-### Testing
-- **7 new tests** for interactive pen mapping functionality
-- **Database method tests** for `delete_job()` and `_save_job_metadata()`
-- **Integration tests** for enhanced plotty-queue command
-- **70% overall coverage** maintained across all modules
+### ploTTY Message Types
+- **JobStateChangeMessage**: Job transition events (queued→running→complete)
+- **JobProgressMessage**: Real-time progress with layer, points, ETA tracking  
+- **DeviceStatusMessage**: Plotter connection and status monitoring
+- **SystemAlertMessage**: System-level notifications (ink, errors, etc.)
+- **VpypePlottyMessage**: Extended vpype-plotty specific events
+
+### Enhanced Commands
+- **plotty-add**: WebSocket broadcasting for job creation events
+- **plotty-monitor**: Real-time monitoring with Rich terminal interface
+- **Fallback Mode**: All commands work without WebSocket server
+
+### 🧪 Testing & Quality
+- **Comprehensive Test Suite**: 16/16 WebSocket tests passing with 100% schema coverage
+- **Mock WebSocket Client**: Reliable testing without server dependency
+- **Message Validation**: Complete ploTTY protocol message type testing
+- **Channel Routing**: Full subscription management testing
+
+### 📦 Dependencies
+- **websockets>=12.0**: Async WebSocket client implementation
+- **fastapi>=0.104.0**: WebSocket server compatibility  
+- **rich>=13.0.0**: Enhanced terminal UI for monitoring
+- **pytest-asyncio>=0.23.0**: Async test support
+
+### 🔧 Technical Improvements
+- **Type Safety**: Full Pydantic schema validation with proper type hints
+- **Modern Python**: Updated datetime.utcnow() to datetime.now(timezone.utc)
+- **Code Quality**: Black and Ruff compliant with zero linting issues
+- **Error Recovery**: Automatic reconnection with exponential backoff
+- **Memory Efficiency**: Streaming message processing
+
+### 📊 Performance & Reliability
+- **Async Architecture**: Non-blocking WebSocket operations
+- **Graceful Degradation**: Full functionality without WebSocket server
+- **Backward Compatibility**: All existing functionality preserved
+- **Configuration Auto-discovery**: XDG config directory support
+- **Navigation System**: Clear paths through documentation based on user needs
+- **Error Recovery**: Automatic retry with exponential backoff for transient failures
+- **User-Friendly Errors**: Detailed error messages with actionable recovery hints
+
+### Documentation Structure
+- **QUICKSTART.md**: 5-minute getting started guide
+- **docs/index.md**: Documentation hub with learning paths
+- **docs/getting-started.md**: Detailed installation and basic concepts
+- **docs/basic-usage.md**: Core commands and everyday workflows
+- **docs/configuration.md**: Workspace setup and customization
+- **docs/api-reference.md**: Complete technical reference
+- **Enhanced README.md**: Streamlined overview with clear navigation
+
+### User Experience Improvements
+- **Lower Barrier to Entry**: New users can succeed in 5 minutes
+- **Progressive Learning**: Users can dive deeper as needed
+- **Better Discoverability**: Clear navigation and focused topics
+- **Reduced Cognitive Load**: Each document has single purpose
+- **Easier Maintenance**: Smaller, focused documents
+
+### Infrastructure
+- **Version Alignment**: Updated to v0.3.0 to align with PRD Phase 3
+- **Production Ready**: Complete documentation for production release
+- **Maintainable Structure**: Modular documentation for easier updates
 
 ## [0.2.0] - 2025-11-12
 

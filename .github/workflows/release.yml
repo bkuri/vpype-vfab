@@ -1,0 +1,76 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 0.2.0)'
+        required: true
+        default: '0.2.0'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build
+    
+    - name: Build package
+      run: |
+        python -m build
+    
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Extract version from tag or input
+        if [[ "${{ github.event_name }}" == "push" ]]; then
+          VERSION=${GITHUB_REF#refs/tags/v}
+        else
+          VERSION="${{ github.event.inputs.version }}"
+        fi
+        
+        # Generate changelog section
+        echo "## Changes in v$VERSION" > changelog.md
+        echo "" >> changelog.md
+        
+        # Get commits since last tag
+        if git describe --tags --abbrev=0 HEAD >/dev/null 2>&1; then
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD^)
+          git log ${LAST_TAG}..HEAD --oneline --pretty="- %s" >> changelog.md
+        else
+          git log --oneline --pretty="- %s" | head -20 >> changelog.md
+        fi
+        
+        echo "changelog<<EOF" >> $GITHUB_OUTPUT
+        cat changelog.md >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.changelog.outputs.version }}
+        name: Release v${{ steps.changelog.outputs.version }}
+        body: ${{ steps.changelog.outputs.changelog }}
+        files: |
+          dist/*
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

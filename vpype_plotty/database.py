@@ -8,7 +8,11 @@ import vpype
 from vpype import Document
 
 from vpype_plotty.config import PlottyConfig
-from vpype_plotty.exceptions import PlottyJobError
+from vpype_plotty.exceptions import (
+    PlottyJobError,
+    handle_plotty_errors,
+    retry_on_failure,
+)
 
 
 class PlottyIntegration:
@@ -40,12 +44,16 @@ class PlottyIntegration:
         except ImportError:
             return False
 
+    @handle_plotty_errors
+    @retry_on_failure(max_retries=3, base_delay=1.0)
     def add_job(
         self,
         document: Document,
         name: str,
         preset: str = "fast",
         paper: str = "A4",
+        priority: int = 1,
+        pen_mapping: dict | None = None,
     ) -> str:
         """Add job to ploTTY system.
 
@@ -54,6 +62,8 @@ class PlottyIntegration:
             name: Job name
             preset: Optimization preset
             paper: Paper size
+            priority: Job priority (1=highest)
+            pen_mapping: Optional layer-to-pen mapping
 
         Returns:
             Job ID
@@ -62,9 +72,13 @@ class PlottyIntegration:
             PlottyJobError: If job creation fails
         """
         if self._plotty_available():
-            return self._add_job_plotty(document, name, preset, paper)
+            return self._add_job_plotty(
+                document, name, preset, paper, priority, pen_mapping
+            )
         else:
-            return self._add_job_standalone(document, name, preset, paper)
+            return self._add_job_standalone(
+                document, name, preset, paper, priority, pen_mapping
+            )
 
     def _add_job_plotty(
         self,
@@ -72,6 +86,8 @@ class PlottyIntegration:
         name: str,
         preset: str,
         paper: str,
+        priority: int = 1,
+        pen_mapping: dict | None = None,
     ) -> str:
         """Add job using ploTTY integration.
 
@@ -134,6 +150,8 @@ class PlottyIntegration:
         name: str,
         preset: str,
         paper: str,
+        priority: int = 1,
+        pen_mapping: dict | None = None,
     ) -> str:
         """Add job in standalone mode without ploTTY.
 
@@ -177,6 +195,8 @@ class PlottyIntegration:
 
         return name
 
+    @handle_plotty_errors
+    @retry_on_failure(max_retries=2, base_delay=0.5)
     def queue_job(self, name: str, priority: int = 1) -> None:
         """Queue existing job for plotting.
 
@@ -219,6 +239,7 @@ class PlottyIntegration:
         except Exception as e:
             raise PlottyJobError(f"Failed to queue job '{name}': {e}")
 
+    @handle_plotty_errors
     def get_job_status(self, name: str) -> Dict[str, Any]:
         """Get status of a specific job.
 
@@ -289,6 +310,8 @@ class PlottyIntegration:
 
         return jobs
 
+    @handle_plotty_errors
+    @retry_on_failure(max_retries=2, base_delay=0.5)
     def delete_job(self, name: str) -> None:
         """Delete a job from ploTTY system.
 
@@ -343,3 +366,44 @@ class PlottyIntegration:
 
         except (OSError, json.JSONDecodeError) as e:
             raise PlottyJobError(f"Failed to save job metadata: {e}")
+
+    def find_job(self, name: str) -> str:
+        """Find job ID by name.
+
+        Args:
+            name: Job name
+
+        Returns:
+            Job ID
+
+        Raises:
+            PlottyJobError: If job not found
+        """
+        job_path = self.jobs_dir / name
+        if not job_path.exists():
+            raise PlottyJobError(f"Job '{name}' not found")
+
+        job_json_path = job_path / "job.json"
+        if not job_json_path.exists():
+            raise PlottyJobError(f"Job metadata for '{name}' not found")
+
+        try:
+            with open(job_json_path, encoding="utf-8") as f:
+                job_data = json.load(f)
+                return job_data.get("id", name)
+        except (json.JSONDecodeError, OSError) as e:
+            raise PlottyJobError(f"Failed to read job ID for '{name}': {e}")
+
+    def get_job(self, name: str) -> Dict[str, Any]:
+        """Get complete job data by name.
+
+        Args:
+            name: Job name
+
+        Returns:
+            Complete job dictionary
+
+        Raises:
+            PlottyJobError: If job not found
+        """
+        return self.get_job_status(name)

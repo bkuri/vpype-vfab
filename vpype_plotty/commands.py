@@ -48,21 +48,24 @@ def _interactive_pen_mapping(document, job_name: str, workspace: str = None) -> 
 
     # Check if document has multiple layers
     if len(document.layers) <= 1:
+        # Get the single layer ID, or use 0 if no layers
+        if document.layers:
+            layer_id = next(iter(document.layers.keys()))
+        else:
+            layer_id = 0
         click.echo("Document has only one layer. Using pen 1.")
-        return {0: 1}
+        return {layer_id: 1}
 
     # Display layer information
     click.echo(f"Found {len(document.layers)} layers:")
-    for i, layer in enumerate(document.layers):
-        layer_id = layer.id
+    for layer_id, layer in document.layers.items():
         path_count = len(layer)
         click.echo(f"  Layer {layer_id}: {path_count} paths")
 
     click.echo()
 
     # Map each layer to a pen
-    for i, layer in enumerate(document.layers):
-        layer_id = layer.id
+    for i, (layer_id, layer) in enumerate(document.layers.items()):
         path_count = len(layer)
 
         # Check for existing mapping
@@ -155,7 +158,7 @@ def plotty_add(
 
         # Generate job name if not provided
         if not name:
-            name = generate_job_name()
+            name = generate_job_name(document)
 
         # Handle pen mapping for multi-layer designs
         if pen_mapping and len(document.layers) > 1:
@@ -287,12 +290,24 @@ def plotty_add(
     "--workspace",
     help="ploTTY workspace path",
 )
+@click.option(
+    "--interactive",
+    "-i",
+    is_flag=True,
+    help="Interactive pen mapping for multi-layer designs",
+)
 @vpype_cli.global_processor
-def plotty_queue(document, name, priority, workspace):
+def plotty_queue(document, name, priority, workspace, interactive):
     """Queue existing ploTTY job."""
     try:
         # Initialize ploTTY integration
         plotty = PlottyIntegration(workspace)
+
+        # Handle interactive pen mapping if requested
+        if interactive:
+            click.echo("⚠ Interactive pen mapping requires document access")
+            click.echo("   This feature is not yet available in queue mode")
+            click.echo("   Use plotty-add --pen-mapping instead")
 
         # Find job by name or ID
         job_id = plotty.find_job(name)
@@ -301,7 +316,7 @@ def plotty_queue(document, name, priority, workspace):
             return document
 
         # Queue job
-        plotty.queue_job(job_id, priority)
+        plotty.queue_job(name, priority)
         click.echo(f"🚀 Job '{name}' queued with priority {priority}")
 
         return document
@@ -383,7 +398,7 @@ def plotty_status(document, name, format, workspace):
     help="ploTTY workspace path",
 )
 @vpype_cli.global_processor
-def plotty_list(document, state, output_format, limit, workspace):
+def plotty_list(document, state, format, limit, workspace):
     """List ploTTY jobs."""
     try:
         # Initialize ploTTY integration
@@ -395,7 +410,7 @@ def plotty_list(document, state, output_format, limit, workspace):
         if not jobs:
             click.echo("No jobs found.")
         else:
-            output = format_job_list(jobs, output_format)
+            output = format_job_list(jobs, format)
             click.echo(output)
 
         return document
