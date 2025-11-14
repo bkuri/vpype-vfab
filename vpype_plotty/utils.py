@@ -12,6 +12,139 @@ from vpype import Document
 from vpype_plotty.exceptions import PlottyJobError
 
 
+class JobFormatter:
+    """Unified job and list formatting with consistent output."""
+
+    def __init__(self):
+        """Initialize formatter with state color mappings."""
+        self.state_colors = {
+            "pending": "🟡",
+            "queued": "🔵",
+            "running": "🟢",
+            "completed": "✅",
+            "failed": "❌",
+            "cancelled": "⏹️",
+        }
+
+        self.device_status_icons = {
+            "connected": "🟢",
+            "disconnected": "🔴",
+            "busy": "🟡",
+            "error": "❌",
+            "offline": "⚫",
+        }
+
+    def format(self, data, output_format="table", data_type="single"):
+        """Unified formatting for jobs and lists.
+
+        Args:
+            data: Job data (dict) or list of jobs
+            output_format: Output format (table, json, simple, csv)
+            data_type: Type of data ("single" or "list")
+
+        Returns:
+            Formatted string
+        """
+        if output_format == "json":
+            if data_type == "list" and not data:
+                return "No jobs found."
+            return json.dumps(data, indent=2)
+
+        elif output_format == "simple" and data_type == "single":
+            return f"{data['name']}: {data['state']}"
+
+        elif output_format == "csv" and data_type == "list":
+            return self._format_csv(data)
+
+        else:  # table format
+            return self._format_table(data, data_type)
+
+    def _format_csv(self, jobs):
+        """Format jobs as CSV."""
+        import csv
+        import io
+
+        if not jobs:
+            return "No jobs found."
+
+        output = io.StringIO()
+        writer = csv.DictWriter(output, fieldnames=jobs[0].keys())
+        writer.writeheader()
+        writer.writerows(jobs)
+        return output.getvalue().strip()
+
+    def _format_table(self, data, data_type):
+        """Format data as table."""
+        if data_type == "single":
+            return self._format_single_table(data)
+        else:
+            return self._format_list_table(data)
+
+    def _format_single_table(self, job):
+        """Format single job as table row."""
+        created = job.get("created_at", "Unknown")
+        state = job.get("state", "Unknown")
+        paper = job.get("paper", "Unknown")
+        return f"{job['name']:<20} {state:<10} {paper:<8} {created}"
+
+    def _format_list_table(self, jobs):
+        """Format list of jobs as table."""
+        if not jobs:
+            return "No jobs found."
+
+        lines = [f"{'Name':<20} {'State':<10} {'Paper':<8} {'Created':<20}"]
+        lines.append("-" * 65)
+        for job in jobs:
+            created = job.get("created_at", "Unknown")[:19]  # Remove timezone info
+            state = job.get("state", "Unknown")
+            paper = job.get("paper", "Unknown")
+            lines.append(f"{job['name']:<20} {state:<10} {paper:<8} {created}")
+        return "\n".join(lines)
+
+    def format_job_status_monitor(self, job: dict) -> str:
+        """Format job status for monitor display with enhanced details.
+
+        Args:
+            job: Job data dictionary
+
+        Returns:
+            Formatted status string with progress and timing
+        """
+        name = job.get("name", "Unnamed")
+        state = job.get("state", "unknown")
+        job_id = job.get("id", "unknown")[:8]  # Short ID
+
+        # Add progress if available
+        progress = ""
+        if "progress" in job:
+            progress_pct = job["progress"]
+            progress = f" ({progress_pct:.1f}%)"
+
+        # Add timing if available
+        timing = ""
+        if "created_at" in job:
+            created = datetime.fromisoformat(job["created_at"]).strftime("%H:%M:%S")
+            timing = f" [{created}]"
+
+        icon = self.state_colors.get(state, "❓")
+        return f"{icon} {name} ({job_id}){progress}{timing} - {state}"
+
+    def format_device_status(self, device: dict) -> str:
+        """Format device status for display.
+
+        Args:
+            device: Device data dictionary
+
+        Returns:
+            Formatted device string
+        """
+        name = device.get("name", "Unknown Device")
+        status = device.get("status", "unknown")
+
+        icon = self.device_status_icons.get(status, "❓")
+        return f"{icon} {name} - {status}"
+
+
 def save_document_for_plotty(
     document: Document, job_path: Path, name: str
 ) -> tuple[Path, Path]:
@@ -106,6 +239,10 @@ def validate_preset(preset: str) -> str:
     return preset
 
 
+# Global formatter instance for backward compatibility
+_job_formatter = JobFormatter()
+
+
 def format_job_status(job_data: dict, output_format: str = "table") -> str:
     """Format job status for display.
 
@@ -116,17 +253,7 @@ def format_job_status(job_data: dict, output_format: str = "table") -> str:
     Returns:
         Formatted status string
     """
-    if output_format == "json":
-        return json.dumps(job_data, indent=2)
-
-    elif output_format == "simple":
-        return f"{job_data['name']}: {job_data['state']}"
-
-    else:  # table format
-        created = job_data.get("created_at", "Unknown")
-        state = job_data.get("state", "Unknown")
-        paper = job_data.get("paper", "Unknown")
-        return f"{job_data['name']:<20} {state:<10} {paper:<8} {created}"
+    return _job_formatter.format(job_data, output_format, "single")
 
 
 def format_job_list(jobs: list[dict], output_format: str = "table") -> str:
@@ -139,29 +266,4 @@ def format_job_list(jobs: list[dict], output_format: str = "table") -> str:
     Returns:
         Formatted jobs string
     """
-    if not jobs:
-        return "No jobs found."
-
-    if output_format == "json":
-        return json.dumps(jobs, indent=2)
-
-    elif output_format == "csv":
-        import csv
-        import io
-
-        output = io.StringIO()
-        if jobs:
-            writer = csv.DictWriter(output, fieldnames=jobs[0].keys())
-            writer.writeheader()
-            writer.writerows(jobs)
-        return output.getvalue().strip()
-
-    else:  # table format
-        lines = [f"{'Name':<20} {'State':<10} {'Paper':<8} {'Created':<20}"]
-        lines.append("-" * 65)
-        for job in jobs:
-            created = job.get("created_at", "Unknown")[:19]  # Remove timezone info
-            state = job.get("state", "Unknown")
-            paper = job.get("paper", "Unknown")
-            lines.append(f"{job['name']:<20} {state:<10} {paper:<8} {created}")
-        return "\n".join(lines)
+    return _job_formatter.format(jobs, output_format, "list")
