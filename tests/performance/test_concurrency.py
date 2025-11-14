@@ -144,9 +144,9 @@ class TestPerformanceConcurrency:
         processing_time = end_time - start_time
 
         assert result.returncode == 0
-        assert processing_time < 60.0, (
-            f"Large dataset processing took too long: {processing_time}s"
-        )
+        assert (
+            processing_time < 60.0
+        ), f"Large dataset processing took too long: {processing_time}s"
 
         # Check file size
         file_size = os.path.getsize(svg_file)
@@ -188,9 +188,9 @@ class TestPerformanceConcurrency:
         assert total_paths == 400  # 20x20 grid
 
         # Memory usage should be reasonable (less than 100MB for this test)
-        assert memory_used < 100 * 1024 * 1024, (
-            f"Memory usage too high: {memory_used / 1024 / 1024:.1f}MB"
-        )
+        assert (
+            memory_used < 100 * 1024 * 1024
+        ), f"Memory usage too high: {memory_used / 1024 / 1024:.1f}MB"
 
     @skip_if_no_sandbox
     def test_batch_queue_processing(self, workspace_dir):
@@ -250,9 +250,9 @@ class TestPerformanceConcurrency:
 
         # Count queued jobs
         queued_count = result.stdout.count("batch_job_")
-        assert queued_count >= 10, (
-            f"Expected at least 10 queued jobs, got {queued_count}"
-        )
+        assert (
+            queued_count >= 10
+        ), f"Expected at least 10 queued jobs, got {queued_count}"
 
     @skip_if_no_sandbox
     def test_database_performance(self, workspace_dir):
@@ -518,9 +518,9 @@ class TestPerformanceConcurrency:
 
         assert result.returncode == 0
         job_addition_time = end_time - start_time
-        assert job_addition_time < baselines["simple_job_addition"], (
-            f"Job addition regression: {job_addition_time}s > {baselines['simple_job_addition']}s"
-        )
+        assert (
+            job_addition_time < baselines["simple_job_addition"]
+        ), f"Job addition regression: {job_addition_time}s > {baselines['simple_job_addition']}s"
 
         # Test job listing
         start_time = time.time()
@@ -538,6 +538,6 @@ class TestPerformanceConcurrency:
 
         assert result.returncode == 0
         listing_time = end_time - start_time
-        assert listing_time < baselines["job_listing"], (
-            f"Job listing regression: {listing_time}s > {baselines['job_listing']}s"
-        )
+        assert (
+            listing_time < baselines["job_listing"]
+        ), f"Job listing regression: {listing_time}s > {baselines['job_listing']}s"

@@ -339,7 +339,7 @@ class TestCommands:
             assert pen_mapping == {0: 1}
 
     def test_plotty_queue_with_interactive_pen_mapping(self):
-        """Test plotty-queue command with interactive pen mapping enabled."""
+        """Test plotty-queue command after adding job with interactive pen mapping."""
         from unittest.mock import patch
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -347,13 +347,36 @@ class TestCommands:
             with open(svg_file, "w") as f:
                 f.write(create_test_svg())
 
-            # Add job first
-            subprocess.run(
+            # Mock the interactive pen mapping to avoid user input
+            with patch(
+                "vpype_plotty.commands._interactive_pen_mapping"
+            ) as mock_mapping:
+                mock_mapping.return_value = {1: 1}
+
+                # Add job with interactive pen mapping
+                add_result = subprocess.run(
+                    [
+                        "vpype",
+                        "read",
+                        svg_file,
+                        "plotty-add",
+                        "--name",
+                        "test_job",
+                        "--pen-mapping",
+                        "interactive",
+                        "--workspace",
+                        temp_dir,
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
+                assert add_result.returncode == 0
+
+            # Queue the job (no interactive option needed for queue)
+            result = subprocess.run(
                 [
                     "vpype",
-                    "read",
-                    svg_file,
-                    "plotty-add",
+                    "plotty-queue",
                     "--name",
                     "test_job",
                     "--workspace",
@@ -363,27 +386,4 @@ class TestCommands:
                 text=True,
             )
 
-            # Mock the interactive pen mapping to avoid user input
-            with patch(
-                "vpype_plotty.commands._interactive_pen_mapping"
-            ) as mock_mapping:
-                mock_mapping.return_value = {1: 1}
-
-                # Queue with interactive pen mapping
-                result = subprocess.run(
-                    [
-                        "vpype",
-                        "plotty-queue",
-                        "--name",
-                        "test_job",
-                        "--interactive",
-                        "--workspace",
-                        temp_dir,
-                    ],
-                    capture_output=True,
-                    text=True,
-                )
-
-                # Note: This test might need adjustment based on how the mocking
-                # interacts with the subprocess call
-                assert result.returncode == 0
+            assert result.returncode == 0

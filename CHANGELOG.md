@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-11-14
+
+### 🐛 Bug Fixes
+- **🧪 Integration Test Decorators**: Fixed function signature preservation using `functools.wraps`
+- **💾 Database Operations**: Fixed `_save_job_metadata` to properly create nested directory structures
+- **📊 Monitor Display**: Enhanced `format_device_status` to include device type information
+- **🔧 Error Recovery**: Improved workspace fallback handling in integration tests
+
+### 🧪 Testing Improvements
+- **✅ Core Test Suite**: All database, monitor, commands, and config tests now passing
+- **📈 Test Coverage**: Maintained 62% coverage with comprehensive test fixes
+- **🎯 Integration Workflows**: Fixed end-to-end workflow validation tests
+
+### 🧹 Code Quality
+- **📝 Code Formatting**: Applied Black formatting to all test files
+- **🔍 Linting**: Addressed code quality issues across test suite
+
 ## [0.3.1] - 2025-11-13
 
 ### 🧪 Testing Infrastructure

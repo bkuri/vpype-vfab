@@ -140,9 +140,15 @@ class JobFormatter:
         """
         name = device.get("name", "Unknown Device")
         status = device.get("status", "unknown")
+        device_type = device.get("type", "")
 
         icon = self.device_status_icons.get(status, "❓")
-        return f"{icon} {name} - {status}"
+
+        # Include device type if available
+        if device_type:
+            return f"{icon} {name} - {status} ({device_type})"
+        else:
+            return f"{icon} {name} - {status}"
 
 
 def save_document_for_plotty(

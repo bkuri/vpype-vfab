@@ -1,5 +1,6 @@
 """Test utilities for sandbox environment setup and management."""
 
+import functools
 import sys
 from pathlib import Path
 
@@ -154,6 +155,7 @@ def mock_quickdraw_data():
 def skip_if_no_sandbox(test_func):
     """Decorator to skip tests if sandbox is not available."""
 
+    @functools.wraps(test_func)
     def wrapper(*args, **kwargs):
         config = get_sandbox_config()
         if not config:
@@ -168,6 +170,7 @@ def skip_if_no_sandbox(test_func):
 def skip_if_no_vsketch(test_func):
     """Decorator to skip tests if vsketch is not available."""
 
+    @functools.wraps(test_func)
     def wrapper(*args, **kwargs):
         try:
             import vsketch

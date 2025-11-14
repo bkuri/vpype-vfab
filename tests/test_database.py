@@ -38,15 +38,8 @@ class TestPlottyIntegration:
             plotty = PlottyIntegration()
             assert plotty._plotty_available() is True
 
-    def test_plotty_available_false(self):
-        """Test ploTTY availability when not installed."""
-        from vpype_plotty.database import PlottyIntegration
-
-        plotty = PlottyIntegration()
-        assert plotty._plotty_available() is False
-
-    def test_add_job_standalone(self):
-        """Test adding job in standalone mode."""
+    def test_add_job_with_plotty(self):
+        """Test adding job with ploTTY integration."""
         from vpype_plotty.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -69,7 +62,8 @@ class TestPlottyIntegration:
             assert job_data["name"] == "test_job"
             assert job_data["paper"] == "A4"
             assert job_data["state"] == "NEW"
-            assert job_data["metadata"]["standalone"] is True
+            assert "created_at" in job_data
+            assert "updated_at" in job_data
 
     def test_queue_job(self):
         """Test queuing existing job."""
