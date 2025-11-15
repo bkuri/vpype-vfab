@@ -6,15 +6,15 @@ from typing import Callable, Optional
 import click
 import vpype_cli
 
-from vpype_plotty.base import StreamlinedPlottyCommand
+from vpype_vfab.base import StreamlinedVfabCommand
 
 
-def plotty_command(
+def vfab_command(
     *options, requires_workspace: bool = True, error_context: Optional[str] = None
 ):
-    """Universal ploTTY command decorator that handles common scaffolding.
+    """Universal vfab command decorator that handles common scaffolding.
 
-    This decorator eliminates repetitive code across all ploTTY commands by:
+    This decorator eliminates repetitive code across all vfab commands by:
     - Adding standard --workspace option when required
     - Applying vpype_cli global processor
     - Handling command initialization and error handling
@@ -37,7 +37,7 @@ def plotty_command(
             workspace = kwargs.get("workspace")
 
             # Initialize command
-            cmd = StreamlinedPlottyCommand(workspace)
+            cmd = StreamlinedVfabCommand(workspace)
 
             try:
                 # Call the original function with cmd as first argument after document
@@ -55,7 +55,7 @@ def plotty_command(
 
         # Add workspace option if required
         if requires_workspace:
-            command_func = click.option("--workspace", help="ploTTY workspace path")(
+            command_func = click.option("--workspace", help="vfab workspace path")(
                 command_func
             )
 
@@ -71,7 +71,7 @@ def plotty_command(
     return decorator
 
 
-def workspace_option(help_text: str = "ploTTY workspace path") -> Callable:
+def workspace_option(help_text: str = "vfab workspace path") -> Callable:
     """Standard workspace option decorator.
 
     Args:

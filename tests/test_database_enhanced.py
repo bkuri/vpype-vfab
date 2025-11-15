@@ -50,8 +50,8 @@ class TestPlottyIntegrationEnhanced:
 
             assert plotty.workspace == mock_workspace
 
-    def test_plotty_available_true(self):
-        """Test ploTTY availability when installed."""
+    def test_vfab_available_true(self):
+        """Test vfab availability when installed."""
         with patch.dict(
             "sys.modules",
             {
@@ -63,8 +63,8 @@ class TestPlottyIntegrationEnhanced:
             plotty = PlottyIntegration()
             assert plotty._plotty_available() is True
 
-    def test_plotty_available_false(self):
-        """Test ploTTY availability when not installed."""
+    def test_vfab_available_false(self):
+        """Test vfab availability when not installed."""
         with patch.dict("sys.modules", {}, clear=True):
             with patch("builtins.__import__", side_effect=ImportError("No module")):
                 plotty = PlottyIntegration()

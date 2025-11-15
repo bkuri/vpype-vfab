@@ -1,11 +1,11 @@
 # Configuration Guide
 
-This guide covers vpype-plotty configuration, workspace management, and customization options.
+This guide covers vpype-vfab configuration, workspace management, and customization options.
 
 ## Table of Contents
 
 1. [Workspace Setup](#workspace-setup)
-2. [ploTTY Configuration](#plotty-configuration)
+2. [vfab Configuration](#plotty-configuration)
 3. [Presets and Optimization](#presets-and-optimization)
 4. [Paper Sizes](#paper-sizes)
 5. [Environment Variables](#environment-variables)
@@ -15,43 +15,43 @@ This guide covers vpype-plotty configuration, workspace management, and customiz
 
 ### Automatic Workspace Detection
 
-vpype-plotty automatically detects ploTTY workspaces in this order:
+vpype-vfab automatically detects vfab workspaces in this order:
 
 1. **Explicit `--workspace` parameter**
-2. `./plotty-workspace` (current directory)
-3. `~/plotty-workspace` (home directory)
+2. `./vfab-workspace` (current directory)
+3. `~/vfab-workspace` (home directory)
 4. XDG data directory (`~/.local/share/plotty`)
 
 ### Creating a Workspace
 
 ```bash
-# Method 1: Use ploTTY (recommended)
-ploTTY init --workspace ~/my-plotty-workspace
+# Method 1: Use vfab (recommended)
+vfab init --workspace ~/my-vfab-workspace
 
 # Method 2: Manual creation
-mkdir ~/my-plotty-workspace
-cd ~/my-plotty-workspace
+mkdir ~/my-vfab-workspace
+cd ~/my-vfab-workspace
 mkdir jobs logs state
 
-# Method 3: Let vpype-plotty create it
-vpype --workspace ~/new-workspace plotty-add --name test
+# Method 3: Let vpype-vfab create it
+vpype --workspace ~/new-workspace vfab-add --name test
 ```
 
 ### Workspace Structure
 
 ```
-~/plotty-workspace/
+~/vfab-workspace/
 ├── jobs/                    # Job files and metadata
 │   ├── job_name/
 │   │   ├── design.svg       # Original design
 │   │   ├── optimized.svg    # Optimized version
 │   │   ├── job.json        # Job metadata
 │   │   └── pen_mapping.yaml # Pen assignments (if multi-pen)
-├── config.yaml             # ploTTY configuration
+├── config.yaml             # vfab configuration
 ├── logs/                   # Operation logs
 │   ├── plotty.log
 │   └── jobs.log
-└── state/                  # ploTTY state files
+└── state/                  # vfab state files
     ├── queue.json
     └── plotter_state.json
 ```
@@ -60,25 +60,25 @@ vpype --workspace ~/new-workspace plotty-add --name test
 
 ```bash
 # Project-specific workspace
-vpype --workspace ./project-workspace plotty-add --name project_design
+vpype --workspace ./project-workspace vfab-add --name project_design
 
 # Temporary workspace
-vpype --workspace /tmp/test-workspace plotty-add --name test
+vpype --workspace /tmp/test-workspace vfab-add --name test
 
 # Environment variable
 export PLOTTY_WORKSPACE=~/client-workspace
-vpype plotty-add --name client_design
+vpype vfab-add --name client_design
 ```
 
-## ploTTY Configuration
+## vfab Configuration
 
 ### Basic Configuration
 
-ploTTY uses `config.yaml` in the workspace root:
+vfab uses `config.yaml` in the workspace root:
 
 ```yaml
-# ploTTY configuration
-workspace: "/home/user/plotty-workspace"
+# vfab configuration
+workspace: "/home/user/vfab-workspace"
 
 # Plotter settings
 plotter:
@@ -102,12 +102,12 @@ logging:
   backup_count: 5
 ```
 
-### vpype-plotty Specific Settings
+### vpype-vfab Specific Settings
 
-Add vpype-plotty configuration to the same file:
+Add vpype-vfab configuration to the same file:
 
 ```yaml
-# vpype-plotty configuration
+# vpype-vfab configuration
 vpype:
   default_preset: "default"
   presets_file: "vpype-presets.yaml"
@@ -181,8 +181,8 @@ presets:
 Use custom presets:
 
 ```bash
-vpype plotty-add --name design --preset ultra_fast
-vpype plotty-add --name detailed_art --preset detailed
+vpype vfab-add --name design --preset ultra_fast
+vpype vfab-add --name detailed_art --preset detailed
 ```
 
 ## Presets and Optimization
@@ -271,8 +271,8 @@ hq:
 
 3. **Test and refine**:
    ```bash
-   vpype plotty-add --name test --preset my_preset
-   vpype plotty-status --name test
+   vpype vfab-add --name test --preset my_preset
+   vpype vfab-status --name test
    ```
 
 ## Paper Sizes
@@ -281,17 +281,17 @@ hq:
 
 #### Metric (ISO 216)
 ```bash
-vpype plotty-add --name design --paper A4    # 210x297mm
-vpype plotty-add --name design --paper A3    # 297x420mm
-vpype plotty-add --name design --paper A2    # 420x594mm
-vpype plotty-add --name design --paper A1    # 594x841mm
+vpype vfab-add --name design --paper A4    # 210x297mm
+vpype vfab-add --name design --paper A3    # 297x420mm
+vpype vfab-add --name design --paper A2    # 420x594mm
+vpype vfab-add --name design --paper A1    # 594x841mm
 ```
 
 #### US (ANSI)
 ```bash
-vpype plotty-add --name design --paper Letter    # 8.5x11in
-vpype plotty-add --name design --paper Tabloid   # 11x17in
-vpype plotty-add --name design --paper Legal     # 8.5x14in
+vpype vfab-add --name design --paper Letter    # 8.5x11in
+vpype vfab-add --name design --paper Tabloid   # 11x17in
+vpype vfab-add --name design --paper Legal     # 8.5x14in
 ```
 
 ### Custom Paper Sizes
@@ -300,15 +300,15 @@ vpype plotty-add --name design --paper Legal     # 8.5x14in
 
 ```bash
 # Metric
-vpype plotty-add --name design --paper 297x420mm
-vpype plotty-add --name design --paper 100x200mm
+vpype vfab-add --name design --paper 297x420mm
+vpype vfab-add --name design --paper 100x200mm
 
 # Imperial
-vpype plotty-add --name design --paper 8.5x11in
-vpype plotty-add --name design --paper 12x18in
+vpype vfab-add --name design --paper 8.5x11in
+vpype vfab-add --name design --paper 12x18in
 
 # Mixed (not recommended but supported)
-vpype plotty-add --name design --paper 8.5x297mm
+vpype vfab-add --name design --paper 8.5x297mm
 ```
 
 ### Custom Size Aliases
@@ -327,8 +327,8 @@ paper:
 Use aliases:
 
 ```bash
-vpype plotty-add --name design --paper postcard
-vpype plotty-add --name design --paper banner
+vpype vfab-add --name design --paper postcard
+vpype vfab-add --name design --paper banner
 ```
 
 ### Paper Margins
@@ -346,20 +346,20 @@ paper:
 
 ## Environment Variables
 
-### ploTTY Workspace
+### vfab Workspace
 
 ```bash
 # Set default workspace
-export PLOTTY_WORKSPACE=~/my-plotty-workspace
+export PLOTTY_WORKSPACE=~/my-vfab-workspace
 
 # Temporary override
-PLOTTY_WORKSPACE=/tmp/test-workspace vpype plotty-add --name test
+PLOTTY_WORKSPACE=/tmp/test-workspace vpype vfab-add --name test
 
 # Project-specific
 export PLOTTY_WORKSPACE=./project-workspace
 ```
 
-### vpype-plotty Settings
+### vpype-vfab Settings
 
 ```bash
 # Debug mode
@@ -377,16 +377,16 @@ export VPYPE_PLOTTY_LOG_LEVEL=DEBUG
 Add to `~/.bashrc` or `~/.zshrc`:
 
 ```bash
-# ploTTY workspace
-export PLOTTY_WORKSPACE=~/plotty-workspace
+# vfab workspace
+export PLOTTY_WORKSPACE=~/vfab-workspace
 
-# vpype-plotty settings
+# vpype-vfab settings
 export VPYPE_PLOTTY_LOG_LEVEL=INFO
 
 # Aliases for convenience
-alias pp-status='vpype plotty-status'
-alias pp-list='vpype plotty-list --format table'
-alias pp-queue='vpype plotty-queue'
+alias pp-status='vpype vfab-status'
+alias pp-list='vpype vfab-list --format table'
+alias pp-queue='vpype vfab-queue'
 ```
 
 ## Advanced Configuration
@@ -426,8 +426,8 @@ priorities:
 Use priorities:
 
 ```bash
-vpype plotty-queue --name urgent_job --priority 10
-vpype plotty-queue --name background_task --priority 1
+vpype vfab-queue --name urgent_job --priority 10
+vpype vfab-queue --name background_task --priority 1
 ```
 
 ### Automation Settings
@@ -496,7 +496,7 @@ integrations:
   git:
     enabled: true
     auto_commit: true
-    commit_message: "Add ploTTY job: {job_name}"
+    commit_message: "Add vfab job: {job_name}"
     
   # API access
   api:
@@ -510,37 +510,37 @@ integrations:
 ### Check Configuration
 
 ```bash
-# Validate ploTTY configuration
-ploTTY config --validate
+# Validate vfab configuration
+vfab config --validate
 
 # Check workspace
-ploTTY check --workspace ~/my-workspace
+vfab check --workspace ~/my-workspace
 
-# Test vpype-plotty settings
-vpype --debug plotty-add --name config_test
+# Test vpype-vfab settings
+vpype --debug vfab-add --name config_test
 ```
 
 ### Common Issues
 
 #### Workspace Not Found
 ```bash
-# Error: ploTTY workspace not found
+# Error: vfab workspace not found
 # Solution: Create or specify workspace
-vpype --workspace ~/correct/path plotty-add --name test
+vpype --workspace ~/correct/path vfab-add --name test
 ```
 
 #### Invalid Preset
 ```bash
 # Error: Unknown preset 'my_preset'
 # Solution: Check preset file
-cat ~/plotty-workspace/vpype-presets.yaml
+cat ~/vfab-workspace/vpype-presets.yaml
 ```
 
 #### Permission Issues
 ```bash
 # Error: Permission denied
 # Solution: Fix permissions
-chmod -R u+rw ~/plotty-workspace/
+chmod -R u+rw ~/vfab-workspace/
 ```
 
 ---

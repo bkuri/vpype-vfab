@@ -1,29 +1,29 @@
-# vpype-plotty
+# vpype-vfab
 
-[![PyPI version](https://img.shields.io/pypi/v/vpype-plotty.svg)](https://pypi.org/project/vpype-plotty/)
-[![Python versions](https://img.shields.io/pypi/pyversions/vpype-plotty.svg)](https://pypi.org/project/vpype-plotty/)
+[![PyPI version](https://img.shields.io/pypi/v/vpype-vfab.svg)](https://pypi.org/project/vpype-vfab/)
+[![Python versions](https://img.shields.io/pypi/pyversions/vpype-vfab.svg)](https://pypi.org/project/vpype-vfab/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](tests/)
 
-**vpype-plotty** bridges creative tools (vsketch, vpype) with [ploTTY](https://github.com/bkuri/plotty)'s professional plotter management system. Go from generative art to plotter jobs in seconds.
+**vpype-vfab** bridges creative tools (vsketch, vpype) with [vfab](https://github.com/bkuri/vfab)'s professional plotter management system. Go from generative art to plotter jobs in seconds.
 
 ## ✨ Key Features
 
 - 🎨 **Seamless Integration**: Works directly with vpype and vsketch workflows
-- 🚀 **Quick Job Creation**: Add documents to ploTTY with a single command  
+- 🚀 **Quick Job Creation**: Add documents to vfab with a single command  
 - 📊 **Job Management**: Queue, monitor, and list plotter jobs
 - 🎯 **Optimization Presets**: Fast, default, and high-quality settings
 - 🖊️ **Multi-Pen Support**: Interactive pen mapping with YAML persistence
 - 🛡️ **Error Recovery**: Automatic retry logic and user-friendly error messages
-- 🔧 **Standalone Mode**: Works with or without ploTTY installation
+- 🔧 **Standalone Mode**: Works with or without vfab installation
 
 ## 🚀 Quick Start
 
 ### Install (2 commands)
 
 ```bash
-pipx inject vpype vpype-plotty
-vpype circle --radius 5cm plotty-add --name test --queue
+pipx inject vpype vpype-vfab
+vpype circle --radius 5cm vfab-add --name test --queue
 ```
 
 ### Your First Plot (3 commands)
@@ -32,11 +32,11 @@ vpype circle --radius 5cm plotty-add --name test --queue
 # Create design
 vpype rand --seed 123
 
-# Add to ploTTY
-vpype plotty-add --name my_first_plot
+# Add to vfab
+vpype vfab-add --name my_first_plot
 
 # Check status  
-vpype plotty-status
+vpype vfab-status
 ```
 
 📖 **[→ Full Quick Start Guide](docs/quickstart.md)** (5 minutes to first plot)
@@ -62,16 +62,16 @@ vpype plotty-status
 
 | Command | What it does | Example |
 |---------|--------------|---------|
-| `plotty-add` | Add design to ploTTY | `vpype plotty-add --name test --queue` |
-| `plotty-queue` | Queue existing job | `vpype plotty-queue --name test --priority 2` |
-| `plotty-status` | Check job status | `vpype plotty-status --name test --format json` |
-| `plotty-list` | List all jobs | `vpype plotty-list --state queued --format table` |
+| `vfab-add` | Add design to vfab | `vpype vfab-add --name test --queue` |
+| `vfab-queue` | Queue existing job | `vpype vfab-queue --name test --priority 2` |
+| `vfab-status` | Check job status | `vpype vfab-status --name test --format json` |
+| `vfab-list` | List all jobs | `vpype vfab-list --state queued --format table` |
 
 ## 🎯 Common Workflows
 
 ### Basic Design → Plot
 ```bash
-vpype read design.svg plotty-add --name my_design --preset hq --queue
+vpype read design.svg vfab-add --name my_design --preset hq --queue
 ```
 
 ### vsketch Integration
@@ -80,13 +80,13 @@ import vsketch
 
 class MySketch(vsketch.SketchClass):
     def finalize(self, vsk: vsketch.Vsketch) -> None:
-        vsk.vpype("plotty-add --name my_sketch --preset hq --queue")
+        vsk.vpype("vfab-add --name my_sketch --preset hq --queue")
 ```
 
 ### Batch Processing
 ```bash
 for seed in {1..10}; do
-    vpype rand --seed $seed plotty-add --name variant_$seed --queue
+    vpype rand --seed $seed vfab-add --name variant_$seed --queue
 done
 ```
 
@@ -94,18 +94,18 @@ done
 
 ### For vpype Users
 ```bash
-pipx inject vpype vpype-plotty
+pipx inject vpype vpype-vfab
 ```
 
 ### For vsketch Users  
 ```bash
-pipx inject vsketch vpype-plotty
+pipx inject vsketch vpype-vfab
 ```
 
 ### Development Installation
 ```bash
-git clone https://github.com/bkuri/vpype-plotty.git
-cd vpype-plotty
+git clone https://github.com/bkuri/vpype-vfab.git
+cd vpype-vfab
 pip install -e ".[dev]"
 ```
 
@@ -114,7 +114,7 @@ pip install -e ".[dev]"
 - **Python**: 3.11+
 - **vpype**: 1.14+ (for vpype users)
 - **vsketch**: 1.0+ (for vsketch users)  
-- **ploTTY**: 1.0+ (optional, for full integration)
+- **vfab**: 1.0+ (optional, for full integration)
 
 ## 🏗️ Development
 
@@ -140,8 +140,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🔗 Links
 
-- **Repository**: [github.com/bkuri/vpype-plotty](https://github.com/bkuri/vpype-plotty)
-- **ploTTY**: [github.com/bkuri/plotty](https://github.com/bkuri/plotty)  
+- **Repository**: [github.com/bkuri/vpype-vfab](https://github.com/bkuri/vpype-vfab)
+- **vfab**: [github.com/bkuri/plotty](https://github.com/bkuri/vfab)  
 - **vpype**: [github.com/abey79/vpype](https://github.com/abey79/vpype)
 - **vsketch**: [github.com/abey79/vsketch](https://github.com/abey79/vsketch)
 
@@ -156,10 +156,10 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ### [v0.2.0] - 2025-11-12
 - ✨ **Interactive Pen Mapping**: Multi-pen designs with YAML persistence
 - 🔧 **Complete Database Methods**: Full CRUD operations for job management
-- 📊 **Enhanced plotty-queue**: Interactive features and priority support
+- 📊 **Enhanced vfab-queue**: Interactive features and priority support
 
 ### [v0.1.0] - 2025-11-12
-- 🎉 **Initial Release**: Core commands and basic ploTTY integration
+- 🎉 **Initial Release**: Core commands and basic vfab integration
 
 ---
 

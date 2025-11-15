@@ -1,6 +1,6 @@
 # API Reference
 
-This document provides technical reference for vpype-plotty commands, functions, and configuration options.
+This document provides technical reference for vpype-vfab commands, functions, and configuration options.
 
 ## Table of Contents
 
@@ -12,13 +12,13 @@ This document provides technical reference for vpype-plotty commands, functions,
 
 ## Commands
 
-### plotty-add
+### vfab-add
 
-Add current vpype document to ploTTY job system.
+Add current vpype document to vfab job system.
 
 #### Syntax
 ```bash
-vpype plotty-add [OPTIONS]
+vpype vfab-add [OPTIONS]
 ```
 
 #### Options
@@ -30,28 +30,28 @@ vpype plotty-add [OPTIONS]
 | `--paper` | | string | `A4` | Paper size (A4, A3, Letter, or custom) |
 | `--queue` | | flag | `False` | Automatically queue job after adding |
 | `--no-queue` | | flag | `True` | Don't automatically queue job |
-| `--workspace` | | path | auto-detected | ploTTY workspace path |
+| `--workspace` | | path | auto-detected | vfab workspace path |
 
 #### Examples
 ```bash
 # Basic usage
-vpype plotty-add --name my_design
+vpype vfab-add --name my_design
 
 # With preset and auto-queue
-vpype plotty-add --name test --preset hq --queue
+vpype vfab-add --name test --preset hq --queue
 
 # Custom paper size
-vpype plotty-add --name large --paper A3 --preset default
+vpype vfab-add --name large --paper A3 --preset default
 
 # Custom workspace
-vpype --workspace /path/to/workspace plotty-add --name test
+vpype --workspace /path/to/workspace vfab-add --name test
 ```
 
 #### Return Values
 
 **Success**: Returns job name and metadata
 ```
-✓ Added job 'my_design' to ploTTY
+✓ Added job 'my_design' to vfab
 Job ID: my_design
 Preset: default
 Paper: A4
@@ -60,17 +60,17 @@ Created: 2025-11-12T10:30:00Z
 
 **Error**: Returns descriptive error message with recovery hint
 ```
-✗ Error: ploTTY installation or workspace not found
-Recovery: Install ploTTY or specify --workspace /path/to/workspace
+✗ Error: vfab installation or workspace not found
+Recovery: Install vfab or specify --workspace /path/to/workspace
 ```
 
-### plotty-queue
+### vfab-queue
 
-Queue existing ploTTY job for plotting.
+Queue existing vfab job for plotting.
 
 #### Syntax
 ```bash
-vpype plotty-queue [OPTIONS]
+vpype vfab-queue [OPTIONS]
 ```
 
 #### Options
@@ -81,18 +81,18 @@ vpype plotty-queue [OPTIONS]
 | `--priority` | | integer | `1` | Job priority (1-10, higher = more urgent) |
 | `--interactive` | | flag | `True` | Enable interactive pen mapping |
 | `--no-interactive` | | flag | `False` | Disable interactive pen mapping |
-| `--workspace` | | path | auto-detected | ploTTY workspace path |
+| `--workspace` | | path | auto-detected | vfab workspace path |
 
 #### Examples
 ```bash
 # Queue with default priority
-vpype plotty-queue --name my_design
+vpype vfab-queue --name my_design
 
 # High priority job
-vpype plotty-queue --name urgent --priority 10
+vpype vfab-queue --name urgent --priority 10
 
 # Multi-pen design with interactive mapping
-vpype plotty-queue --name colorful --interactive
+vpype vfab-queue --name colorful --interactive
 ```
 
 #### Interactive Pen Mapping
@@ -114,13 +114,13 @@ Enter pen number for layer 2 [2]: 3
 ✅ Queued job 'colorful_design' with priority 1
 ```
 
-### plotty-status
+### vfab-status
 
 Check job status and details.
 
 #### Syntax
 ```bash
-vpype plotty-status [OPTIONS]
+vpype vfab-status [OPTIONS]
 ```
 
 #### Options
@@ -129,7 +129,7 @@ vpype plotty-status [OPTIONS]
 |--------|-------|-------|---------|-------------|
 | `--name` | `-n` | string | `None` | Specific job name (shows all if omitted) |
 | `--format` | | choice | `table` | Output format (`table`, `json`, `simple`) |
-| `--workspace` | | path | auto-detected | ploTTY workspace path |
+| `--workspace` | | path | auto-detected | vfab workspace path |
 
 #### Output Formats
 
@@ -170,13 +170,13 @@ my_design: queued (priority 1, created 2m ago)
 test_circle: running (priority 5, created 5m ago, duration 3m 15s)
 ```
 
-### plotty-list
+### vfab-list
 
-List ploTTY jobs with filtering and sorting options.
+List vfab jobs with filtering and sorting options.
 
 #### Syntax
 ```bash
-vpype plotty-list [OPTIONS]
+vpype vfab-list [OPTIONS]
 ```
 
 #### Options
@@ -186,22 +186,22 @@ vpype plotty-list [OPTIONS]
 | `--state` | | string | `None` | Filter by job state (`queued`, `running`, `completed`, `failed`) |
 | `--format` | | choice | `table` | Output format (`table`, `json`, `csv`) |
 | `--limit` | | integer | `None` | Maximum number of jobs to show |
-| `--workspace` | | path | auto-detected | ploTTY workspace path |
+| `--workspace` | | path | auto-detected | vfab workspace path |
 
 #### Filtering Examples
 
 ```bash
 # Only queued jobs
-vpype plotty-list --state queued
+vpype vfab-list --state queued
 
 # Only completed jobs from today
-vpype plotty-list --state completed --limit 10
+vpype vfab-list --state completed --limit 10
 
 # Export to CSV
-vpype plotty-list --format csv > jobs_backup.csv
+vpype vfab-list --format csv > jobs_backup.csv
 
 # JSON for scripts
-vpype plotty-list --format json | jq '.[] | select(.state == "failed")'
+vpype vfab-list --format json | jq '.[] | select(.state == "failed")'
 ```
 
 ## Configuration Options
@@ -211,8 +211,8 @@ vpype plotty-list --format json | jq '.[] | select(.state == "failed")'
 Located at `<workspace>/config.yaml`:
 
 ```yaml
-# ploTTY workspace configuration
-workspace: "/home/user/plotty-workspace"
+# vfab workspace configuration
+workspace: "/home/user/vfab-workspace"
 
 # Plotter hardware settings
 plotter:
@@ -239,10 +239,10 @@ logging:
   backup_count: 5            # Number of backup logs
 ```
 
-### vpype-plotty Configuration
+### vpype-vfab Configuration
 
 ```yaml
-# vpype-plotty specific settings
+# vpype-vfab specific settings
 vpype:
   default_preset: "default"           # Default optimization preset
   presets_file: "vpype-presets.yaml" # Custom presets file
@@ -297,7 +297,7 @@ presets:
 
 ```python
 class PlottyError(Exception):
-    """Base exception for vpype-plotty."""
+    """Base exception for vpype-vfab."""
     
     def __init__(self, message: str, recovery_hint: Optional[str] = None, retry_after: Optional[float] = None):
         super().__init__(message)
@@ -310,20 +310,20 @@ class PlottyError(Exception):
 #### PlottyNotFoundError
 ```python
 class PlottyNotFoundError(PlottyError):
-    """ploTTY installation or workspace not found."""
+    """vfab installation or workspace not found."""
     
     def __init__(self, message: str, workspace_path: Optional[str] = None):
-        recovery_hint = f"Check ploTTY installation at {workspace_path}" if workspace_path else "Verify ploTTY is properly installed"
+        recovery_hint = f"Check vfab installation at {workspace_path}" if workspace_path else "Verify vfab is properly installed"
         super().__init__(message, recovery_hint)
 ```
 
 #### PlottyConnectionError
 ```python
 class PlottyConnectionError(PlottyError):
-    """Connection or communication error with ploTTY."""
+    """Connection or communication error with vfab."""
     
     def __init__(self, message: str, retry_after: float = 5.0):
-        super().__init__(message, "Check ploTTY is running and accessible", retry_after)
+        super().__init__(message, "Check vfab is running and accessible", retry_after)
 ```
 
 #### PlottyTimeoutError
@@ -332,7 +332,7 @@ class PlottyTimeoutError(PlottyError):
     """Operation timeout error."""
     
     def __init__(self, message: str, timeout_seconds: float):
-        super().__init__(message, f"Increase timeout or check ploTTY performance", timeout_seconds)
+        super().__init__(message, f"Increase timeout or check vfab performance", timeout_seconds)
 ```
 
 #### PlottyJobError
@@ -341,7 +341,7 @@ class PlottyJobError(PlottyError):
     """Job creation or management error."""
     
     def __init__(self, message: str, job_id: Optional[str] = None):
-        recovery_hint = f"Check job status with: plotty-status {job_id}" if job_id else "Verify job parameters and ploTTY status"
+        recovery_hint = f"Check job status with: vfab-status {job_id}" if job_id else "Verify job parameters and vfab status"
         super().__init__(message, recovery_hint)
 ```
 
@@ -367,7 +367,7 @@ class JobMetadata:
     layer_count: int                    # Number of layers
     file_size_bytes: int                 # File size in bytes
     
-    # ploTTY metadata
+    # vfab metadata
     plotter_id: Optional[str]           # Assigned plotter
     queue_position: Optional[int]         # Position in queue
     error_message: Optional[str]         # Error message if failed
@@ -406,11 +406,11 @@ class LayerMapping:
 
 ## Environment Variables
 
-### ploTTY Variables
+### vfab Variables
 
 ```bash
 # Workspace location
-export PLOTTY_WORKSPACE=~/my-plotty-workspace
+export PLOTTY_WORKSPACE=~/my-vfab-workspace
 
 # Configuration file
 export PLOTTY_CONFIG=~/my-config.yaml
@@ -419,14 +419,14 @@ export PLOTTY_CONFIG=~/my-config.yaml
 export PLOTTY_LOG_LEVEL=DEBUG
 ```
 
-### vpype-plotty Variables
+### vpype-vfab Variables
 
 ```bash
 # Debug mode
 export VPYPE_PLOTTY_DEBUG=1
 
 # Custom config file
-export VPYPE_PLOTTY_CONFIG=~/vpype-plotty-config.yaml
+export VPYPE_PLOTTY_CONFIG=~/vpype-vfab-config.yaml
 
 # Log level
 export VPYPE_PLOTTY_LOG_LEVEL=DEBUG
@@ -439,14 +439,14 @@ export VPYPE_PLOTTY_WORKSPACE=~/default-workspace
 
 ```bash
 # Common aliases
-alias pp-add='vpype plotty-add'
-alias pp-queue='vpype plotty-queue'
-alias pp-status='vpype plotty-status'
-alias pp-list='vpype plotty-list --format table'
+alias pp-add='vpype vfab-add'
+alias pp-queue='vpype vfab-queue'
+alias pp-status='vpype vfab-status'
+alias pp-list='vpype vfab-list --format table'
 
 # Development aliases
-alias pp-test='vpype --debug plotty-add --name test'
-alias pp-jobs='vpype plotty-list --format json | jq .'
+alias pp-test='vpype --debug vfab-add --name test'
+alias pp-jobs='vpype vfab-list --format json | jq .'
 ```
 
 ## Error Codes
@@ -459,7 +459,7 @@ alias pp-jobs='vpype plotty-list --format json | jq .'
 | 1 | General Error | Generic error occurred |
 | 2 | Usage Error | Invalid command line arguments |
 | 3 | Configuration Error | Invalid configuration |
-| 4 | Connection Error | Cannot connect to ploTTY |
+| 4 | Connection Error | Cannot connect to vfab |
 | 5 | Job Error | Job operation failed |
 | 6 | Timeout Error | Operation timed out |
 | 7 | Permission Error | Insufficient permissions |
@@ -472,12 +472,12 @@ Each error includes suggested recovery action:
 ```bash
 # Example error with recovery
 Error: Job 'my_design' not found
-Recovery: Check job name with: vpype plotty-list
+Recovery: Check job name with: vpype vfab-list
 Exit code: 5
 
 # Example timeout with retry
 Error: Connection timeout after 30 seconds
-Recovery: Check ploTTY is running and accessible
+Recovery: Check vfab is running and accessible
 Retry after: 5.0 seconds
 Exit code: 6
 ```

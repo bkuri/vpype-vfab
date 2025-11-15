@@ -101,7 +101,7 @@ class TestUtilsEnhanced:
             validate_preset("Fast")  # Should be "fast"
 
     def test_save_document_for_plotty_basic(self):
-        """Test basic document saving for ploTTY."""
+        """Test basic document saving for vfab."""
         with tempfile.TemporaryDirectory() as temp_dir:
             document = Document()
             job_path = Path(temp_dir) / "test_job"
@@ -174,7 +174,7 @@ class TestUtilsEnhanced:
         with pytest.raises(PlottyJobError) as exc_info:
             save_document_for_plotty(document, invalid_path, "test_job")
 
-        assert "Failed to save document for ploTTY" in str(exc_info.value)
+        assert "Failed to save document for vfab" in str(exc_info.value)
 
     @patch("vpype.write_svg")
     def test_save_document_for_plotty_vpype_error(self, mock_write_svg):
@@ -188,7 +188,7 @@ class TestUtilsEnhanced:
             with pytest.raises(PlottyJobError) as exc_info:
                 save_document_for_plotty(document, job_path, "test_job")
 
-            assert "Failed to save document for ploTTY" in str(exc_info.value)
+            assert "Failed to save document for vfab" in str(exc_info.value)
 
     def test_format_job_status_table_complete(self):
         """Test formatting job status as table with complete data."""

@@ -52,7 +52,7 @@ class TestPerformanceConcurrency:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     job_name,
                     "--workspace",
@@ -83,11 +83,11 @@ class TestPerformanceConcurrency:
         assert all(results), f"Failed to add some jobs: {results}"
         assert duration < 30.0, f"Concurrent job addition took too long: {duration}s"
 
-        # Verify all jobs are in ploTTY
+        # Verify all jobs are in vfab
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-list",
+                "vfab-list",
                 "--workspace",
                 workspace_dir,
             ],
@@ -130,7 +130,7 @@ class TestPerformanceConcurrency:
                 "linemerge",
                 "linesimplify",
                 "linesort",
-                "plotty-add",
+                "vfab-add",
                 "--name",
                 "large_dataset_test",
                 "--workspace",
@@ -217,7 +217,7 @@ class TestPerformanceConcurrency:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     job_name,
                     "--queue",
@@ -236,7 +236,7 @@ class TestPerformanceConcurrency:
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-list",
+                "vfab-list",
                 "--state",
                 "QUEUED",
                 "--workspace",
@@ -324,7 +324,7 @@ class TestPerformanceConcurrency:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     job_name,
                     "--workspace",
@@ -341,7 +341,7 @@ class TestPerformanceConcurrency:
             result = subprocess.run(
                 [
                     "vpype",
-                    "plotty-status",
+                    "vfab-status",
                     "--name",
                     job_name,
                     "--workspace",
@@ -397,7 +397,7 @@ class TestPerformanceConcurrency:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     job_name,
                     "--queue",
@@ -417,11 +417,11 @@ class TestPerformanceConcurrency:
         assert total_time < 60.0, f"Stress test took too long: {total_time}s"
         assert len(job_names) == job_count
 
-        # Verify all jobs are in ploTTY
+        # Verify all jobs are in vfab
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-list",
+                "vfab-list",
                 "--format",
                 "json",
                 "--workspace",
@@ -505,7 +505,7 @@ class TestPerformanceConcurrency:
                 "vpype",
                 "read",
                 svg_file,
-                "plotty-add",
+                "vfab-add",
                 "--name",
                 "regression_test",
                 "--workspace",
@@ -527,7 +527,7 @@ class TestPerformanceConcurrency:
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-list",
+                "vfab-list",
                 "--workspace",
                 workspace_dir,
             ],

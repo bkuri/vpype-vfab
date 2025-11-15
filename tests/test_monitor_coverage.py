@@ -170,7 +170,7 @@ class TestMonitorCoverage:
             header_calls = [
                 call
                 for call in mock_echo.call_args_list
-                if "ploTTY Monitor" in str(call)
+                if "vfab Monitor" in str(call)
             ]
             assert len(header_calls) > 0
             assert "updates every 2.0s" in str(header_calls[0])

@@ -3,7 +3,7 @@
 Generate configurable-sized plots using vsketch + vpype-plotty + plotty workflow.
 
 This script creates multiple generative art pieces using vsketch examples,
-optimizes them for plotting, and adds them to ploTTY queue automatically.
+optimizes them for plotting, and adds them to vfab queue automatically.
 Supports various page sizes (A3, A4, A5, letter, legal, etc.).
 
 The --categories parameter specifies which Google Quick Draw dataset categories to use
@@ -50,11 +50,11 @@ except ImportError:
 
 
 def setup_workspace(workspace_path: str) -> str:
-    """Setup and verify ploTTY workspace."""
+    """Setup and verify vfab workspace."""
     workspace = Path(workspace_path).expanduser()
 
     if not workspace.exists():
-        print(f"📁 Creating ploTTY workspace: {workspace}")
+        print(f"📁 Creating vfab workspace: {workspace}")
         workspace.mkdir(parents=True, exist_ok=True)
 
     return str(workspace)
@@ -77,7 +77,7 @@ def finalize_with_plotty(
     output_dir: Path | None = None,
     verbose: bool = False,
 ) -> None:
-    """Apply vpype optimization and add to ploTTY."""
+    """Apply vpype optimization and add to vfab."""
     # Standard vpype optimization
     vpype_cmd = "linemerge linesimplify reloop linesort"
     if verbose:
@@ -90,18 +90,18 @@ def finalize_with_plotty(
         vsk.save(str(svg_path))
         print(f"💾 Saved SVG: {svg_path}")
 
-    # Build plotty-add command
-    cmd = f"plotty-add --name {job_name} --preset {preset}"
+    # Build vfab-add command
+    cmd = f"vfab-add --name {job_name} --preset {preset}"
     if workspace:
         cmd += f" --workspace {workspace}"
     if queue:
         cmd += " --queue"
 
-    # Add to ploTTY
+    # Add to vfab
     if verbose:
-        print(f"🔧 Executing ploTTY command: {cmd}")
+        print(f"🔧 Executing vfab command: {cmd}")
     vsk.vpype(cmd)
-    print(f"✅ Added to ploTTY: {job_name} (preset: {preset}, queued: {queue})")
+    print(f"✅ Added to vfab: {job_name} (preset: {preset}, queued: {queue})")
 
 
 def generate_quickdraw_plot(
@@ -138,7 +138,7 @@ def generate_quickdraw_plot(
         # Generate the sketch
         sketch.draw(vsk)
 
-        # Finalize and add to ploTTY
+        # Finalize and add to vfab
         finalize_with_plotty(
             vsk, job_name, workspace, preset, queue, True, output_dir, verbose
         )
@@ -181,7 +181,7 @@ def generate_schotter_plot(
         # Generate the sketch
         sketch.draw(vsk)
 
-        # Finalize and add to ploTTY
+        # Finalize and add to vfab
         finalize_with_plotty(
             vsk, job_name, workspace, preset, queue, True, output_dir, verbose
         )
@@ -223,7 +223,7 @@ def generate_randomflower_plot(
         # Generate the sketch
         sketch.draw(vsk)
 
-        # Finalize and add to ploTTY
+        # Finalize and add to vfab
         finalize_with_plotty(
             vsk, job_name, workspace, preset, queue, True, output_dir, verbose
         )
@@ -235,7 +235,7 @@ def generate_randomflower_plot(
         return False
 
 
-def check_vpype_plotty():
+def check_vpype_vfab():
     """Check if vpype-plotty is available."""
     try:
         result = subprocess.run(["vpype", "--help"], capture_output=True, text=True)
@@ -251,10 +251,10 @@ def check_vpype_plotty():
 
 
 def show_job_status(workspace: str):
-    """Show current ploTTY job status."""
-    print("\n📊 Current ploTTY job status:")
+    """Show current vfab job status."""
+    print("\n📊 Current vfab job status:")
     try:
-        cmd = ["vpype", "plotty-list"]
+        cmd = ["vpype", "vfab-list"]
         if workspace:
             cmd.extend(["--workspace", workspace])
 
@@ -313,14 +313,14 @@ def main():
     parser.add_argument(
         "--workspace",
         "-W",
-        default="~/plotty-workspace",
-        help="ploTTY workspace path (default: ~/plotty-workspace)",
+        default="~/vfab-workspace",
+        help="vfab workspace path (default: ~/vfab-workspace)",
     )
     parser.add_argument(
         "--preset",
         choices=["fast", "default", "hq"],
         default="fast",
-        help="ploTTY preset (default: fast)",
+        help="vfab preset (default: fast)",
     )
     parser.add_argument(
         "--queue", "-Q", action="store_true", help="Queue jobs for plotting"
@@ -382,7 +382,7 @@ def main():
     print("=" * 50)
 
     # Check dependencies
-    if not check_vpype_plotty():
+    if not check_vpype_vfab():
         sys.exit(1)
 
     # Setup workspace and output directory
@@ -469,7 +469,7 @@ def main():
         show_job_status(workspace)
 
     print(f"\n🎉 Workflow complete! Check {output_dir} for SVG files.")
-    print(f"📋 ploTTY workspace: {workspace}")
+    print(f"📋 vfab workspace: {workspace}")
 
 
 if __name__ == "__main__":

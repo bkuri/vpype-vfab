@@ -1,6 +1,6 @@
-# vpype-plotty Usage Guide
+# vpype-vfab Usage Guide
 
-This guide provides detailed tutorials and examples for using vpype-plotty effectively in your creative workflow.
+This guide provides detailed tutorials and examples for using vpype-vfab effectively in your creative workflow.
 
 ## Table of Contents
 
@@ -19,16 +19,16 @@ This guide provides detailed tutorials and examples for using vpype-plotty effec
 
 - **vpype** (v1.14+): Vector graphics pipeline
 - **vsketch** (optional): Generative art framework
-- **ploTTY** (optional): Professional plotter management
+- **vfab** (optional): Professional plotter management
 
 ### Installation
 
 ```bash
 # Install into vpype
-pipx inject vpype vpype-plotty
+pipx inject vpype vpype-vfab
 
 # Or into vsketch
-pipx inject vsketch vpype-plotty
+pipx inject vsketch vpype-vfab
 
 # Verify installation
 vpype --help | grep plotty
@@ -38,10 +38,10 @@ vpype --help | grep plotty
 
 ```bash
 # Create a simple test design
-vpype circle --radius 5cm plotty-add --name test_circle --queue
+vpype circle --radius 5cm vfab-add --name test_circle --queue
 
 # Check if it worked
-vpype plotty-list
+vpype vfab-list
 ```
 
 ## Basic Workflow
@@ -69,30 +69,30 @@ vpype linemerge linesimplify reloop linesort
 vpype linemerge --tolerance 0.1mm linesimplify --tolerance 0.05mm
 ```
 
-### 3. Add to ploTTY
+### 3. Add to vfab
 
 ```bash
 # Basic addition
-vpype plotty-add --name my_design
+vpype vfab-add --name my_design
 
 # With preset and auto-queue
-vpype plotty-add --name my_design --preset hq --queue
+vpype vfab-add --name my_design --preset hq --queue
 
 # Custom paper size
-vpype plotty-add --name my_design --paper A3 --preset default
+vpype vfab-add --name my_design --paper A3 --preset default
 ```
 
 ### 4. Manage Jobs
 
 ```bash
 # Queue the job
-vpype plotty-queue --name my_design --priority 1
+vpype vfab-queue --name my_design --priority 1
 
 # Check status
-vpype plotty-status --name my_design
+vpype vfab-status --name my_design
 
 # List all jobs
-vpype plotty-list --format table
+vpype vfab-list --format table
 ```
 
 ## Advanced Features
@@ -101,7 +101,7 @@ vpype plotty-list --format table
 
 #### Fast Preset (Drafts & Testing)
 ```bash
-vpype plotty-add --name draft --preset fast --queue
+vpype vfab-add --name draft --preset fast --queue
 ```
 - Quick optimization
 - Minimal processing time
@@ -109,7 +109,7 @@ vpype plotty-add --name draft --preset fast --queue
 
 #### Default Preset (General Use)
 ```bash
-vpype plotty-add --name final --preset default --queue
+vpype vfab-add --name final --preset default --queue
 ```
 - Balanced optimization
 - Good quality/time ratio
@@ -117,7 +117,7 @@ vpype plotty-add --name final --preset default --queue
 
 #### High-Quality Preset (Final Output)
 ```bash
-vpype plotty-add --name masterpiece --preset hq --queue
+vpype vfab-add --name masterpiece --preset hq --queue
 ```
 - Maximum optimization
 - Best possible quality
@@ -127,24 +127,24 @@ vpype plotty-add --name masterpiece --preset hq --queue
 
 ```bash
 # Standard sizes
-vpype plotty-add --name design --paper A4
-vpype plotty-add --name design --paper A3
-vpype plotty-add --name design --paper US_Letter
+vpype vfab-add --name design --paper A4
+vpype vfab-add --name design --paper A3
+vpype vfab-add --name design --paper US_Letter
 
 # Custom sizes
-vpype plotty-add --name design --paper 297x420mm
-vpype plotty-add --name design --paper 11x17in
+vpype vfab-add --name design --paper 297x420mm
+vpype vfab-add --name design --paper 11x17in
 ```
 
 ### Workspace Management
 
 ```bash
 # Use specific workspace
-vpype --workspace /path/to/project plotty-add --name design
+vpype --workspace /path/to/project vfab-add --name design
 
 # Create project-specific workspace
 mkdir my_project_workspace
-vpype --workspace ./my_project_workspace plotty-add --name design
+vpype --workspace ./my_project_workspace vfab-add --name design
 ```
 
 ## vsketch Integration
@@ -170,8 +170,8 @@ class MySketch(vsketch.SketchClass):
         # Standard optimization
         vsk.vpype("linemerge linesimplify reloop linesort")
         
-        # Add to ploTTY
-        vsk.vpype("plotty-add --name generative_circles --preset hq --queue")
+        # Add to vfab
+        vsk.vpype("vfab-add --name generative_circles --preset hq --queue")
 
 if __name__ == "__main__":
     MySketch().display()
@@ -203,8 +203,8 @@ class ParametricSketch(vsketch.SketchClass):
         # Get preset from parameter
         preset = vsk.param("preset", "default")
         
-        # Optimize and add to ploTTY
-        vsk.vpype(f"linemerge linesimplify reloop linesort plotty-add --name parametric_art --preset {preset}")
+        # Optimize and add to vfab
+        vsk.vpype(f"linemerge linesimplify reloop linesort vfab-add --name parametric_art --preset {preset}")
 
 if __name__ == "__main__":
     ParametricSketch().display()
@@ -223,7 +223,7 @@ import sys
 from pathlib import Path
 
 def generate_variant(seed: int, name: str) -> bool:
-    """Generate a single variant and add to ploTTY."""
+    """Generate a single variant and add to vfab."""
     try:
         # Generate the sketch
         cmd = f"vsk run --seed {seed} my_sketch.py --save-only"
@@ -233,9 +233,9 @@ def generate_variant(seed: int, name: str) -> bool:
             print(f"❌ Failed to generate variant {seed}: {result.stderr}")
             return False
         
-        # Add to ploTTY
+        # Add to vfab
         svg_file = f"output/{name}_{seed}.svg"
-        cmd = f"vpype read {svg_file} plotty-add --name {name}_{seed} --preset hq --queue"
+        cmd = f"vpype read {svg_file} vfab-add --name {name}_{seed} --preset hq --queue"
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
         
         if result.returncode == 0:
@@ -267,8 +267,8 @@ def main():
     
     print(f"\n📊 Summary: {successful}/{count} variants generated successfully")
     
-    # Show ploTTY status
-    subprocess.run("vpype plotty-list --format table", shell=True)
+    # Show vfab status
+    subprocess.run("vpype vfab-list --format table", shell=True)
 
 if __name__ == "__main__":
     main()
@@ -281,10 +281,10 @@ if __name__ == "__main__":
 python batch_generate.py my_design 10
 
 # Check what was queued
-vpype plotty-list --state queued
+vpype vfab-list --state queued
 
 # Monitor progress
-vpype plotty-status
+vpype vfab-status
 ```
 
 ## Multi-Pen Designs
@@ -296,14 +296,14 @@ vpype plotty-status
 vpype read background.svg \
     read foreground.svg \
     read details.svg \
-    plotty-add --name multi_layer_design --preset hq
+    vfab-add --name multi_layer_design --preset hq
 ```
 
 ### Interactive Pen Mapping
 
 ```bash
 # Queue with interactive pen mapping
-vpype plotty-queue --name multi_layer_design --interactive
+vpype vfab-queue --name multi_layer_design --interactive
 ```
 
 This will prompt you to assign pens to each layer:
@@ -331,7 +331,7 @@ Enter pen number for layer 3 [3]: 2
 
 ```bash
 # Use saved mapping for future jobs
-vpype plotty-queue --name similar_design --interactive --load-pen-mapping multi_layer_design_pen_mapping.yaml
+vpype vfab-queue --name similar_design --interactive --load-pen-mapping multi_layer_design_pen_mapping.yaml
 ```
 
 ## Production Workflow
@@ -348,8 +348,8 @@ mkdir -p designs/{clients,internal,tests}
 mkdir -p output/{final,proofs,drafts}
 mkdir -p archive
 
-# 3. Configure ploTTY workspace
-ploTTY init --workspace .
+# 3. Configure vfab workspace
+vfab init --workspace .
 ```
 
 ### Quality Control Pipeline
@@ -384,7 +384,7 @@ vpype linemerge --tolerance 0.05mm \
     linesimplify --tolerance 0.02mm \
     reloop \
     linesort \
-    plotty-add --name "$DESIGN_NAME" --preset "$PRESET" --paper "$PAPER"
+    vfab-add --name "$DESIGN_NAME" --preset "$PRESET" --paper "$PAPER"
 
 # 3. Create proof
 echo "📋 Creating proof..."
@@ -394,11 +394,11 @@ vpype read "designs/clients/$DESIGN_NAME.svg" \
 
 # 4. Queue for production
 echo "🚀 Queuing for production..."
-vpype plotty-queue --name "$DESIGN_NAME" --priority 2
+vpype vfab-queue --name "$DESIGN_NAME" --priority 2
 
 # 5. Generate report
 echo "📊 Generating status report..."
-vpype plotty-status --name "$DESIGN_NAME" --format json > "output/${DESIGN_NAME}_status.json"
+vpype vfab-status --name "$DESIGN_NAME" --format json > "output/${DESIGN_NAME}_status.json"
 
 echo "✅ Production pipeline complete for $DESIGN_NAME"
 ```
@@ -407,13 +407,13 @@ echo "✅ Production pipeline complete for $DESIGN_NAME"
 
 ```bash
 # Monitor all production jobs
-watch -n 5 'vpype plotty-list --state queued,running --format table'
+watch -n 5 'vpype vfab-list --state queued,running --format table'
 
 # Get detailed status for specific job
-vpype plotty-status --name important_client_job --format json
+vpype vfab-status --name important_client_job --format json
 
 # Export job list for reporting
-vpype plotty-list --format csv > production_jobs_$(date +%Y%m%d).csv
+vpype vfab-list --format csv > production_jobs_$(date +%Y%m%d).csv
 ```
 
 ## Troubleshooting
@@ -433,54 +433,54 @@ vpype read design.svg validate --min-path-length 0.5mm
 vpype read design.svg stats --details
 ```
 
-#### ploTTY Connection Issues
+#### vfab Connection Issues
 
 ```bash
-# Check ploTTY status
-ploTTY status
+# Check vfab status
+vfab status
 
 # Verify workspace
-vpype --workspace /path/to/workspace plotty-list
+vpype --workspace /path/to/workspace vfab-list
 
 # Test with simple design
-vpype circle --radius 5cm plotty-add --name test --queue
+vpype circle --radius 5cm vfab-add --name test --queue
 ```
 
 #### Performance Issues
 
 ```bash
 # Use fast preset for testing
-vpype plotty-add --name test --preset fast --queue
+vpype vfab-add --name test --preset fast --queue
 
 # Simplify complex designs
-vpype read complex_design.svg linesimplify --tolerance 0.1mm plotty-add --name simplified
+vpype read complex_design.svg linesimplify --tolerance 0.1mm vfab-add --name simplified
 
 # Break large jobs into smaller pieces
-vpype read large_design.svg split --max-paths 1000 plotty-add --name part1
+vpype read large_design.svg split --max-paths 1000 vfab-add --name part1
 ```
 
 ### Debug Mode
 
 ```bash
 # Enable verbose output
-vpype --debug plotty-add --name debug_test input.svg
+vpype --debug vfab-add --name debug_test input.svg
 
-# Check ploTTY integration
-vpype plotty-status --format json | jq .
+# Check vfab integration
+vpype vfab-status --format json | jq .
 ```
 
 ### Getting Help
 
 ```bash
 # Get help for any command
-vpype plotty-add --help
-vpype plotty-queue --help
-vpype plotty-status --help
-vpype plotty-list --help
+vpype vfab-add --help
+vpype vfab-queue --help
+vpype vfab-status --help
+vpype vfab-list --help
 
 # Check version and compatibility
 vpype --version
-vpype-plotty --version  # if available
+vpype-vfab --version  # if available
 ```
 
 ## Best Practices
@@ -495,7 +495,7 @@ vpype-plotty --version  # if available
 
 ## Next Steps
 
-- Explore ploTTY documentation for advanced plotter management
+- Explore vfab documentation for advanced plotter management
 - Check vpype documentation for optimization techniques
 - Look at vsketch examples for generative art inspiration
 - Join the community for support and inspiration

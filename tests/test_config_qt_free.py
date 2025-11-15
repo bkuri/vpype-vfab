@@ -125,8 +125,8 @@ class TestConfigQtFree:
             # Mock explicit path fails
             mock_path_class.side_effect = [
                 MagicMock(exists=False, is_dir=False),  # explicit path
-                MagicMock(exists=True, is_dir=True),  # current/plotty-workspace
-                MagicMock(),  # home/plotty-workspace
+                MagicMock(exists=True, is_dir=True),  # current/vfab-workspace
+                MagicMock(),  # home/vfab-workspace
                 MagicMock(),  # user_data_dir
             ]
             mock_path_class.cwd.return_value = Path("/current")
@@ -145,8 +145,8 @@ class TestConfigQtFree:
             # Mock explicit and current directory fail
             mock_path_class.side_effect = [
                 MagicMock(exists=False, is_dir=False),  # explicit path
-                MagicMock(exists=False, is_dir=False),  # current/plotty-workspace
-                MagicMock(exists=True, is_dir=True),  # home/plotty-workspace
+                MagicMock(exists=False, is_dir=False),  # current/vfab-workspace
+                MagicMock(exists=True, is_dir=True),  # home/vfab-workspace
                 MagicMock(),  # user_data_dir
             ]
             mock_path_class.home.return_value = Path("/home/user")
@@ -165,8 +165,8 @@ class TestConfigQtFree:
             # Mock all but user data dir fail
             mock_path_class.side_effect = [
                 MagicMock(exists=False, is_dir=False),  # explicit path
-                MagicMock(exists=False, is_dir=False),  # current/plotty-workspace
-                MagicMock(exists=False, is_dir=False),  # home/plotty-workspace
+                MagicMock(exists=False, is_dir=False),  # current/vfab-workspace
+                MagicMock(exists=False, is_dir=False),  # home/vfab-workspace
                 MagicMock(exists=True, is_dir=True),  # user_data_dir
             ]
             mock_user_data_dir.return_value = "/user/data/plotty"
@@ -179,7 +179,7 @@ class TestConfigQtFree:
     def test_find_workspace_create_default(self):
         """Test workspace creation when none found."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            # Create a temp directory that doesn't have plotty-workspace
+            # Create a temp directory that doesn't have vfab-workspace
             temp_path = Path(temp_dir)
 
             # Mock home to be in our temp directory
@@ -189,7 +189,7 @@ class TestConfigQtFree:
                 pc = config.PlottyConfig()
 
                 # Should create and return default workspace
-                expected_workspace = temp_path / "plotty-workspace"
+                expected_workspace = temp_path / "vfab-workspace"
                 assert pc.workspace_path == expected_workspace
                 assert expected_workspace.exists()
 
@@ -199,7 +199,7 @@ class TestConfigQtFree:
             temp_path = Path(temp_dir)
 
             # Create a file where we want to create directory (causes failure)
-            blocking_file = temp_path / "plotty-workspace"
+            blocking_file = temp_path / "vfab-workspace"
             blocking_file.write_text("blocked")
 
             # Mock home to be in our temp directory

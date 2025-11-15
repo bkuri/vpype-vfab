@@ -191,7 +191,7 @@ class TestSimplePlottyMonitor:
 
         # Verify header was printed
         mock_echo.assert_any_call(
-            "🔍 ploTTY Monitor - 2024-01-01 12:00:00 (updates every 1.0s)"
+            "🔍 vfab Monitor - 2024-01-01 12:00:00 (updates every 1.0s)"
         )
         mock_echo.assert_any_call("=" * 60)
 
@@ -281,7 +281,7 @@ class TestSimplePlottyMonitor:
             monitor.static_snapshot()
 
             # Verify header was printed
-            mock_echo.assert_any_call("📊 ploTTY Job Status")
+            mock_echo.assert_any_call("📊 vfab Job Status")
             mock_echo.assert_any_call("=" * 40)
 
             # Verify update_display was called
@@ -328,7 +328,7 @@ class TestPlottyMonitorCommand:
 
     @patch("src.monitor.SimplePlottyMonitor")
     @patch("src.monitor.click.echo")
-    def test_plotty_monitor_static_default(self, mock_echo, mock_monitor_class):
+    def test_vfab_monitor_static_default(self, mock_echo, mock_monitor_class):
         """Test static monitor with default parameters."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -344,7 +344,7 @@ class TestPlottyMonitorCommand:
         assert result.exit_code == 0
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_follow_mode(self, mock_monitor_class):
+    def test_vfab_monitor_follow_mode(self, mock_monitor_class):
         """Test monitor in follow mode."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -360,7 +360,7 @@ class TestPlottyMonitorCommand:
         assert result.exit_code == 0
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_custom_poll_rate(self, mock_monitor_class):
+    def test_vfab_monitor_custom_poll_rate(self, mock_monitor_class):
         """Test monitor with custom poll rate."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -376,7 +376,7 @@ class TestPlottyMonitorCommand:
         assert result.exit_code == 0
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_fast_option(self, mock_monitor_class):
+    def test_vfab_monitor_fast_option(self, mock_monitor_class):
         """Test monitor with fast option."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -392,7 +392,7 @@ class TestPlottyMonitorCommand:
         assert result.exit_code == 0
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_slow_option(self, mock_monitor_class):
+    def test_vfab_monitor_slow_option(self, mock_monitor_class):
         """Test monitor with slow option."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor

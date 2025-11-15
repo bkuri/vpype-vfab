@@ -1,4 +1,4 @@
-"""Simple tests for streamlined ploTTY database integration."""
+"""Simple tests for streamlined vfab database integration."""
 
 import json
 import tempfile
@@ -155,7 +155,7 @@ class TestStreamlinedPlottyIntegration:
         assert "created_at" in metadata
 
     def test_notify_plotty_success(self, integration):
-        """Test ploTTY notification success."""
+        """Test vfab notification success."""
         job_data = {"state": "QUEUED", "name": "test"}
 
         integration._notify_plotty("test", job_data)
@@ -171,7 +171,7 @@ class TestStreamlinedPlottyIntegration:
         assert "timestamp" in notification
 
     def test_notify_plotty_failure(self, integration):
-        """Test ploTTY notification failure (should not raise)."""
+        """Test vfab notification failure (should not raise)."""
         # Mock queue_dir to cause permission error
         integration.queue_dir = Path("/nonexistent/directory")
 

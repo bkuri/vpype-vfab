@@ -19,8 +19,8 @@ def generate_and_queue_sketches(seeds, base_name):
             print(f"✗ Failed to generate sketch for seed {seed}: {result.stderr}")
             continue
 
-        # Add to ploTTY
-        cmd = f'vpype rand --seed {seed} linemerge linesimplify reloop linesort plotty-add --name "{base_name}_{seed}" --preset fast --queue'
+        # Add to vfab
+        cmd = f'vpype rand --seed {seed} linemerge linesimplify reloop linesort vfab-add --name "{base_name}_{seed}" --preset fast --queue'
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
 
         if result.returncode == 0:
@@ -88,7 +88,7 @@ def main():
 
     # Show current queue status
     print("\nCurrent queue status:")
-    cmd = "vpype plotty-list --state QUEUED --format table"
+    cmd = "vpype vfab-list --state QUEUED --format table"
     subprocess.run(cmd, shell=True)
 
     # Monitor jobs (optional)

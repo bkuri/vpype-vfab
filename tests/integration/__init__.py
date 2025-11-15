@@ -99,15 +99,15 @@ def import_vsketch_example(example_name):
 
 
 def create_mock_plotty_workspace(workspace_dir):
-    """Create a mock ploTTY workspace for testing."""
+    """Create a mock vfab workspace for testing."""
     workspace_path = Path(workspace_dir)
 
-    # Create ploTTY directory structure
+    # Create vfab directory structure
     (workspace_path / "jobs").mkdir(parents=True, exist_ok=True)
     (workspace_path / "devices").mkdir(parents=True, exist_ok=True)
     (workspace_path / "logs").mkdir(parents=True, exist_ok=True)
 
-    # Create mock ploTTY config
+    # Create mock vfab config
     config_content = """
 websocket:
   enabled: true
@@ -124,7 +124,7 @@ devices:
 
 database:
   type: sqlite
-  path: ploTTY.db
+  path: vfab.db
 
 logging:
   level: INFO
@@ -135,7 +135,7 @@ logging:
     config_file.write_text(config_content)
 
     # Create mock database
-    db_file = workspace_path / "ploTTY.db"
+    db_file = workspace_path / "vfab.db"
     db_file.touch()
 
     return workspace_path

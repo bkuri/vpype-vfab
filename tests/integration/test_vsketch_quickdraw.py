@@ -157,8 +157,8 @@ class TestQuickDrawIntegration:
                 # Verify grid was created
                 assert len(vsk.document.layers) > 0
 
-    def test_quickdraw_with_vpype_plotty_add(self, quickdraw_sketch, workspace_dir):
-        """Test adding Quick Draw sketch to ploTTY."""
+    def test_quickdraw_with_vpype_vfab_add(self, quickdraw_sketch, workspace_dir):
+        """Test adding Quick Draw sketch to vfab."""
         try:
             import vsketch
         except ImportError:
@@ -189,13 +189,13 @@ class TestQuickDrawIntegration:
             svg_file = os.path.join(workspace_dir, "quickdraw.svg")
             vsk.save(svg_file)
 
-            # Add to ploTTY using vpype command
+            # Add to vfab using vpype command
             result = subprocess.run(
                 [
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "quickdraw_test",
                     "--workspace",
@@ -206,7 +206,7 @@ class TestQuickDrawIntegration:
             )
 
             assert result.returncode == 0
-            assert "Job 'quickdraw_test' added to ploTTY" in result.stdout
+            assert "Job 'quickdraw_test' added to vfab" in result.stdout
 
     def test_quickdraw_batch_processing(self, workspace_dir):
         """Test batch processing of multiple Quick Draw categories."""
@@ -243,7 +243,7 @@ class TestQuickDrawIntegration:
 
                 sketch.draw(vsk)
 
-                # Save and add to ploTTY
+                # Save and add to vfab
                 svg_file = os.path.join(workspace_dir, f"quickdraw_{category}.svg")
                 vsk.save(svg_file)
 
@@ -255,7 +255,7 @@ class TestQuickDrawIntegration:
                         "vpype",
                         "read",
                         svg_file,
-                        "plotty-add",
+                        "vfab-add",
                         "--name",
                         job_name,
                         "--queue",  # Auto-queue for batch processing
@@ -267,11 +267,11 @@ class TestQuickDrawIntegration:
                 )
 
                 assert result.returncode == 0
-                assert f"Job '{job_name}' added to ploTTY" in result.stdout
+                assert f"Job '{job_name}' added to vfab" in result.stdout
 
-        # Verify all jobs are in ploTTY
+        # Verify all jobs are in vfab
         result = subprocess.run(
-            ["vpype", "plotty-list", "--workspace", workspace_dir],
+            ["vpype", "vfab-list", "--workspace", workspace_dir],
             capture_output=True,
             text=True,
         )
@@ -368,13 +368,13 @@ class TestQuickDrawIntegration:
             svg_file = os.path.join(workspace_dir, "quickdraw_multilayer.svg")
             vsk.save(svg_file)
 
-            # Test with ploTTY
+            # Test with vfab
             result = subprocess.run(
                 [
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "quickdraw_multilayer",
                     "--workspace",
@@ -465,13 +465,13 @@ class TestQuickDrawIntegration:
             assert os.path.exists(svg_file)
             assert os.path.getsize(svg_file) > 0
 
-            # Add to ploTTY
+            # Add to vfab
             result = subprocess.run(
                 [
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "quickdraw_finalized",
                     "--preset",
@@ -484,7 +484,7 @@ class TestQuickDrawIntegration:
             )
 
             assert result.returncode == 0
-            assert "Job 'quickdraw_finalized' added to ploTTY" in result.stdout
+            assert "Job 'quickdraw_finalized' added to vfab" in result.stdout
 
     def test_quickdraw_memory_usage(self, workspace_dir):
         """Test memory usage with large Quick Draw dataset."""

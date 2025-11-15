@@ -51,7 +51,7 @@ class TestUtils:
             validate_preset("invalid")
 
     def test_save_document_for_plotty(self):
-        """Test saving document for ploTTY."""
+        """Test saving document for vfab."""
         with tempfile.TemporaryDirectory() as temp_dir:
             document = Document()
             job_path = Path(temp_dir) / "test_job"

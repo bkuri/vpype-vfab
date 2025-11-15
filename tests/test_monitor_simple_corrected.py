@@ -219,7 +219,7 @@ class TestSimplePlottyMonitor:
             # Should print header and call update_display
             mock_update.assert_called_once()
             echo_calls = [str(call) for call in mock_echo.call_args_list]
-            assert any("ploTTY Job Status" in call for call in echo_calls)
+            assert any("vfab Job Status" in call for call in echo_calls)
 
     def test_start_monitoring_keyboard_interrupt(self):
         """Test monitoring interruption with Ctrl+C."""

@@ -187,8 +187,8 @@ class TestSimplePlottyMonitor:
         ):
             monitor.monitor_once()
 
-            # Should print "No ploTTY jobs found."
-            mock_print.assert_called_with("No ploTTY jobs found.")
+            # Should print "No vfab jobs found."
+            mock_print.assert_called_with("No vfab jobs found.")
 
     def test_monitor_once_with_jobs(self):
         """Test single monitoring cycle with jobs."""

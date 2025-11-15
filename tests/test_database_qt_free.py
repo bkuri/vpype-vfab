@@ -1,4 +1,4 @@
-"""Qt-free tests for vpype_plotty.database module."""
+"""Qt-free tests for vpype_vfab.database module."""
 
 import pytest
 from unittest.mock import Mock, patch, MagicMock, mock_open
@@ -73,7 +73,7 @@ class TestDatabaseQtFree:
     def test_init_without_workspace_path(self):
         """Test StreamlinedPlottyIntegration initialization without explicit workspace."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            workspace_path = Path(temp_dir) / "plotty-workspace"
+            workspace_path = Path(temp_dir) / "vfab-workspace"
             workspace_path.mkdir()
 
             # Mock PlottyConfig entirely to avoid complex initialization
@@ -640,7 +640,7 @@ class TestDatabaseQtFree:
             assert result == {"id": "test_job", "state": "COMPLETED"}
 
     def test_notify_plotty_success(self):
-        """Test successful ploTTY notification."""
+        """Test successful vfab notification."""
         with patch("database.Path") as mock_path_class:
             mock_workspace = MagicMock()
             mock_workspace.__truediv__ = MagicMock(return_value=MagicMock())
@@ -659,7 +659,7 @@ class TestDatabaseQtFree:
             assert call_args[2] == "queue"
 
     def test_notify_plotty_failure(self):
-        """Test ploTTY notification failure (should not raise)."""
+        """Test vfab notification failure (should not raise)."""
         with patch("database.Path") as mock_path_class:
             mock_workspace = MagicMock()
             mock_workspace.__truediv__ = MagicMock(return_value=MagicMock())
@@ -676,8 +676,8 @@ class TestDatabaseQtFree:
             # Should not raise exception
             integration._notify_plotty("test_job", job_data)
 
-    def test_plotty_available_true(self):
-        """Test ploTTY availability check when available."""
+    def test_vfab_available_true(self):
+        """Test vfab availability check when available."""
         with patch("database.Path") as mock_path_class:
             mock_workspace = MagicMock()
             mock_workspace.__truediv__ = MagicMock(return_value=MagicMock())
@@ -691,8 +691,8 @@ class TestDatabaseQtFree:
                 result = integration._plotty_available()
                 assert result is True
 
-    def test_plotty_available_false(self):
-        """Test ploTTY availability check when not available."""
+    def test_vfab_available_false(self):
+        """Test vfab availability check when not available."""
         with patch("database.Path") as mock_path_class:
             mock_workspace = MagicMock()
             mock_workspace.__truediv__ = MagicMock(return_value=MagicMock())

@@ -9,7 +9,7 @@ import click
 import vpype
 from vpype import Document
 
-from vpype_plotty.exceptions import PlottyJobError
+from vpype_vfab.exceptions import VfabJobError
 
 
 class JobFormatter:
@@ -154,7 +154,7 @@ class JobFormatter:
 def save_document_for_plotty(
     document: Document, job_path: Path, name: str
 ) -> tuple[Path, Path]:
-    """Save vpype document as ploTTY-compatible job.
+    """Save vpype document as vfab-compatible job.
 
     Args:
         document: vpype document to save
@@ -165,7 +165,7 @@ def save_document_for_plotty(
         Tuple of (svg_path, job_json_path)
 
     Raises:
-        PlottyJobError: If document cannot be saved
+        VfabJobError: If document cannot be saved
     """
     try:
         # Ensure job directory exists
@@ -197,7 +197,7 @@ def save_document_for_plotty(
         return svg_path, job_json_path
 
     except Exception as e:
-        raise PlottyJobError(f"Failed to save document for ploTTY: {e}")
+        raise VfabJobError(f"Failed to save document for vfab: {e}")
 
 
 def generate_job_name(document: Document, fallback_name: Optional[str] = None) -> str:

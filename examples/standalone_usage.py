@@ -38,15 +38,15 @@ def main():
         print("pipx inject vpype vpype-plotty")
         sys.exit(1)
 
-    # Example 1: Create simple generative art and add to ploTTY
+    # Example 1: Create simple generative art and add to vfab
     run_command(
-        "vpype rand --seed 42 linemerge linesimplify reloop linesort plotty-add --name example_1 --preset fast",
-        "Create random art and add to ploTTY",
+        "vpype rand --seed 42 linemerge linesimplify reloop linesort vfab-add --name example_1 --preset fast",
+        "Create random art and add to vfab",
     )
 
     # Example 2: Create more complex art with high-quality preset
     run_command(
-        "vpype rand --seed 123 repeat 3 transform rotate 120 linemerge linesimplify reloop linesort plotty-add --name example_2 --preset hq --queue",
+        "vpype rand --seed 123 repeat 3 transform rotate 120 linemerge linesimplify reloop linesort vfab-add --name example_2 --preset hq --queue",
         "Create complex art with high-quality preset and auto-queue",
     )
 
@@ -55,7 +55,7 @@ def main():
 
     # Example 4: List queued jobs
     run_command(
-        "vpype plotty-list --state QUEUED --format table",
+        "vpype vfab-list --state QUEUED --format table",
         "List queued jobs in table format",
     )
 
@@ -72,14 +72,14 @@ def main():
 
     # Example 7: List all jobs with limit
     run_command(
-        "vpype plotty-list --limit 5 --format table",
+        "vpype vfab-list --limit 5 --format table",
         "List up to 5 jobs in table format",
     )
 
     print(f"\n{'=' * 50}")
     print("Examples complete!")
-    print("Check your ploTTY workspace for the created jobs.")
-    print("Default workspace: ~/plotty-workspace")
+    print("Check your vfab workspace for the created jobs.")
+    print("Default workspace: ~/vfab-workspace")
     print("=" * 50)
 
 

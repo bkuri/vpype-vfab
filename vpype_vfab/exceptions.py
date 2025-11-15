@@ -19,47 +19,47 @@ class PlottyError(Exception):
         self.retry_after = retry_after
 
 
-class PlottyNotFoundError(PlottyError):
-    """ploTTY installation or workspace not found."""
+class VfabNotFoundError(PlottyError):
+    """vfab installation or workspace not found."""
 
     def __init__(self, message: str, workspace_path: Optional[str] = None):
         recovery_hint = (
-            f"Check ploTTY installation at {workspace_path}"
+            f"Check vfab installation at {workspace_path}"
             if workspace_path
-            else "Verify ploTTY is properly installed"
+            else "Verify vfab is properly installed"
         )
         super().__init__(message, recovery_hint)
 
 
-class PlottyConfigError(PlottyError):
-    """ploTTY configuration error."""
+class VfabConfigError(PlottyError):
+    """vfab configuration error."""
 
     def __init__(self, message: str, config_file: Optional[str] = None):
         recovery_hint = (
             f"Check configuration file: {config_file}"
             if config_file
-            else "Verify ploTTY configuration"
+            else "Verify vfab configuration"
         )
         super().__init__(message, recovery_hint)
 
 
-class PlottyJobError(PlottyError):
+class VfabJobError(PlottyError):
     """Job creation or management error."""
 
     def __init__(self, message: str, job_id: Optional[str] = None):
         recovery_hint = (
             f"Check job status with: plotty-status {job_id}"
             if job_id
-            else "Verify job parameters and ploTTY status"
+            else "Verify job parameters and vfab status"
         )
         super().__init__(message, recovery_hint)
 
 
 class PlottyConnectionError(PlottyError):
-    """Connection or communication error with ploTTY."""
+    """Connection or communication error with vfab."""
 
     def __init__(self, message: str, retry_after: float = 5.0):
-        super().__init__(message, "Check ploTTY is running and accessible", retry_after)
+        super().__init__(message, "Check vfab is running and accessible", retry_after)
 
 
 class PlottyTimeoutError(PlottyError):
@@ -67,7 +67,7 @@ class PlottyTimeoutError(PlottyError):
 
     def __init__(self, message: str, timeout_seconds: float):
         super().__init__(
-            message, "Increase timeout or check ploTTY performance", timeout_seconds
+            message, "Increase timeout or check vfab performance", timeout_seconds
         )
 
 
@@ -135,20 +135,20 @@ def handle_plotty_errors(func: Callable) -> Callable:
             # Re-raise plotty errors as-is
             raise
         except FileNotFoundError as e:
-            raise PlottyNotFoundError(
+            raise VfabNotFoundError(
                 f"Required file or directory not found: {e}",
                 str(e.filename) if hasattr(e, "filename") else None,
             )
         except PermissionError as e:
-            raise PlottyConfigError(
-                f"Permission denied accessing ploTTY resources: {e}",
+            raise VfabConfigError(
+                f"Permission denied accessing vfab resources: {e}",
                 str(e.filename) if hasattr(e, "filename") else None,
             )
         except ConnectionError as e:
-            raise PlottyConnectionError(f"Failed to connect to ploTTY: {e}")
+            raise PlottyConnectionError(f"Failed to connect to vfab: {e}")
         except TimeoutError as e:
             raise PlottyTimeoutError(f"Operation timed out: {e}", 30.0)
         except Exception as e:
-            raise PlottyError(f"Unexpected error in ploTTY operation: {e}")
+            raise PlottyError(f"Unexpected error in vfab operation: {e}")
 
     return wrapper

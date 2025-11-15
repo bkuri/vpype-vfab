@@ -39,36 +39,36 @@ class TestPlottyError:
 class TestSpecificExceptions:
     """Test specific exception classes."""
 
-    def test_plotty_not_found_error(self):
-        error = PlottyNotFoundError("ploTTY not found", "/path/to/plotty")
-        assert "ploTTY not found" in str(error)
+    def test_vfab_not_found_error(self):
+        error = PlottyNotFoundError("vfab not found", "/path/to/plotty")
+        assert "vfab not found" in str(error)
         assert "/path/to/plotty" in error.recovery_hint
 
-    def test_plotty_not_found_error_no_path(self):
-        error = PlottyNotFoundError("ploTTY not found")
-        assert "Verify ploTTY is properly installed" in error.recovery_hint
+    def test_vfab_not_found_error_no_path(self):
+        error = PlottyNotFoundError("vfab not found")
+        assert "Verify vfab is properly installed" in error.recovery_hint
 
-    def test_plotty_config_error(self):
+    def test_vfab_config_error(self):
         error = PlottyConfigError("Invalid config", "/path/to/config")
         assert "Invalid config" in str(error)
         assert "/path/to/config" in error.recovery_hint
 
-    def test_plotty_job_error(self):
+    def test_vfab_job_error(self):
         error = PlottyJobError("Job failed", "job123")
         assert "Job failed" in str(error)
         assert "job123" in error.recovery_hint
 
-    def test_plotty_connection_error(self):
+    def test_vfab_connection_error(self):
         error = PlottyConnectionError("Connection failed")
         assert "Connection failed" in str(error)
         assert error.retry_after == 5.0
 
-    def test_plotty_timeout_error(self):
+    def test_vfab_timeout_error(self):
         error = PlottyTimeoutError("Operation timed out", 30.0)
         assert "Operation timed out" in str(error)
         assert error.retry_after == 30.0
 
-    def test_plotty_resource_error(self):
+    def test_vfab_resource_error(self):
         error = PlottyResourceError("Out of memory", "memory")
         assert "Out of memory" in str(error)
         assert "memory" in error.recovery_hint
@@ -175,7 +175,7 @@ class TestErrorHandlingDecorator:
 
         with pytest.raises(PlottyConnectionError) as exc_info:
             connection_error()
-        assert "Failed to connect to ploTTY" in str(exc_info.value)
+        assert "Failed to connect to vfab" in str(exc_info.value)
 
     def test_converts_timeout_error(self):
         @handle_plotty_errors
@@ -194,7 +194,7 @@ class TestErrorHandlingDecorator:
 
         with pytest.raises(PlottyError) as exc_info:
             generic_error()
-        assert "Unexpected error in ploTTY operation" in str(exc_info.value)
+        assert "Unexpected error in vfab operation" in str(exc_info.value)
 
     def test_successful_operation_passthrough(self):
         @handle_plotty_errors

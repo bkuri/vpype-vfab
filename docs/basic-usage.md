@@ -1,6 +1,6 @@
 # Basic Usage Guide
 
-This guide covers core vpype-plotty functionality for everyday use. Perfect for users who understand the basics and want to master essential workflows.
+This guide covers core vpype-vfab functionality for everyday use. Perfect for users who understand the basics and want to master essential workflows.
 
 ## Table of Contents
 
@@ -15,17 +15,17 @@ This guide covers core vpype-plotty functionality for everyday use. Perfect for 
 
 ### Adding Jobs
 
-The most common operation - add your current vpype document to ploTTY:
+The most common operation - add your current vpype document to vfab:
 
 ```bash
 # Basic addition
-vpype plotty-add --name my_design
+vpype vfab-add --name my_design
 
 # With preset and auto-queue
-vpype plotty-add --name my_design --preset hq --queue
+vpype vfab-add --name my_design --preset hq --queue
 
 # Custom paper size
-vpype plotty-add --name large_design --paper A3 --preset default
+vpype vfab-add --name large_design --paper A3 --preset default
 ```
 
 **Pro Tips:**
@@ -37,16 +37,16 @@ vpype plotty-add --name large_design --paper A3 --preset default
 
 ```bash
 # Queue existing job
-vpype plotty-queue --name my_design --priority 1
+vpype vfab-queue --name my_design --priority 1
 
 # Check specific job
-vpype plotty-status --name my_design
+vpype vfab-status --name my_design
 
 # List all jobs
-vpype plotty-list --format table
+vpype vfab-list --format table
 
 # Filter by state
-vpype plotty-list --state queued
+vpype vfab-list --state queued
 ```
 
 **Priority Levels:**
@@ -64,8 +64,8 @@ Always optimize designs before plotting:
 # Standard optimization
 vpype linemerge linesimplify reloop linesort
 
-# Add to ploTTY
-vpype plotty-add --name optimized_design --preset hq
+# Add to vfab
+vpype vfab-add --name optimized_design --preset hq
 ```
 
 ### Optimization Levels
@@ -73,13 +73,13 @@ vpype plotty-add --name optimized_design --preset hq
 #### Fast Optimization (Testing)
 ```bash
 vpype linemerge --tolerance 0.1mm linesimplify --tolerance 0.05mm
-vpype plotty-add --name test --preset fast --queue
+vpype vfab-add --name test --preset fast --queue
 ```
 
 #### High-Quality Optimization (Final)
 ```bash
 vpype linemerge --tolerance 0.02mm linesimplify --tolerance 0.01mm
-vpype plotty-add --name final --preset hq --queue
+vpype vfab-add --name final --preset hq --queue
 ```
 
 ### Validation
@@ -113,26 +113,26 @@ Jobs progress through these states:
 
 ```bash
 # Quick status overview
-vpype plotty-status
+vpype vfab-status
 
 # Detailed job information
-vpype plotty-status --name my_design --format json
+vpype vfab-status --name my_design --format json
 
 # Watch job progress
-watch -n 2 'vpype plotty-status --name my_design'
+watch -n 2 'vpype vfab-status --name my_design'
 ```
 
 ### Job Operations
 
 ```bash
 # Queue with priority
-vpype plotty-queue --name important_job --priority 8
+vpype vfab-queue --name important_job --priority 8
 
 # List recent jobs
-vpype plotty-list --limit 10 --format table
+vpype vfab-list --limit 10 --format table
 
 # Export job list
-vpype plotty-list --format csv > jobs_backup.csv
+vpype vfab-list --format csv > jobs_backup.csv
 ```
 
 ## Common Workflows
@@ -144,13 +144,13 @@ vpype plotty-list --format csv > jobs_backup.csv
 vpype read my_design.svg
 
 # 2. Quick test with fast preset
-vpype plotty-add --name test_design --preset fast --queue
+vpype vfab-add --name test_design --preset fast --queue
 
 # 3. Check test result
-vpype plotty-status --name test_design
+vpype vfab-status --name test_design
 
 # 4. Create final version
-vpype plotty-add --name final_design --preset hq --queue
+vpype vfab-add --name final_design --preset hq --queue
 ```
 
 ### Workflow 2: Batch Processing
@@ -161,11 +161,11 @@ for file in designs/*.svg; do
     name=$(basename "$file" .svg)
     vpype read "$file" \
         linemerge linesimplify reloop linesort \
-        plotty-add --name "$name" --preset default --queue
+        vfab-add --name "$name" --preset default --queue
 done
 
 # Check all jobs
-vpype plotty-list --format table
+vpype vfab-list --format table
 ```
 
 ### Workflow 3: Iterative Design
@@ -174,15 +174,15 @@ vpype plotty-list --format table
 # Create variations
 for seed in {1..5}; do
     vpype rand --seed $seed \
-        plotty-add --name variant_$seed --preset fast --queue
+        vfab-add --name variant_$seed --preset fast --queue
 done
 
 # Review results
-vpype plotty-list --state completed
+vpype vfab-list --state completed
 
 # Create final version of best variant
 vpype rand --seed 3 \
-    plotty-add --name final_variant --preset hq --queue
+    vfab-add --name final_variant --preset hq --queue
 ```
 
 ### Workflow 4: Large Design Management
@@ -191,14 +191,14 @@ vpype rand --seed 3 \
 # Split large design into manageable parts
 vpype read large_design.svg \
     split --max-paths 1000 \
-    plotty-add --name large_part1 --preset default
+    vfab-add --name large_part1 --preset default
 
 # Process parts sequentially
-vpype plotty-queue --name large_part1
-vpype plotty-status --name large_part1
+vpype vfab-queue --name large_part1
+vpype vfab-status --name large_part1
 
 # Continue with next part when first completes
-vpype plotty-queue --name large_part2
+vpype vfab-queue --name large_part2
 ```
 
 ## Output Formats
@@ -206,7 +206,7 @@ vpype plotty-queue --name large_part2
 ### Table Format (Default)
 
 ```bash
-vpype plotty-list --format table
+vpype vfab-list --format table
 ```
 
 ```
@@ -222,7 +222,7 @@ vpype plotty-list --format table
 ### JSON Format (Scripts)
 
 ```bash
-vpype plotty-status --name my_design --format json
+vpype vfab-status --name my_design --format json
 ```
 
 ```json
@@ -242,7 +242,7 @@ vpype plotty-status --name my_design --format json
 ### CSV Format (Export)
 
 ```bash
-vpype plotty-list --format csv > jobs.csv
+vpype vfab-list --format csv > jobs.csv
 ```
 
 ```csv
@@ -259,14 +259,14 @@ Use consistent, descriptive names:
 
 ```bash
 # Good names
-vpype plotty-add --name client_logo_final --preset hq
-vpype plotty-add --name test_pattern_v3 --preset fast
-vpype plotty-add --name batch_poster_01 --preset default
+vpype vfab-add --name client_logo_final --preset hq
+vpype vfab-add --name test_pattern_v3 --preset fast
+vpype vfab-add --name batch_poster_01 --preset default
 
 # Avoid
-vpype plotty-add --name test
-vpype plotty-add --name thing
-vpype plotty-add --name 1
+vpype vfab-add --name test
+vpype vfab-add --name thing
+vpype vfab-add --name 1
 ```
 
 ### Preset Selection
@@ -275,38 +275,38 @@ Choose presets based on use case:
 
 ```bash
 # Development/Testing
-vpype plotty-add --name prototype --preset fast --queue
+vpype vfab-add --name prototype --preset fast --queue
 
 # Regular Work
-vpype plotty-add --name standard_design --preset default --queue
+vpype vfab-add --name standard_design --preset default --queue
 
 # Client Work/Final Output
-vpype plotty-add --name client_delivery --preset hq --queue
+vpype vfab-add --name client_delivery --preset hq --queue
 ```
 
 ### Paper Size Management
 
 ```bash
 # Standard sizes
-vpype plotty-add --name a4_design --paper A4
-vpype plotty-add --name large_poster --paper A3
+vpype vfab-add --name a4_design --paper A4
+vpype vfab-add --name large_poster --paper A3
 
 # Custom sizes
-vpype plotty-add --name custom --paper 297x420mm
-vpype plotty-add --name us_letter --paper 8.5x11in
+vpype vfab-add --name custom --paper 297x420mm
+vpype vfab-add --name us_letter --paper 8.5x11in
 ```
 
 ### Queue Management
 
 ```bash
 # Low priority background jobs
-vpype plotty-queue --name background_task --priority 1
+vpype vfab-queue --name background_task --priority 1
 
 # Normal work
-vpype plotty-queue --name regular_job --priority 5
+vpype vfab-queue --name regular_job --priority 5
 
 # Urgent jobs
-vpype plotty-queue --name urgent_fix --priority 10
+vpype vfab-queue --name urgent_fix --priority 10
 ```
 
 ### Error Prevention
@@ -316,13 +316,13 @@ vpype plotty-queue --name urgent_fix --priority 10
 vpype read design.svg validate --min-path-length 0.5mm
 
 # Test with fast preset first
-vpype plotty-add --name test --preset fast --queue
+vpype vfab-add --name test --preset fast --queue
 
 # Check status before creating final version
-vpype plotty-status --name test
+vpype vfab-status --name test
 
 # Create final version only after test succeeds
-vpype plotty-add --name final --preset hq --queue
+vpype vfab-add --name final --preset hq --queue
 ```
 
 ### Performance Tips
@@ -335,8 +335,8 @@ vpype read complex.svg linesimplify --tolerance 0.1mm
 vpype read huge.svg split --max-paths 500
 
 # Use appropriate presets
-vpype plotty-add --name draft --preset fast      # Quick testing
-vpype plotty-add --name final --preset hq        # Final output
+vpype vfab-add --name draft --preset fast      # Quick testing
+vpype vfab-add --name final --preset hq        # Final output
 ```
 
 ## Troubleshooting Common Issues
@@ -345,20 +345,20 @@ vpype plotty-add --name final --preset hq        # Final output
 
 ```bash
 # Check if job was created
-vpype plotty-list --format table
+vpype vfab-list --format table
 
 # Check specific job
-vpype plotty-status --name my_design
+vpype vfab-status --name my_design
 
 # Verify workspace
-vpype --debug plotty-list
+vpype --debug vfab-list
 ```
 
 ### Long Processing Times
 
 ```bash
 # Use faster preset
-vpype plotty-add --name design --preset fast
+vpype vfab-add --name design --preset fast
 
 # Simplify design
 vpype read design.svg linesimplify --tolerance 0.1mm
@@ -371,7 +371,7 @@ vpype read design.svg split --max-paths 1000
 
 ```bash
 # Use higher quality preset
-vpype plotty-add --name design --preset hq
+vpype vfab-add --name design --preset hq
 
 # Manual optimization
 vpype read design.svg \

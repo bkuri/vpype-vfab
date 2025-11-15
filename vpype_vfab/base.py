@@ -1,22 +1,22 @@
-"""Base command class for vpype-plotty."""
+"""Base command class for vpype-vfab."""
 
 from typing import Dict, Optional
 
 import click
 
-from vpype_plotty.database import StreamlinedPlottyIntegration
+from vpype_vfab.database import StreamlinedVfabIntegration
 
 
-class StreamlinedPlottyCommand:
-    """Base class for streamlined ploTTY commands."""
+class StreamlinedVfabCommand:
+    """Base class for streamlined vfab commands."""
 
     def __init__(self, workspace: Optional[str] = None):
-        """Initialize command with ploTTY integration.
+        """Initialize command with vfab integration.
 
         Args:
-            workspace: Optional ploTTY workspace path
+            workspace: Optional vfab workspace path
         """
-        self.plotty = StreamlinedPlottyIntegration(workspace)
+        self.plotty = StreamlinedVfabIntegration(workspace)
 
     def handle_error(self, error: Exception, context: str = "") -> None:
         """Handle command errors consistently.

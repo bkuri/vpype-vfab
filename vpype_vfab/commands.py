@@ -5,15 +5,15 @@ from typing import Optional
 import click
 from click import Abort
 
-from vpype_plotty.decorators import (
-    plotty_command,
+from vpype_vfab.decorators import (
+    vfab_command,
     name_option,
     preset_option,
     queue_option,
     priority_option,
     pen_mapping_option,
 )
-from vpype_plotty.utils import (
+from vpype_vfab.utils import (
     format_job_list,
     format_job_status,
     generate_job_name,
@@ -29,7 +29,7 @@ def _interactive_pen_mapping(
     Args:
         document: vpype document with layers
         job_name: Name of the job
-        workspace: ploTTY workspace path
+        workspace: vfab workspace path
 
     Returns:
         Dictionary mapping layer IDs to pen numbers
@@ -40,7 +40,7 @@ def _interactive_pen_mapping(
     pen_mapping = {}
 
     # Get existing pen mapping file path
-    config_dir = Path(workspace or "") or Path.home() / ".vpype-plotty"
+    config_dir = Path(workspace or "") or Path.home() / ".vpype-vfab"
     config_dir.mkdir(parents=True, exist_ok=True)
     pen_mapping_file = config_dir / "pen_mappings.yaml"
 
@@ -104,7 +104,7 @@ def _interactive_pen_mapping(
     return pen_mapping
 
 
-@plotty_command(
+@vfab_command(
     name_option(),
     preset_option(),
     queue_option(),
@@ -112,8 +112,8 @@ def _interactive_pen_mapping(
     pen_mapping_option(),
     error_context="job creation",
 )
-def plotty_add(cmd, document, name, preset, queue, priority, pen_mapping, workspace):
-    """Add document to ploTTY job system."""
+def vfab_add(cmd, document, name, preset, queue, priority, pen_mapping, workspace):
+    """Add document to vfab job system."""
     # Validate preset
     validate_preset(preset)
 
@@ -129,7 +129,7 @@ def plotty_add(cmd, document, name, preset, queue, priority, pen_mapping, worksp
     else:
         pen_map = cmd.get_pen_mapping(document, pen_mapping)
 
-    # Add job to ploTTY
+    # Add job to vfab
     job_id = cmd.plotty.add_job(
         document=document,
         name=name,
@@ -138,8 +138,8 @@ def plotty_add(cmd, document, name, preset, queue, priority, pen_mapping, worksp
         pen_mapping=pen_map,
     )
 
-    click.echo(f"✅ Job '{name}' added to ploTTY (ID: {job_id[:8]})")
-    click.echo("💡 Use 'plotty-monitor --follow' for real-time job tracking")
+    click.echo(f"✅ Job '{name}' added to vfab (ID: {job_id[:8]})")
+    click.echo("💡 Use 'vfab-monitor --follow' for real-time job tracking")
 
     # Queue job if requested
     if queue:
@@ -149,13 +149,13 @@ def plotty_add(cmd, document, name, preset, queue, priority, pen_mapping, worksp
     return document
 
 
-@plotty_command(
+@vfab_command(
     name_option(required=True),
     priority_option(),
     error_context="job queuing",
 )
-def plotty_queue(cmd, document, name, priority, workspace):
-    """Queue existing ploTTY job."""
+def vfab_queue(cmd, document, name, priority, workspace):
+    """Queue existing vfab job."""
     # Verify job exists
     try:
         cmd.plotty.load_job(name)
@@ -170,7 +170,7 @@ def plotty_queue(cmd, document, name, priority, workspace):
     return document
 
 
-@plotty_command(
+@vfab_command(
     click.option("--name", "-n", help="Job name or ID"),
     click.option(
         "--format",
@@ -181,8 +181,8 @@ def plotty_queue(cmd, document, name, priority, workspace):
     ),
     error_context="status check",
 )
-def plotty_status(cmd, document, name, format, workspace):
-    """Check ploTTY job status."""
+def vfab_status(cmd, document, name, format, workspace):
+    """Check vfab job status."""
     if name:
         # Get specific job status
         try:
@@ -204,7 +204,7 @@ def plotty_status(cmd, document, name, format, workspace):
     return document
 
 
-@plotty_command(
+@vfab_command(
     click.option("--state", "-s", help="Filter by job state"),
     click.option(
         "--format",
@@ -216,8 +216,8 @@ def plotty_status(cmd, document, name, format, workspace):
     click.option("--limit", type=int, help="Limit number of jobs"),
     error_context="job listing",
 )
-def plotty_list(cmd, document, state, format, limit, workspace):
-    """List ploTTY jobs."""
+def vfab_list(cmd, document, state, format, limit, workspace):
+    """List vfab jobs."""
     jobs = cmd.plotty.list_jobs()
 
     # Filter by state
@@ -237,7 +237,7 @@ def plotty_list(cmd, document, state, format, limit, workspace):
     return document
 
 
-@plotty_command(
+@vfab_command(
     click.option(
         "--follow", "-f", is_flag=True, help="Follow job progress with updates"
     ),
@@ -252,8 +252,8 @@ def plotty_list(cmd, document, state, format, limit, workspace):
     click.option("--slow", is_flag=True, help="Slow updates (5s polling rate)"),
     error_context="monitoring",
 )
-def plotty_monitor(cmd, document, follow, poll_rate, fast, slow, workspace):
-    """Monitor ploTTY jobs with configurable real-time updates."""
+def vfab_monitor(cmd, document, follow, poll_rate, fast, slow, workspace):
+    """Monitor vfab jobs with configurable real-time updates."""
     # Import streamlined monitor
     from .monitor import SimplePlottyMonitor
 
@@ -274,13 +274,13 @@ def plotty_monitor(cmd, document, follow, poll_rate, fast, slow, workspace):
     return document
 
 
-@plotty_command(
+@vfab_command(
     name_option(required=True),
     click.option("--force", is_flag=True, help="Force deletion without confirmation"),
     error_context="job deletion",
 )
-def plotty_delete(cmd, document, name, force, workspace):
-    """Delete ploTTY job."""
+def vfab_delete(cmd, document, name, force, workspace):
+    """Delete vfab job."""
     # Verify job exists
     try:
         job = cmd.plotty.get_job(name)

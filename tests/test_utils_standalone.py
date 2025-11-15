@@ -13,14 +13,14 @@ import pytest
 
 # Define the exception locally to avoid imports
 class PlottyJobError(Exception):
-    """Exception for ploTTY job-related errors."""
+    """Exception for vfab job-related errors."""
 
     pass
 
 
 # Copy utility functions directly to avoid import chain issues
 def save_document_for_plotty(document, job_path, name):
-    """Save vpype document as ploTTY-compatible job."""
+    """Save vpype document as vfab-compatible job."""
     try:
         # Ensure job directory exists
         job_path.mkdir(parents=True, exist_ok=True)
@@ -52,7 +52,7 @@ def save_document_for_plotty(document, job_path, name):
         return svg_path, job_json_path
 
     except Exception as e:
-        raise PlottyJobError(f"Failed to save document for ploTTY: {e}")
+        raise PlottyJobError(f"Failed to save document for vfab: {e}")
 
 
 def generate_job_name(document, fallback_name=None):
@@ -186,7 +186,7 @@ class TestSaveDocumentForPlotty:
 
         with patch("builtins.open", side_effect=OSError("Permission denied")):
             with pytest.raises(
-                PlottyJobError, match="Failed to save document for ploTTY"
+                PlottyJobError, match="Failed to save document for vfab"
             ):
                 save_document_for_plotty(mock_document, job_path, "test_job")
 

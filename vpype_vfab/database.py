@@ -1,4 +1,4 @@
-"""Streamlined ploTTY database integration."""
+"""Streamlined vfab database integration."""
 
 import json
 import shutil
@@ -8,21 +8,21 @@ from typing import Any, Dict, List, Optional
 
 from vpype import Document
 
-from vpype_plotty.config import PlottyConfig
-from vpype_plotty.exceptions import PlottyJobError
-from vpype_plotty.utils import save_document_for_plotty
+from vpype_vfab.config import VfabConfig
+from vpype_vfab.exceptions import VfabJobError
+from vpype_vfab.utils import save_document_for_plotty
 
 
-class StreamlinedPlottyIntegration:
-    """Streamlined ploTTY integration with simplified job management."""
+class StreamlinedVfabIntegration:
+    """Streamlined vfab integration with simplified job management."""
 
     def __init__(self, workspace_path: Optional[str] = None) -> None:
-        """Initialize streamlined ploTTY integration.
+        """Initialize streamlined vfab integration.
 
         Args:
-            workspace_path: Optional path to ploTTY workspace directory
+            workspace_path: Optional path to vfab workspace directory
         """
-        self.config_manager = PlottyConfig(workspace_path)
+        self.config_manager = VfabConfig(workspace_path)
         self.workspace = self.config_manager.workspace_path
         self.jobs_dir = self.workspace / "jobs"
         self.jobs_dir.mkdir(parents=True, exist_ok=True)
@@ -57,18 +57,18 @@ class StreamlinedPlottyIntegration:
             Loaded JSON data
 
         Raises:
-            PlottyJobError: If file cannot be loaded
+            VfabJobError: If file cannot be loaded
         """
         file_path = self._get_file_path(name, file_type)
 
         if not file_path.exists():
-            raise PlottyJobError(f"{file_type.title()} '{name}' not found")
+            raise VfabJobError(f"{file_type.title()} '{name}' not found")
 
         try:
             with open(file_path, encoding="utf-8") as f:
                 return json.load(f)
         except (json.JSONDecodeError, OSError) as e:
-            raise PlottyJobError(f"Failed to load {file_type} '{name}': {e}")
+            raise VfabJobError(f"Failed to load {file_type} '{name}': {e}")
 
     def _save_json_file(
         self, name: str, data: Dict[str, Any], file_type: str = "job"
@@ -81,7 +81,7 @@ class StreamlinedPlottyIntegration:
             file_type: Type of file ("job" or "queue")
 
         Raises:
-            PlottyJobError: If file cannot be saved
+            VfabJobError: If file cannot be saved
         """
         file_path = self._get_file_path(name, file_type)
 
@@ -90,7 +90,7 @@ class StreamlinedPlottyIntegration:
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
         except (OSError, json.JSONDecodeError) as e:
-            raise PlottyJobError(f"Failed to save {file_type} '{name}': {e}")
+            raise VfabJobError(f"Failed to save {file_type} '{name}': {e}")
 
     def add_job(
         self,
@@ -101,7 +101,7 @@ class StreamlinedPlottyIntegration:
         priority: int = 1,
         pen_mapping: Optional[Dict] = None,
     ) -> str:
-        """Add job to ploTTY system with unified approach.
+        """Add job to vfab system with unified approach.
 
         Args:
             document: vpype document to add
@@ -115,7 +115,7 @@ class StreamlinedPlottyIntegration:
             Job ID
 
         Raises:
-            PlottyJobError: If job creation fails
+            VfabJobError: If job creation fails
         """
         try:
             # Create unified job metadata
@@ -131,13 +131,13 @@ class StreamlinedPlottyIntegration:
             job_data.update(existing_job_data)
             self._save_json_file(name, job_data, "job")
 
-            # Notify ploTTY via simple file system queue
+            # Notify vfab via simple file system queue
             self._notify_plotty(name, job_data)
 
             return name
 
         except Exception as e:
-            raise PlottyJobError(f"Failed to create job '{name}': {e}")
+            raise VfabJobError(f"Failed to create job '{name}': {e}")
 
     def queue_job(self, name: str, priority: int = 1) -> None:
         """Queue existing job for plotting.
@@ -147,7 +147,7 @@ class StreamlinedPlottyIntegration:
             priority: Job priority
 
         Raises:
-            PlottyJobError: If job queuing fails
+            VfabJobError: If job queuing fails
         """
         try:
             job_data = self.load_job(name)
@@ -160,11 +160,11 @@ class StreamlinedPlottyIntegration:
             # Save updated metadata
             self.save_job(name, job_data)
 
-            # Notify ploTTY
+            # Notify vfab
             self._notify_plotty(name, job_data)
 
         except Exception as e:
-            raise PlottyJobError(f"Failed to queue job '{name}': {e}")
+            raise VfabJobError(f"Failed to queue job '{name}': {e}")
 
     def load_job(self, name: str) -> Dict[str, Any]:
         """Load job data by name.
@@ -176,7 +176,7 @@ class StreamlinedPlottyIntegration:
             Job data dictionary
 
         Raises:
-            PlottyJobError: If job not found
+            VfabJobError: If job not found
         """
         return self._load_json_file(name, "job")
 
@@ -188,33 +188,33 @@ class StreamlinedPlottyIntegration:
             job_data: Job data dictionary
 
         Raises:
-            PlottyJobError: If save fails
+            VfabJobError: If save fails
         """
         self._save_json_file(name, job_data, "job")
 
     def remove_job(self, name: str) -> None:
-        """Remove job from ploTTY system.
+        """Remove job from vfab system.
 
         Args:
             name: Job name to remove
 
         Raises:
-            PlottyJobError: If job removal fails
+            VfabJobError: If job removal fails
         """
         job_path = self.jobs_dir / name
 
         if not job_path.exists():
-            raise PlottyJobError(f"Job '{name}' not found")
+            raise VfabJobError(f"Job '{name}' not found")
 
         try:
             shutil.rmtree(job_path)
         except OSError as e:
-            raise PlottyJobError(f"Failed to remove job '{name}': {e}")
+            raise VfabJobError(f"Failed to remove job '{name}': {e}")
 
     def list_jobs(
         self, state: Optional[str] = None, limit: Optional[int] = None
     ) -> List[Dict[str, Any]]:
-        """List ploTTY jobs.
+        """List vfab jobs.
 
         Args:
             state: Filter by job state
@@ -242,7 +242,7 @@ class StreamlinedPlottyIntegration:
                 if limit and len(jobs) >= limit:
                     break
 
-            except PlottyJobError:
+            except VfabJobError:
                 # Skip invalid jobs
                 continue
 
@@ -258,7 +258,7 @@ class StreamlinedPlottyIntegration:
             Job status dictionary
 
         Raises:
-            PlottyJobError: If job not found
+            VfabJobError: If job not found
         """
         return self.load_job(name)
 
@@ -272,7 +272,7 @@ class StreamlinedPlottyIntegration:
             Job ID
 
         Raises:
-            PlottyJobError: If job not found
+            VfabJobError: If job not found
         """
         job_data = self.load_job(name)
         return job_data.get("id", name)
@@ -287,7 +287,7 @@ class StreamlinedPlottyIntegration:
             Complete job dictionary
 
         Raises:
-            PlottyJobError: If job not found
+            VfabJobError: If job not found
         """
         return self.load_job(name)
 
@@ -322,7 +322,7 @@ class StreamlinedPlottyIntegration:
         }
 
     def _notify_plotty(self, name: str, job_data: Dict[str, Any]) -> None:
-        """Notify ploTTY about job changes via simple file system queue.
+        """Notify vfab about job changes via simple file system queue.
 
         Args:
             name: Job name
@@ -338,12 +338,12 @@ class StreamlinedPlottyIntegration:
 
             self._save_json_file(name, notification, "queue")
 
-        except PlottyJobError:
+        except VfabJobError:
             # Queue notification is optional - don't fail if it doesn't work
             pass
 
     def _plotty_available(self) -> bool:
-        """Check if ploTTY is available (for backward compatibility)."""
+        """Check if vfab is available (for backward compatibility)."""
         try:
             import plotty  # noqa: F401
 
@@ -383,8 +383,8 @@ class StreamlinedPlottyIntegration:
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(job_data, f, indent=2)
         except (OSError, json.JSONDecodeError) as e:
-            raise PlottyJobError(f"Failed to save job '{job_name}': {e}")
+            raise VfabJobError(f"Failed to save job '{job_name}': {e}")
 
 
 # Maintain backward compatibility
-PlottyIntegration = StreamlinedPlottyIntegration
+PlottyIntegration = StreamlinedVfabIntegration

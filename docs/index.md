@@ -1,10 +1,10 @@
-# vpype-plotty Documentation
+# vpype-vfab Documentation
 
-Welcome to the vpype-plotty documentation hub. This guide helps you find the right documentation for your needs.
+Welcome to the vpype-vfab documentation hub. This guide helps you find the right documentation for your needs.
 
 ## 🚀 Quick Start (New Users)
 
-**New to vpype-plotty? Start here:**
+**New to vpype-vfab? Start here:**
 
 1. **[Quick Start](quickstart.md)** - 5-minute getting started guide
 2. **[Getting Started](getting-started.md)** - Detailed installation and basic concepts
@@ -81,10 +81,10 @@ Getting Started → Basic Usage → Advanced Features → Production Workflow
 
 | Command | Purpose | Quick Example |
 |---------|---------|---------------|
-| `plotty-add` | Add design to ploTTY | `vpype plotty-add --name test --queue` |
-| `plotty-queue` | Queue existing job | `vpype plotty-queue --name test --priority 5` |
-| `plotty-status` | Check job status | `vpype plotty-status --name test` |
-| `plotty-list` | List all jobs | `vpype plotty-list --format table` |
+| `vfab-add` | Add design to vfab | `vpype vfab-add --name test --queue` |
+| `vfab-queue` | Queue existing job | `vpype vfab-queue --name test --priority 5` |
+| `vfab-status` | Check job status | `vpype vfab-status --name test` |
+| `vfab-list` | List all jobs | `vpype vfab-list --format table` |
 
 ### Common Options
 
@@ -115,10 +115,10 @@ Getting Started → Basic Usage → Advanced Features → Production Workflow
 ### Command Line Help
 ```bash
 # Get help for any command
-vpype plotty-add --help
-vpype plotty-queue --help
-vpype plotty-status --help
-vpype plotty-list --help
+vpype vfab-add --help
+vpype vfab-queue --help
+vpype vfab-status --help
+vpype vfab-list --help
 
 # Check versions
 vpype --version
@@ -126,13 +126,13 @@ python --version
 ```
 
 ### Community Support
-- **GitHub Issues**: [Report bugs and request features](https://github.com/bkuri/vpype-plotty/issues)
-- **Discussions**: [Community questions and discussions](https://github.com/bkuri/vpype-plotty/discussions)
+- **GitHub Issues**: [Report bugs and request features](https://github.com/bkuri/vpype-vfab/issues)
+- **Discussions**: [Community questions and discussions](https://github.com/bkuri/vpype-vfab/discussions)
 
 ## 📝 Documentation Structure
 
 ```
-vpype-plotty/
+vpype-vfab/
 ├── README.md                  # Project overview and features
 ├── CHANGELOG.md              # Version history
 └── docs/

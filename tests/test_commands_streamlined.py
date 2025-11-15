@@ -77,19 +77,19 @@ class TestStreamlinedPlottyCommand:
     def test_get_pen_mapping_auto(self, command, mock_document):
         """Test pen mapping with auto preset."""
         mapping = command.get_pen_mapping(mock_document, "auto")
-        # Auto should return None (use ploTTY defaults)
+        # Auto should return None (use vfab defaults)
         assert mapping is None
 
     def test_get_pen_mapping_sequential(self, command, mock_document):
         """Test pen mapping with sequential preset."""
         mapping = command.get_pen_mapping(mock_document, "sequential")
-        # Sequential should return None (use ploTTY defaults)
+        # Sequential should return None (use vfab defaults)
         assert mapping is None
 
     def test_get_pen_mapping_single(self, command, mock_document):
         """Test pen mapping with single preset."""
         mapping = command.get_pen_mapping(mock_document, "single")
-        # Single should return None (use ploTTY defaults)
+        # Single should return None (use vfab defaults)
         assert mapping is None
 
     def test_get_pen_mapping_invalid(self, command, mock_document):
@@ -146,7 +146,7 @@ class TestPenMappingPresets:
 
 
 class TestPlottyCommands:
-    """Test individual ploTTY commands."""
+    """Test individual vfab commands."""
 
     @pytest.fixture
     def temp_workspace(self):
@@ -166,7 +166,7 @@ class TestPlottyCommands:
         doc.layers = [MagicMock(), MagicMock()]  # Mock 2 layers
         return doc
 
-    def test_plotty_add_command_success(self, runner, mock_document, temp_workspace):
+    def test_vfab_add_command_success(self, runner, mock_document, temp_workspace):
         """Test successful plotty_add command."""
         with patch("src.commands.load_document") as mock_load:
             mock_load.return_value = mock_document
@@ -194,7 +194,7 @@ class TestPlottyCommands:
                 # Should not raise exception
                 assert result.exit_code == 0 or result.exception is None
 
-    def test_plotty_add_command_with_pen_mapping(
+    def test_vfab_add_command_with_pen_mapping(
         self, runner, mock_document, temp_workspace
     ):
         """Test plotty_add command with pen mapping."""
@@ -222,7 +222,7 @@ class TestPlottyCommands:
                 # Should not raise exception
                 assert result.exit_code == 0 or result.exception is None
 
-    def test_plotty_list_command_success(self, runner, temp_workspace):
+    def test_vfab_list_command_success(self, runner, temp_workspace):
         """Test successful plotty_list command."""
         with patch("src.commands.StreamlinedPlottyCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
@@ -237,7 +237,7 @@ class TestPlottyCommands:
             # Should not raise exception
             assert result.exit_code == 0 or result.exception is None
 
-    def test_plotty_list_command_with_state_filter(self, runner, temp_workspace):
+    def test_vfab_list_command_with_state_filter(self, runner, temp_workspace):
         """Test plotty_list command with state filter."""
         with patch("src.commands.StreamlinedPlottyCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
@@ -253,7 +253,7 @@ class TestPlottyCommands:
             # Should not raise exception
             assert result.exit_code == 0 or result.exception is None
 
-    def test_plotty_queue_command_success(self, runner, temp_workspace):
+    def test_vfab_queue_command_success(self, runner, temp_workspace):
         """Test successful plotty_queue command."""
         with patch("src.commands.StreamlinedPlottyCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
@@ -266,7 +266,7 @@ class TestPlottyCommands:
             # Should not raise exception
             assert result.exit_code == 0 or result.exception is None
 
-    def test_plotty_queue_command_with_priority(self, runner, temp_workspace):
+    def test_vfab_queue_command_with_priority(self, runner, temp_workspace):
         """Test plotty_queue command with priority."""
         with patch("src.commands.StreamlinedPlottyCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
@@ -280,7 +280,7 @@ class TestPlottyCommands:
             # Should not raise exception
             assert result.exit_code == 0 or result.exception is None
 
-    def test_plotty_status_command_success(self, runner, temp_workspace):
+    def test_vfab_status_command_success(self, runner, temp_workspace):
         """Test successful plotty_status command."""
         with patch("src.commands.StreamlinedPlottyCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
@@ -298,7 +298,7 @@ class TestPlottyCommands:
             # Should not raise exception
             assert result.exit_code == 0 or result.exception is None
 
-    def test_plotty_delete_command_success(self, runner, temp_workspace):
+    def test_vfab_delete_command_success(self, runner, temp_workspace):
         """Test successful plotty_delete command."""
         with patch("src.commands.StreamlinedPlottyCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
@@ -312,7 +312,7 @@ class TestPlottyCommands:
                 # Should not raise exception
                 assert result.exit_code == 0 or result.exception is None
 
-    def test_plotty_delete_command_cancelled(self, runner, temp_workspace):
+    def test_vfab_delete_command_cancelled(self, runner, temp_workspace):
         """Test plotty_delete command when cancelled."""
         with patch("src.commands.StreamlinedPlottyCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
@@ -326,7 +326,7 @@ class TestPlottyCommands:
                 # Should not raise exception
                 assert result.exit_code == 0 or result.exception is None
 
-    def test_plotty_delete_command_force(self, runner, temp_workspace):
+    def test_vfab_delete_command_force(self, runner, temp_workspace):
         """Test plotty_delete command with force flag."""
         with patch("src.commands.StreamlinedPlottyCommand") as mock_cmd_class:
             mock_cmd = MagicMock()

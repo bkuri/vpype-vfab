@@ -84,8 +84,8 @@ class TestSchotterIntegration:
             total_paths = sum(len(layer) for layer in vsk.document.layers.values())
             assert total_paths == expected_squares
 
-    def test_schotter_with_vpype_plotty_add(self, schotter_sketch, workspace_dir):
-        """Test adding Schotter sketch to ploTTY."""
+    def test_schotter_with_vpype_vfab_add(self, schotter_sketch, workspace_dir):
+        """Test adding Schotter sketch to vfab."""
         import vsketch
 
         # Create Schotter pattern
@@ -96,13 +96,13 @@ class TestSchotterIntegration:
         svg_file = os.path.join(workspace_dir, "schotter.svg")
         vsk.save(svg_file)
 
-        # Add to ploTTY using vpype command
+        # Add to vfab using vpype command
         result = subprocess.run(
             [
                 "vpype",
                 "read",
                 svg_file,
-                "plotty-add",
+                "vfab-add",
                 "--name",
                 "schotter_test",
                 "--workspace",
@@ -113,10 +113,10 @@ class TestSchotterIntegration:
         )
 
         assert result.returncode == 0
-        assert "Job 'schotter_test' added to ploTTY" in result.stdout
+        assert "Job 'schotter_test' added to vfab" in result.stdout
 
     def test_schotter_with_different_presets(self, schotter_sketch, workspace_dir):
-        """Test Schotter with different ploTTY presets."""
+        """Test Schotter with different vfab presets."""
         import vsketch
 
         presets = ["fast", "default", "hq"]
@@ -129,13 +129,13 @@ class TestSchotterIntegration:
             svg_file = os.path.join(workspace_dir, f"schotter_{preset}.svg")
             vsk.save(svg_file)
 
-            # Add to ploTTY with preset
+            # Add to vfab with preset
             result = subprocess.run(
                 [
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     f"schotter_{preset}",
                     "--preset",
@@ -148,7 +148,7 @@ class TestSchotterIntegration:
             )
 
             assert result.returncode == 0
-            assert f"Job 'schotter_{preset}' added to ploTTY" in result.stdout
+            assert f"Job 'schotter_{preset}' added to vfab" in result.stdout
 
     def test_schotter_batch_processing(self, workspace_dir):
         """Test batch processing of multiple Schotter variations."""
@@ -177,7 +177,7 @@ class TestSchotterIntegration:
 
             sketch.draw(vsk)
 
-            # Save and add to ploTTY
+            # Save and add to vfab
             svg_file = os.path.join(workspace_dir, f"schotter_batch_{i}.svg")
             vsk.save(svg_file)
 
@@ -189,7 +189,7 @@ class TestSchotterIntegration:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     job_name,
                     "--queue",  # Auto-queue for batch processing
@@ -201,11 +201,11 @@ class TestSchotterIntegration:
             )
 
             assert result.returncode == 0
-            assert f"Job '{job_name}' added to ploTTY" in result.stdout
+            assert f"Job '{job_name}' added to vfab" in result.stdout
 
-        # Verify all jobs are in ploTTY
+        # Verify all jobs are in vfab
         result = subprocess.run(
-            ["vpype", "plotty-list", "--workspace", workspace_dir],
+            ["vpype", "vfab-list", "--workspace", workspace_dir],
             capture_output=True,
             text=True,
         )
@@ -255,7 +255,7 @@ class TestSchotterIntegration:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "schotter_multilayer",
                     "--workspace",
@@ -318,13 +318,13 @@ class TestSchotterIntegration:
         assert os.path.exists(svg_file)
         assert os.path.getsize(svg_file) > 0
 
-        # Add to ploTTY
+        # Add to vfab
         result = subprocess.run(
             [
                 "vpype",
                 "read",
                 svg_file,
-                "plotty-add",
+                "vfab-add",
                 "--name",
                 "schotter_finalized",
                 "--preset",
@@ -337,4 +337,4 @@ class TestSchotterIntegration:
         )
 
         assert result.returncode == 0
-        assert "Job 'schotter_finalized' added to ploTTY" in result.stdout
+        assert "Job 'schotter_finalized' added to vfab" in result.stdout

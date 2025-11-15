@@ -295,7 +295,7 @@ class TestSimplePlottyMonitor:
             monitor.start_monitoring()
 
         echo_calls = [call.args[0] for call in mock_echo.call_args_list if call.args]
-        assert any("🚀 Starting ploTTY monitor" in call for call in echo_calls)
+        assert any("🚀 Starting vfab monitor" in call for call in echo_calls)
         assert any("Press Ctrl+C to stop monitoring" in call for call in echo_calls)
         assert any("👋 Monitor stopped by user" in call for call in echo_calls)
 
@@ -331,7 +331,7 @@ class TestSimplePlottyMonitor:
         monitor.static_snapshot()
 
         echo_calls = [call.args[0] for call in mock_echo.call_args_list if call.args]
-        assert any("📊 ploTTY Job Status" in call for call in echo_calls)
+        assert any("📊 vfab Job Status" in call for call in echo_calls)
         assert any("=" * 40 in call for call in echo_calls)
         assert any("=" * 40 in call for call in echo_calls)
 

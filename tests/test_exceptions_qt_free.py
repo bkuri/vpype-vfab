@@ -1,4 +1,4 @@
-"""Qt-free tests for vpype_plotty.exceptions module."""
+"""Qt-free tests for vpype_vfab.exceptions module."""
 
 import pytest
 from unittest.mock import Mock
@@ -21,7 +21,7 @@ spec.loader.exec_module(exceptions)
 class TestExceptionsQtFree:
     """Qt-free test suite for exceptions module."""
 
-    def test_plotty_error_init(self):
+    def test_vfab_error_init(self):
         """Test PlottyError base exception initialization."""
         message = "Test error message"
         error = exceptions.PlottyError(message)
@@ -30,7 +30,7 @@ class TestExceptionsQtFree:
         assert error.recovery_hint is None
         assert error.retry_after is None
 
-    def test_plotty_error_with_recovery_hint(self):
+    def test_vfab_error_with_recovery_hint(self):
         """Test PlottyError with recovery hint."""
         message = "Error with hint"
         recovery_hint = "Try again later"
@@ -39,7 +39,7 @@ class TestExceptionsQtFree:
         assert str(error) == message
         assert error.recovery_hint == recovery_hint
 
-    def test_plotty_error_with_retry_after(self):
+    def test_vfab_error_with_retry_after(self):
         """Test PlottyError with retry_after."""
         message = "Error with retry"
         retry_after = 5.0
@@ -48,15 +48,15 @@ class TestExceptionsQtFree:
         assert str(error) == message
         assert error.retry_after == retry_after
 
-    def test_plotty_not_found_error_init(self):
+    def test_vfab_not_found_error_init(self):
         """Test PlottyNotFoundError initialization."""
-        message = "ploTTY not found"
+        message = "vfab not found"
         error = exceptions.PlottyNotFoundError(message)
 
         assert str(error) == message
-        assert "Verify ploTTY is properly installed" in error.recovery_hint
+        assert "Verify vfab is properly installed" in error.recovery_hint
 
-    def test_plotty_not_found_error_with_workspace(self):
+    def test_vfab_not_found_error_with_workspace(self):
         """Test PlottyNotFoundError with workspace path."""
         message = "Workspace not found"
         workspace_path = "/path/to/workspace"
@@ -65,30 +65,30 @@ class TestExceptionsQtFree:
         assert str(error) == message
         assert workspace_path in error.recovery_hint
 
-    def test_plotty_not_found_error_inheritance(self):
+    def test_vfab_not_found_error_inheritance(self):
         """Test PlottyNotFoundError inheritance."""
         error = exceptions.PlottyNotFoundError("test")
 
         assert isinstance(error, exceptions.PlottyError)
         assert isinstance(error, Exception)
 
-    def test_plotty_connection_error_init(self):
+    def test_vfab_connection_error_init(self):
         """Test PlottyConnectionError initialization."""
         message = "Connection failed"
         error = exceptions.PlottyConnectionError(message)
 
         assert str(error) == message
         assert error.retry_after == 5.0
-        assert "Check ploTTY is running" in error.recovery_hint
+        assert "Check vfab is running" in error.recovery_hint
 
-    def test_plotty_connection_error_inheritance(self):
+    def test_vfab_connection_error_inheritance(self):
         """Test PlottyConnectionError inheritance."""
         error = exceptions.PlottyConnectionError("test")
 
         assert isinstance(error, exceptions.PlottyError)
         assert isinstance(error, Exception)
 
-    def test_plotty_job_error_init(self):
+    def test_vfab_job_error_init(self):
         """Test PlottyJobError initialization."""
         message = "Job failed"
         error = exceptions.PlottyJobError(message)
@@ -96,7 +96,7 @@ class TestExceptionsQtFree:
         assert str(error) == message
         assert "Verify job parameters" in error.recovery_hint
 
-    def test_plotty_job_error_with_job_id(self):
+    def test_vfab_job_error_with_job_id(self):
         """Test PlottyJobError with job ID."""
         message = "Job failed"
         job_id = "job123"
@@ -105,22 +105,22 @@ class TestExceptionsQtFree:
         assert str(error) == message
         assert job_id in error.recovery_hint
 
-    def test_plotty_job_error_inheritance(self):
+    def test_vfab_job_error_inheritance(self):
         """Test PlottyJobError inheritance."""
         error = exceptions.PlottyJobError("test")
 
         assert isinstance(error, exceptions.PlottyError)
         assert isinstance(error, Exception)
 
-    def test_plotty_config_error_init(self):
+    def test_vfab_config_error_init(self):
         """Test PlottyConfigError initialization."""
         message = "Config error"
         error = exceptions.PlottyConfigError(message)
 
         assert str(error) == message
-        assert "Verify ploTTY configuration" in error.recovery_hint
+        assert "Verify vfab configuration" in error.recovery_hint
 
-    def test_plotty_config_error_with_config_file(self):
+    def test_vfab_config_error_with_config_file(self):
         """Test PlottyConfigError with config file."""
         message = "Config error"
         config_file = "/path/to/config"
@@ -129,14 +129,14 @@ class TestExceptionsQtFree:
         assert str(error) == message
         assert config_file in error.recovery_hint
 
-    def test_plotty_config_error_inheritance(self):
+    def test_vfab_config_error_inheritance(self):
         """Test PlottyConfigError inheritance."""
         error = exceptions.PlottyConfigError("test")
 
         assert isinstance(error, exceptions.PlottyError)
         assert isinstance(error, Exception)
 
-    def test_plotty_timeout_error_init(self):
+    def test_vfab_timeout_error_init(self):
         """Test PlottyTimeoutError initialization."""
         message = "Operation timed out"
         timeout_seconds = 30.0
@@ -146,14 +146,14 @@ class TestExceptionsQtFree:
         assert error.retry_after == timeout_seconds
         assert "Increase timeout" in error.recovery_hint
 
-    def test_plotty_timeout_error_inheritance(self):
+    def test_vfab_timeout_error_inheritance(self):
         """Test PlottyTimeoutError inheritance."""
         error = exceptions.PlottyTimeoutError("test", 30.0)
 
         assert isinstance(error, exceptions.PlottyError)
         assert isinstance(error, Exception)
 
-    def test_plotty_resource_error_init(self):
+    def test_vfab_resource_error_init(self):
         """Test PlottyResourceError initialization."""
         message = "Out of memory"
         error = exceptions.PlottyResourceError(message)
@@ -161,7 +161,7 @@ class TestExceptionsQtFree:
         assert str(error) == message
         assert "unknown resources" in error.recovery_hint
 
-    def test_plotty_resource_error_with_type(self):
+    def test_vfab_resource_error_with_type(self):
         """Test PlottyResourceError with resource type."""
         message = "Out of memory"
         resource_type = "memory"
@@ -170,7 +170,7 @@ class TestExceptionsQtFree:
         assert str(error) == message
         assert resource_type in error.recovery_hint
 
-    def test_plotty_resource_error_inheritance(self):
+    def test_vfab_resource_error_inheritance(self):
         """Test PlottyResourceError inheritance."""
         error = exceptions.PlottyResourceError("test")
 

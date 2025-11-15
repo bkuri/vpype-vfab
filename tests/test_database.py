@@ -1,4 +1,4 @@
-"""Test ploTTY database integration."""
+"""Test vfab database integration."""
 
 import json
 import tempfile
@@ -12,7 +12,7 @@ from src.exceptions import PlottyJobError
 
 
 class TestPlottyIntegration:
-    """Test ploTTY integration."""
+    """Test vfab integration."""
 
     def test_init_with_workspace_path(self):
         """Test initialization with explicit workspace path."""
@@ -23,8 +23,8 @@ class TestPlottyIntegration:
             assert plotty.workspace == Path(temp_dir)
             assert plotty.jobs_dir == Path(temp_dir) / "jobs"
 
-    def test_plotty_available_true(self):
-        """Test ploTTY availability when installed."""
+    def test_vfab_available_true(self):
+        """Test vfab availability when installed."""
         from src.database import PlottyIntegration
 
         with patch.dict(
@@ -39,7 +39,7 @@ class TestPlottyIntegration:
             assert plotty._plotty_available() is True
 
     def test_add_job_with_plotty(self):
-        """Test adding job with ploTTY integration."""
+        """Test adding job with vfab integration."""
         from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:

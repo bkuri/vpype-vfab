@@ -1,4 +1,4 @@
-"""Enhanced ploTTY configuration tests with Qt mocking setup."""
+"""Enhanced vfab configuration tests with Qt mocking setup."""
 
 import os
 import sys
@@ -33,7 +33,7 @@ from src.exceptions import PlottyConfigError, PlottyNotFoundError
 
 
 class TestPlottyConfigEnhanced:
-    """Enhanced ploTTY configuration management tests."""
+    """Enhanced vfab configuration management tests."""
 
     def test_init_with_explicit_path(self):
         """Test initialization with explicit workspace path."""
@@ -66,7 +66,7 @@ class TestPlottyConfigEnhanced:
     def test_find_workspace_current_dir_candidate(self):
         """Test workspace finding in current directory."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            workspace_dir = Path(temp_dir) / "plotty-workspace"
+            workspace_dir = Path(temp_dir) / "vfab-workspace"
             workspace_dir.mkdir()
 
             with patch("pathlib.Path.cwd") as mock_cwd:
@@ -79,7 +79,7 @@ class TestPlottyConfigEnhanced:
     def test_find_workspace_home_candidate(self):
         """Test workspace finding in home directory."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            workspace_dir = Path(temp_dir) / "plotty-workspace"
+            workspace_dir = Path(temp_dir) / "vfab-workspace"
             workspace_dir.mkdir()
 
             with patch("pathlib.Path.home") as mock_home:
@@ -119,12 +119,12 @@ class TestPlottyConfigEnhanced:
 
                     def exists_side_effect(self):
                         # Return False for all candidates except the created workspace
-                        return str(self).endswith("plotty-workspace")
+                        return str(self).endswith("vfab-workspace")
 
                     mock_exists.side_effect = exists_side_effect
 
                     config = PlottyConfig()
-                    expected_workspace = fake_home / "plotty-workspace"
+                    expected_workspace = fake_home / "vfab-workspace"
                     assert config.workspace_path == expected_workspace
                     assert expected_workspace.exists()
 
@@ -142,7 +142,7 @@ class TestPlottyConfigEnhanced:
                     with pytest.raises(PlottyNotFoundError) as exc_info:
                         PlottyConfig()
 
-                    assert "ploTTY workspace not found" in str(exc_info.value)
+                    assert "vfab workspace not found" in str(exc_info.value)
                     assert "Permission denied" in str(exc_info.value)
 
     def test_load_config_default(self):
@@ -207,7 +207,7 @@ class TestPlottyConfigEnhanced:
             with pytest.raises(PlottyConfigError) as exc_info:
                 config.load_config()
 
-            assert "Failed to load ploTTY config" in str(exc_info.value)
+            assert "Failed to load vfab config" in str(exc_info.value)
 
     def test_load_config_file_read_error(self):
         """Test loading configuration with file read error."""
@@ -221,7 +221,7 @@ class TestPlottyConfigEnhanced:
                 with pytest.raises(PlottyConfigError) as exc_info:
                     config.load_config()
 
-                assert "Failed to load ploTTY config" in str(exc_info.value)
+                assert "Failed to load vfab config" in str(exc_info.value)
 
     def test_save_config_basic(self):
         """Test basic configuration saving."""
@@ -267,7 +267,7 @@ class TestPlottyConfigEnhanced:
                 with pytest.raises(PlottyConfigError) as exc_info:
                     config.save_config(test_config)
 
-                assert "Failed to save ploTTY config" in str(exc_info.value)
+                assert "Failed to save vfab config" in str(exc_info.value)
 
     def test_save_config_file_error(self):
         """Test saving configuration with file error."""
@@ -280,7 +280,7 @@ class TestPlottyConfigEnhanced:
                 with pytest.raises(PlottyConfigError) as exc_info:
                     config.save_config(test_config)
 
-                assert "Failed to save ploTTY config" in str(exc_info.value)
+                assert "Failed to save vfab config" in str(exc_info.value)
 
     def test_default_config_structure(self):
         """Test default configuration structure."""
@@ -394,10 +394,10 @@ class TestPlottyConfigEnhanced:
             explicit_dir = Path(temp_dir) / "explicit"
             explicit_dir.mkdir()
 
-            current_dir = Path(temp_dir) / "plotty-workspace"
+            current_dir = Path(temp_dir) / "vfab-workspace"
             current_dir.mkdir()
 
-            home_dir = Path(temp_dir) / "home_plotty-workspace"
+            home_dir = Path(temp_dir) / "home_vfab-workspace"
             home_dir.mkdir()
 
             with patch("pathlib.Path.cwd") as mock_cwd:

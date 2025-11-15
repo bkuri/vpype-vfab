@@ -1,4 +1,4 @@
-"""ploTTY configuration detection and management."""
+"""vfab configuration detection and management."""
 
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -6,39 +6,39 @@ from typing import Any, Dict, Optional
 import yaml
 from platformdirs import user_data_dir
 
-from vpype_plotty.exceptions import PlottyConfigError, PlottyNotFoundError
+from vpype_vfab.exceptions import VfabConfigError, VfabNotFoundError
 
 
-class PlottyConfig:
-    """ploTTY configuration detection and management."""
+class VfabConfig:
+    """vfab configuration detection and management."""
 
     def __init__(self, workspace_path: Optional[str] = None) -> None:
-        """Initialize ploTTY configuration manager.
+        """Initialize vfab configuration manager.
 
         Args:
-            workspace_path: Optional path to ploTTY workspace directory
+            workspace_path: Optional path to vfab workspace directory
         """
         self.workspace_path = self._find_workspace(workspace_path)
         self.config_path = self.workspace_path / "config.yaml"
         self.vpype_presets_path = self.workspace_path / "vpype-presets.yaml"
 
     def _find_workspace(self, workspace_path: Optional[str]) -> Path:
-        """Find ploTTY workspace using multiple strategies.
+        """Find vfab workspace using multiple strategies.
 
         Args:
             workspace_path: Explicit workspace path to check first
 
         Returns:
-            Path to ploTTY workspace directory
+            Path to vfab workspace directory
 
         Raises:
-            PlottyNotFoundError: If no suitable workspace found
+            VfabNotFoundError: If no suitable workspace found
         """
         candidates = [
             Path(workspace_path) if workspace_path else None,
-            Path.cwd() / "plotty-workspace",
-            Path.home() / "plotty-workspace",
-            Path(user_data_dir("plotty")),
+            Path.cwd() / "vfab-workspace",
+            Path.home() / "vfab-workspace",
+            Path(user_data_dir("vfab")),
         ]
 
         for candidate in candidates:
@@ -46,23 +46,23 @@ class PlottyConfig:
                 return candidate
 
         # Create default workspace if none found
-        default = Path.home() / "plotty-workspace"
+        default = Path.home() / "vfab-workspace"
         try:
             default.mkdir(parents=True, exist_ok=True)
             return default
         except OSError as e:
-            raise PlottyNotFoundError(
-                f"ploTTY workspace not found and could not create default at {default}: {e}"
+            raise VfabNotFoundError(
+                f"vfab workspace not found and could not create default at {default}: {e}"
             )
 
     def load_config(self) -> Dict[str, Any]:
-        """Load ploTTY configuration.
+        """Load vfab configuration.
 
         Returns:
             Configuration dictionary
 
         Raises:
-            PlottyConfigError: If configuration cannot be loaded
+            VfabConfigError: If configuration cannot be loaded
         """
         try:
             if self.config_path.exists():
@@ -70,30 +70,30 @@ class PlottyConfig:
                     return yaml.safe_load(f) or {}
             return self._default_config()
         except (yaml.YAMLError, OSError) as e:
-            raise PlottyConfigError(
-                f"Failed to load ploTTY config from {self.config_path}: {e}"
+            raise VfabConfigError(
+                f"Failed to load vfab config from {self.config_path}: {e}"
             )
 
     def save_config(self, config: Dict[str, Any]) -> None:
-        """Save ploTTY configuration.
+        """Save vfab configuration.
 
         Args:
             config: Configuration dictionary to save
 
         Raises:
-            PlottyConfigError: If configuration cannot be saved
+            VfabConfigError: If configuration cannot be saved
         """
         try:
             self.config_path.parent.mkdir(parents=True, exist_ok=True)
             with open(self.config_path, "w", encoding="utf-8") as f:
                 yaml.dump(config, f, default_flow_style=False, indent=2)
         except (yaml.YAMLError, OSError) as e:
-            raise PlottyConfigError(
-                f"Failed to save ploTTY config to {self.config_path}: {e}"
+            raise VfabConfigError(
+                f"Failed to save vfab config to {self.config_path}: {e}"
             )
 
     def _default_config(self) -> Dict[str, Any]:
-        """Default ploTTY configuration.
+        """Default vfab configuration.
 
         Returns:
             Default configuration dictionary

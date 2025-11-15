@@ -1,4 +1,4 @@
-"""Qt-free tests for vpype_plotty.base module with mocked dependencies."""
+"""Qt-free tests for vpype_vfab.base module with mocked dependencies."""
 
 import pytest
 from unittest.mock import Mock, patch, MagicMock

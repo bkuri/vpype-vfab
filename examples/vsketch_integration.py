@@ -34,14 +34,14 @@ class MySketch(vsketch.SketchClass):
             vsk.rect(x, y, size, size)
 
     def finalize(self, vsk: vsketch.Vsketch) -> None:
-        """Finalize the sketch and add to ploTTY."""
+        """Finalize the sketch and add to vfab."""
         # Standard vpype optimization
         vsk.vpype("linemerge linesimplify reloop linesort")
 
-        # Add to ploTTY with high-quality preset and auto-queue
-        vsk.vpype("plotty-add --name vsketch_example --preset hq --queue")
+        # Add to vfab with high-quality preset and auto-queue
+        vsk.vpype("vfab-add --name vsketch_example --preset hq --queue")
 
-        print("✓ Sketch added to ploTTY with high-quality preset")
+        print("✓ Sketch added to vfab with high-quality preset")
 
 
 if __name__ == "__main__":

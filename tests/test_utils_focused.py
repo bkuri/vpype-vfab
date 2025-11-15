@@ -63,7 +63,7 @@ def save_document_for_plotty(document, job_path, name):
         return svg_path, job_json_path
 
     except Exception as e:
-        raise PlottyJobError(f"Failed to save document for ploTTY: {e}")
+        raise PlottyJobError(f"Failed to save document for vfab: {e}")
 
 
 def generate_job_name(document, fallback_name=None):
@@ -195,7 +195,7 @@ class TestSaveDocumentForPlotty:
 
         mock_vpype.write_svg.side_effect = Exception("SVG write failed")
 
-        with pytest.raises(PlottyJobError, match="Failed to save document for ploTTY"):
+        with pytest.raises(PlottyJobError, match="Failed to save document for vfab"):
             save_document_for_plotty(mock_document, job_path, "test_job")
 
     def test_save_document_file_error(self, temp_dir, mock_document):
@@ -204,7 +204,7 @@ class TestSaveDocumentForPlotty:
 
         with patch("builtins.open", side_effect=OSError("Permission denied")):
             with pytest.raises(
-                PlottyJobError, match="Failed to save document for ploTTY"
+                PlottyJobError, match="Failed to save document for vfab"
             ):
                 save_document_for_plotty(mock_document, job_path, "test_job")
 

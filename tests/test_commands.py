@@ -16,8 +16,8 @@ def create_test_svg() -> str:
 class TestCommands:
     """Test vpype commands."""
 
-    def test_plotty_add_basic(self):
-        """Test basic plotty-add command."""
+    def test_vfab_add_basic(self):
+        """Test basic vfab-add command."""
         with tempfile.TemporaryDirectory() as temp_dir:
             svg_file = os.path.join(temp_dir, "test.svg")
             with open(svg_file, "w") as f:
@@ -28,7 +28,7 @@ class TestCommands:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "test_job",
                     "--workspace",
@@ -39,10 +39,10 @@ class TestCommands:
             )
 
             assert result.returncode == 0
-            assert "Job 'test_job' added to ploTTY" in result.stdout
+            assert "Job 'test_job' added to vfab" in result.stdout
 
-    def test_plotty_add_with_queue(self):
-        """Test plotty-add command with queue option."""
+    def test_vfab_add_with_queue(self):
+        """Test vfab-add command with queue option."""
         with tempfile.TemporaryDirectory() as temp_dir:
             svg_file = os.path.join(temp_dir, "test.svg")
             with open(svg_file, "w") as f:
@@ -53,7 +53,7 @@ class TestCommands:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "test_job",
                     "--queue",
@@ -65,18 +65,18 @@ class TestCommands:
             )
 
             assert result.returncode == 0
-            assert "Job 'test_job' added to ploTTY" in result.stdout
+            assert "Job 'test_job' added to vfab" in result.stdout
             assert "queued" in result.stdout.lower()
 
-    def test_plotty_add_auto_name(self):
-        """Test plotty-add command with auto-generated name."""
+    def test_vfab_add_auto_name(self):
+        """Test vfab-add command with auto-generated name."""
         with tempfile.TemporaryDirectory() as temp_dir:
             svg_file = os.path.join(temp_dir, "test.svg")
             with open(svg_file, "w") as f:
                 f.write(create_test_svg())
 
             result = subprocess.run(
-                ["vpype", "read", svg_file, "plotty-add", "--workspace", temp_dir],
+                ["vpype", "read", svg_file, "vfab-add", "--workspace", temp_dir],
                 capture_output=True,
                 text=True,
             )
@@ -84,8 +84,8 @@ class TestCommands:
             assert result.returncode == 0
             assert "Job 'vpype_job_" in result.stdout
 
-    def test_plotty_add_invalid_preset(self):
-        """Test plotty-add command with invalid preset."""
+    def test_vfab_add_invalid_preset(self):
+        """Test vfab-add command with invalid preset."""
         with tempfile.TemporaryDirectory() as temp_dir:
             svg_file = os.path.join(temp_dir, "test.svg")
             with open(svg_file, "w") as f:
@@ -96,7 +96,7 @@ class TestCommands:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "test_job",
                     "--preset",
@@ -110,8 +110,8 @@ class TestCommands:
 
             assert result.returncode != 0
 
-    def test_plotty_queue_basic(self):
-        """Test basic plotty-queue command."""
+    def test_vfab_queue_basic(self):
+        """Test basic vfab-queue command."""
         with tempfile.TemporaryDirectory() as temp_dir:
             # First create a job
             svg_file = os.path.join(temp_dir, "test.svg")
@@ -124,7 +124,7 @@ class TestCommands:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "test_job",
                     "--workspace",
@@ -138,7 +138,7 @@ class TestCommands:
             result = subprocess.run(
                 [
                     "vpype",
-                    "plotty-queue",
+                    "vfab-queue",
                     "--name",
                     "test_job",
                     "--workspace",
@@ -151,8 +151,8 @@ class TestCommands:
             assert result.returncode == 0
             assert "Job 'test_job' queued" in result.stdout
 
-    def test_plotty_queue_with_priority(self):
-        """Test plotty-queue command with priority."""
+    def test_vfab_queue_with_priority(self):
+        """Test vfab-queue command with priority."""
         with tempfile.TemporaryDirectory() as temp_dir:
             svg_file = os.path.join(temp_dir, "test.svg")
             with open(svg_file, "w") as f:
@@ -164,7 +164,7 @@ class TestCommands:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "test_job",
                     "--workspace",
@@ -178,7 +178,7 @@ class TestCommands:
             result = subprocess.run(
                 [
                     "vpype",
-                    "plotty-queue",
+                    "vfab-queue",
                     "--name",
                     "test_job",
                     "--priority",
@@ -192,8 +192,8 @@ class TestCommands:
 
             assert result.returncode == 0
 
-    def test_plotty_status_specific_job(self):
-        """Test plotty-status command for specific job."""
+    def test_vfab_status_specific_job(self):
+        """Test vfab-status command for specific job."""
         with tempfile.TemporaryDirectory() as temp_dir:
             svg_file = os.path.join(temp_dir, "test.svg")
             with open(svg_file, "w") as f:
@@ -205,7 +205,7 @@ class TestCommands:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "test_job",
                     "--workspace",
@@ -219,7 +219,7 @@ class TestCommands:
             result = subprocess.run(
                 [
                     "vpype",
-                    "plotty-status",
+                    "vfab-status",
                     "--name",
                     "test_job",
                     "--workspace",
@@ -231,55 +231,55 @@ class TestCommands:
 
             assert result.returncode == 0
 
-    def test_plotty_status_all_jobs(self):
-        """Test plotty-status command for all jobs."""
+    def test_vfab_status_all_jobs(self):
+        """Test vfab-status command for all jobs."""
         with tempfile.TemporaryDirectory() as temp_dir:
             result = subprocess.run(
-                ["vpype", "plotty-status", "--workspace", temp_dir],
+                ["vpype", "vfab-status", "--workspace", temp_dir],
                 capture_output=True,
                 text=True,
             )
 
             assert result.returncode == 0
 
-    def test_plotty_list_basic(self):
-        """Test basic plotty-list command."""
+    def test_vfab_list_basic(self):
+        """Test basic vfab-list command."""
         with tempfile.TemporaryDirectory() as temp_dir:
             result = subprocess.run(
-                ["vpype", "plotty-list", "--workspace", temp_dir],
+                ["vpype", "vfab-list", "--workspace", temp_dir],
                 capture_output=True,
                 text=True,
             )
 
             assert result.returncode == 0
 
-    def test_plotty_list_with_state_filter(self):
-        """Test plotty-list command with state filter."""
+    def test_vfab_list_with_state_filter(self):
+        """Test vfab-list command with state filter."""
         with tempfile.TemporaryDirectory() as temp_dir:
             result = subprocess.run(
-                ["vpype", "plotty-list", "--state", "QUEUED", "--workspace", temp_dir],
+                ["vpype", "vfab-list", "--state", "QUEUED", "--workspace", temp_dir],
                 capture_output=True,
                 text=True,
             )
 
             assert result.returncode == 0
 
-    def test_plotty_list_with_limit(self):
-        """Test plotty-list command with limit."""
+    def test_vfab_list_with_limit(self):
+        """Test vfab-list command with limit."""
         with tempfile.TemporaryDirectory() as temp_dir:
             result = subprocess.run(
-                ["vpype", "plotty-list", "--limit", "5", "--workspace", temp_dir],
+                ["vpype", "vfab-list", "--limit", "5", "--workspace", temp_dir],
                 capture_output=True,
                 text=True,
             )
 
             assert result.returncode == 0
 
-    def test_plotty_list_json_format(self):
-        """Test plotty-list command with JSON output."""
+    def test_vfab_list_json_format(self):
+        """Test vfab-list command with JSON output."""
         with tempfile.TemporaryDirectory() as temp_dir:
             result = subprocess.run(
-                ["vpype", "plotty-list", "--format", "json", "--workspace", temp_dir],
+                ["vpype", "vfab-list", "--format", "json", "--workspace", temp_dir],
                 capture_output=True,
                 text=True,
             )
@@ -338,8 +338,8 @@ class TestCommands:
             # Should return default mapping for single layer (layer 0 when no layers)
             assert pen_mapping == {0: 1}
 
-    def test_plotty_queue_with_interactive_pen_mapping(self):
-        """Test plotty-queue command after adding job with interactive pen mapping."""
+    def test_vfab_queue_with_interactive_pen_mapping(self):
+        """Test vfab-queue command after adding job with interactive pen mapping."""
         from unittest.mock import patch
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -359,7 +359,7 @@ class TestCommands:
                         "vpype",
                         "read",
                         svg_file,
-                        "plotty-add",
+                        "vfab-add",
                         "--name",
                         "test_job",
                         "--pen-mapping",
@@ -376,7 +376,7 @@ class TestCommands:
             result = subprocess.run(
                 [
                     "vpype",
-                    "plotty-queue",
+                    "vfab-queue",
                     "--name",
                     "test_job",
                     "--workspace",

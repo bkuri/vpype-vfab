@@ -1,6 +1,6 @@
 # Configurable Plot Generation Script
 
-This script generates configurable-sized plots using vsketch + vpype-plotty + plotty workflow.
+This script generates configurable-sized plots using vsketch + vpype-vfab + plotty workflow.
 
 ## Usage
 
@@ -14,7 +14,7 @@ python examples/generate_vsketch_plots.py
 python examples/generate_vsketch_plots.py \
   -n 5 \
   -s a3 \
-  -W ~/custom-plotty-workspace \
+  -W ~/custom-vfab-workspace \
   --preset hq \
   -C cat,dog,house \
   -O ./my_plots \
@@ -77,13 +77,13 @@ The pattern repeats if you request more than 3 plots, cycling through these type
 ### Core Options
 - `-n, --num-plots`: Number of plots to generate (min: 1, default: 1)
 - `-s, --page-size`: Page size for plots (default: a4, e.g., a3, a4, a5, letter, legal)
-- `-W, --workspace`: ploTTY workspace path (default: `~/plotty-workspace`)
+- `-W, --workspace`: vfab workspace path (default: `~/vfab-workspace`)
 - `-O, --output-dir`: Directory to save SVG files (default: `/tmp/vsketch_plots_<timestamp>`)
 
 ### Plot Configuration
 - `-C, --quickdraw-categories`: QuickDraw categories (comma-separated, default: `cat,dog,house`)
 - `-F, --schotter-fuzziness`: Schotter fuzziness levels (comma-separated, default: `0.5,1.0,1.5`)
-- `--preset`: ploTTY preset - `fast`, `default`, or `hq` (default: `fast`)
+- `--preset`: vfab preset - `fast`, `default`, or `hq` (default: `fast`)
 - `-Q, --queue`: Queue jobs for plotting (default: jobs are created in NEW state)
 
 ### Utility Options
@@ -94,15 +94,15 @@ The pattern repeats if you request more than 3 plots, cycling through these type
 ## Requirements
 
 - `vsketch` - For generative art creation
-- `vpype-plotty` - For ploTTY integration
-- `ploTTY` - For plotter management (optional, script works in standalone mode)
+- `vpype-vfab` - For vfab integration
+- `vfab` - For plotter management (optional, script works in standalone mode)
 
 ## Example Output
 
 ```
 🚀 Starting Plot Generation Workflow
 ==================================================
-📁 Workspace: /home/bk/plotty-workspace
+📁 Workspace: /home/bk/vfab-workspace
 📁 Output directory: /tmp/vsketch_plots_1763232252
 ⚙️  Preset: fast
 📋 Auto-queue: True
@@ -114,8 +114,8 @@ The pattern repeats if you request more than 3 plots, cycling through these type
 🎨 Generating QuickDraw plot: cat
 🔧 Executing vpype command: linemerge linesimplify reloop linesort
 💾 Saved SVG: /tmp/vsketch_plots_1763232252/quickdraw_cat_1.svg
-🔧 Executing ploTTY command: plotty-add --name quickdraw_cat_1 --preset fast --workspace workspace --queue
-✅ Added to ploTTY: quickdraw_cat_1 (preset: fast, queued: True)
+🔧 Executing vfab command: vfab-add --name quickdraw_cat_1 --preset fast --workspace workspace --queue
+✅ Added to vfab: quickdraw_cat_1 (preset: fast, queued: True)
 
 ==================================================
 📊 Generation Summary:
@@ -129,12 +129,12 @@ When using `--verbose`, you'll see the actual commands being executed:
 
 ```
 🔧 Executing vpype command: linemerge linesimplify reloop linesort
-🔧 Executing ploTTY command: plotty-add --name quickdraw_cat_1 --preset fast --workspace /home/bk/plotty-workspace
+🔧 Executing vfab command: vfab-add --name quickdraw_cat_1 --preset fast --workspace /home/bk/vfab-workspace
 ```
 
 ### Job States
 
-The script creates jobs in different ploTTY states:
+The script creates jobs in different vfab states:
 
 - **NEW state** (default): Jobs are created but not queued for plotting
 - **QUEUED state** (with `--queue`): Jobs are automatically queued for plotting
@@ -143,7 +143,7 @@ Use `--queue` when you want to start plotting immediately, or omit it to review 
 
 ## Verification
 
-After running the script, you can check the ploTTY queue with:
+After running the script, you can check the vfab queue with:
 
 ```bash
 vpype plotty-list --format table

@@ -27,7 +27,7 @@ class TestEndToEndWorkflow:
     @skip_if_no_sandbox
     @skip_if_no_vsketch
     def test_complete_schotter_workflow(self, workspace_dir):
-        """Test complete Schotter workflow: vsketch → vpype-plotty → ploTTY."""
+        """Test complete Schotter workflow: vsketch → vpype-plotty → vfab."""
         import vsketch
 
         # Step 1: Generate Schotter pattern with vsketch
@@ -51,13 +51,13 @@ class TestEndToEndWorkflow:
         assert os.path.exists(svg_file)
         assert os.path.getsize(svg_file) > 0
 
-        # Step 4: Add to ploTTY with vpype-plotty
+        # Step 4: Add to vfab with vpype-plotty
         result = subprocess.run(
             [
                 "vpype",
                 "read",
                 svg_file,
-                "plotty-add",
+                "vfab-add",
                 "--name",
                 "schotter_workflow_test",
                 "--preset",
@@ -71,13 +71,13 @@ class TestEndToEndWorkflow:
         )
 
         assert result.returncode == 0
-        assert "Job 'schotter_workflow_test' added to ploTTY" in result.stdout
+        assert "Job 'schotter_workflow_test' added to vfab" in result.stdout
 
         # Step 5: Check job status
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-status",
+                "vfab-status",
                 "--name",
                 "schotter_workflow_test",
                 "--workspace",
@@ -94,7 +94,7 @@ class TestEndToEndWorkflow:
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-list",
+                "vfab-list",
                 "--format",
                 "json",
                 "--workspace",
@@ -139,7 +139,7 @@ class TestEndToEndWorkflow:
             # Step 2: Apply finalize
             quickdraw_sketch.finalize(vsk)
 
-            # Step 3: Save and add to ploTTY
+            # Step 3: Save and add to vfab
             svg_file = os.path.join(workspace_dir, "quickdraw_workflow.svg")
             vsk.save(svg_file)
 
@@ -148,7 +148,7 @@ class TestEndToEndWorkflow:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "quickdraw_workflow_test",
                     "--preset",
@@ -162,7 +162,7 @@ class TestEndToEndWorkflow:
             )
 
             assert result.returncode == 0
-            assert "Job 'quickdraw_workflow_test' added to ploTTY" in result.stdout
+            assert "Job 'quickdraw_workflow_test' added to vfab" in result.stdout
 
     @skip_if_no_sandbox
     def test_batch_processing_workflow(self, workspace_dir):
@@ -186,13 +186,13 @@ class TestEndToEndWorkflow:
             job_name = f"batch_job_{i}"
             job_names.append(job_name)
 
-            # Add to ploTTY
+            # Add to vfab
             result = subprocess.run(
                 [
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     job_name,
                     "--queue",
@@ -204,13 +204,13 @@ class TestEndToEndWorkflow:
             )
 
             assert result.returncode == 0
-            assert f"Job '{job_name}' added to ploTTY" in result.stdout
+            assert f"Job '{job_name}' added to vfab" in result.stdout
 
-        # Verify all jobs are in ploTTY
+        # Verify all jobs are in vfab
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-list",
+                "vfab-list",
                 "--workspace",
                 workspace_dir,
             ],
@@ -252,7 +252,7 @@ class TestEndToEndWorkflow:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     "multilayer_test",
                     "--workspace",
@@ -283,7 +283,7 @@ class TestEndToEndWorkflow:
                 "vpype",
                 "read",
                 svg_file,
-                "plotty-add",
+                "vfab-add",
                 "--name",
                 "invalid_test",
                 "--workspace",
@@ -296,11 +296,11 @@ class TestEndToEndWorkflow:
         # May fail at vpype level, but shouldn't crash
         # The exact behavior depends on vpype's error handling
 
-        # Test with non-existent ploTTY (should handle gracefully by creating fallback)
+        # Test with non-existent vfab (should handle gracefully by creating fallback)
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-status",
+                "vfab-status",
                 "--workspace",
                 "/tmp/definitely_nonexistent_path_12345",
             ],
@@ -337,7 +337,7 @@ class TestEndToEndWorkflow:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     job["name"],
                     "--workspace",
@@ -353,7 +353,7 @@ class TestEndToEndWorkflow:
             result = subprocess.run(
                 [
                     "vpype",
-                    "plotty-queue",
+                    "vfab-queue",
                     "--name",
                     job["name"],
                     "--priority",
@@ -371,7 +371,7 @@ class TestEndToEndWorkflow:
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-list",
+                "vfab-list",
                 "--state",
                 "QUEUED",
                 "--workspace",
@@ -402,7 +402,7 @@ class TestEndToEndWorkflow:
                 "vpype",
                 "read",
                 svg_file,
-                "plotty-add",
+                "vfab-add",
                 "--name",
                 "monitoring_test",
                 "--workspace",
@@ -418,7 +418,7 @@ class TestEndToEndWorkflow:
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-monitor",
+                "vfab-monitor",
                 "--workspace",
                 workspace_dir,
             ],
@@ -433,7 +433,7 @@ class TestEndToEndWorkflow:
     @skip_if_no_sandbox
     def test_configuration_driven_workflow(self, workspace_dir):
         """Test workflow driven by configuration files."""
-        # Create ploTTY configuration
+        # Create vfab configuration
         config_content = """
 websocket:
   enabled: true
@@ -471,7 +471,7 @@ presets:
                 "vpype",
                 "read",
                 svg_file,
-                "plotty-add",
+                "vfab-add",
                 "--name",
                 "config_test",
                 "--preset",
@@ -518,7 +518,7 @@ presets:
                 svg_file,
                 "linemerge",
                 "linesimplify",
-                "plotty-add",
+                "vfab-add",
                 "--name",
                 "performance_test",
                 "--workspace",
@@ -557,7 +557,7 @@ presets:
                     "vpype",
                     "read",
                     svg_file,
-                    "plotty-add",
+                    "vfab-add",
                     "--name",
                     job_name,
                     "--workspace",
@@ -573,7 +573,7 @@ presets:
         result = subprocess.run(
             [
                 "vpype",
-                "plotty-list",
+                "vfab-list",
                 "--workspace",
                 workspace_dir,
             ],
@@ -587,4 +587,4 @@ presets:
 
         # Test cleanup (if supported)
         # This would test job deletion/cleanup functionality
-        # Implementation depends on ploTTY's cleanup features
+        # Implementation depends on vfab's cleanup features

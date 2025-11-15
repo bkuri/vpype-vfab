@@ -1,4 +1,4 @@
-"""Test ploTTY configuration detection."""
+"""Test vfab configuration detection."""
 
 import tempfile
 from pathlib import Path
@@ -12,7 +12,7 @@ from src.exceptions import PlottyConfigError
 
 
 class TestPlottyConfig:
-    """Test ploTTY configuration management."""
+    """Test vfab configuration management."""
 
     def test_find_workspace_with_explicit_path(self):
         """Test workspace detection with explicit path."""

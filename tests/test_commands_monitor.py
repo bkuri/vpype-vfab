@@ -15,7 +15,7 @@ class TestPlottyMonitorCommand:
         self.runner = CliRunner()
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_static_default(self, mock_monitor_class):
+    def test_vfab_monitor_static_default(self, mock_monitor_class):
         """Test static monitor with default parameters."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -27,7 +27,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.static_snapshot.assert_called_once()
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_follow_mode(self, mock_monitor_class):
+    def test_vfab_monitor_follow_mode(self, mock_monitor_class):
         """Test monitor in follow mode."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -39,7 +39,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.start_monitoring.assert_called_once()
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_custom_poll_rate(self, mock_monitor_class):
+    def test_vfab_monitor_custom_poll_rate(self, mock_monitor_class):
         """Test monitor with custom poll rate."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -51,7 +51,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.static_snapshot.assert_called_once()
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_fast_option(self, mock_monitor_class):
+    def test_vfab_monitor_fast_option(self, mock_monitor_class):
         """Test monitor with fast option."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -63,7 +63,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.static_snapshot.assert_called_once()
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_slow_option(self, mock_monitor_class):
+    def test_vfab_monitor_slow_option(self, mock_monitor_class):
         """Test monitor with slow option."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -75,7 +75,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.static_snapshot.assert_called_once()
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_workspace_option(self, mock_monitor_class):
+    def test_vfab_monitor_workspace_option(self, mock_monitor_class):
         """Test monitor with workspace option."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -88,7 +88,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.static_snapshot.assert_called_once()
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_follow_with_workspace(self, mock_monitor_class):
+    def test_vfab_monitor_follow_with_workspace(self, mock_monitor_class):
         """Test monitor follow mode with workspace."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -103,7 +103,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.start_monitoring.assert_called_once()
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_fast_follow(self, mock_monitor_class):
+    def test_vfab_monitor_fast_follow(self, mock_monitor_class):
         """Test monitor fast option with follow mode."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -115,7 +115,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.start_monitoring.assert_called_once()
 
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_slow_follow(self, mock_monitor_class):
+    def test_vfab_monitor_slow_follow(self, mock_monitor_class):
         """Test monitor slow option with follow mode."""
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
@@ -199,7 +199,7 @@ class TestPlottyMonitorCommand:
 
     @patch("src.commands.click.echo")
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_exception_handling(self, mock_monitor_class, mock_echo):
+    def test_vfab_monitor_exception_handling(self, mock_monitor_class, mock_echo):
         """Test exception handling in monitor command."""
         # Simulate exception from SimplePlottyMonitor
         mock_monitor_class.side_effect = Exception("Test error")
@@ -212,7 +212,7 @@ class TestPlottyMonitorCommand:
 
     @patch("src.commands.click.echo")
     @patch("src.monitor.SimplePlottyMonitor")
-    def test_plotty_monitor_monitor_exception(self, mock_monitor_class, mock_echo):
+    def test_vfab_monitor_monitor_exception(self, mock_monitor_class, mock_echo):
         """Test exception from monitor methods."""
         mock_monitor = Mock()
         mock_monitor.static_snapshot.side_effect = Exception("Monitor error")
@@ -230,7 +230,7 @@ class TestPlottyMonitorCommand:
         result = self.runner.invoke(plotty_monitor, ["--help"])
 
         assert result.exit_code == 0
-        assert "Monitor ploTTY jobs" in result.output
+        assert "Monitor vfab jobs" in result.output
         assert "--workspace" in result.output
         assert "--follow" in result.output
         assert "--poll-rate" in result.output

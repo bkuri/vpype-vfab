@@ -338,10 +338,10 @@ class TestMonitorQtFree:
 
                 # Verify header and update_display were called
                 echo_calls = [str(call) for call in mock_click.echo.call_args_list]
-                assert any("ploTTY Job Status" in call_str for call_str in echo_calls)
+                assert any("vfab Job Status" in call_str for call_str in echo_calls)
                 monitor_instance.update_display.assert_called_once()
 
-    def test_plotty_monitor_command_default_options(self):
+    def test_vfab_monitor_command_default_options(self):
         """Test plotty_monitor command with default options."""
         # Test the core logic that the CLI command would execute
         with patch("monitor.PlottyIntegration") as mock_integration_class:
@@ -378,7 +378,7 @@ class TestMonitorQtFree:
                 # Verify monitor was created with default poll rate
                 mock_monitor_class.assert_called_once_with(None, 1.0)
 
-    def test_plotty_monitor_command_follow_mode(self):
+    def test_vfab_monitor_command_follow_mode(self):
         """Test plotty_monitor command with follow mode."""
         with patch("monitor.PlottyIntegration") as mock_integration_class:
             mock_integration_instance = Mock()
@@ -416,7 +416,7 @@ class TestMonitorQtFree:
                 mock_monitor_class.assert_called_once_with("/test/workspace", 1.0)
                 mock_monitor_instance.start_monitoring.assert_called_once()
 
-    def test_plotty_monitor_command_fast_option(self):
+    def test_vfab_monitor_command_fast_option(self):
         """Test plotty_monitor command with fast option."""
         with patch("monitor.PlottyIntegration") as mock_integration_class:
             mock_integration_instance = Mock()
@@ -454,7 +454,7 @@ class TestMonitorQtFree:
                 mock_monitor_class.assert_called_once_with(None, 0.1)
                 mock_monitor_instance.start_monitoring.assert_called_once()
 
-    def test_plotty_monitor_command_slow_option(self):
+    def test_vfab_monitor_command_slow_option(self):
         """Test plotty_monitor command with slow option."""
         with patch("monitor.PlottyIntegration") as mock_integration_class:
             mock_integration_instance = Mock()
@@ -492,7 +492,7 @@ class TestMonitorQtFree:
                 mock_monitor_class.assert_called_once_with(None, 5.0)
                 mock_monitor_instance.start_monitoring.assert_called_once()
 
-    def test_plotty_monitor_command_custom_poll_rate(self):
+    def test_vfab_monitor_command_custom_poll_rate(self):
         """Test plotty_monitor command with custom poll rate."""
         with patch("monitor.PlottyIntegration") as mock_integration_class:
             mock_integration_instance = Mock()
@@ -530,7 +530,7 @@ class TestMonitorQtFree:
                 mock_monitor_class.assert_called_once_with(None, 2.5)
                 mock_monitor_instance.start_monitoring.assert_called_once()
 
-    def test_plotty_monitor_command_poll_rate_validation(self):
+    def test_vfab_monitor_command_poll_rate_validation(self):
         """Test poll rate validation in command."""
         with patch("monitor.PlottyIntegration") as mock_integration_class:
             mock_integration_instance = Mock()
@@ -567,7 +567,7 @@ class TestMonitorQtFree:
                 # Verify poll rate was clamped to minimum
                 mock_monitor_class.assert_called_once_with(None, 0.1)
 
-    def test_plotty_monitor_command_poll_rate_above_maximum(self):
+    def test_vfab_monitor_command_poll_rate_above_maximum(self):
         """Test poll rate above maximum in command."""
         with patch("monitor.PlottyIntegration") as mock_integration_class:
             mock_integration_instance = Mock()

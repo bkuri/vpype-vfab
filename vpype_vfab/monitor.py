@@ -1,4 +1,4 @@
-"""Streamlined ploTTY monitoring with configurable polling rates."""
+"""Streamlined vfab monitoring with configurable polling rates."""
 
 import time
 from typing import Optional, Dict, Any
@@ -6,21 +6,21 @@ from datetime import datetime
 
 import click
 
-from vpype_plotty.database import PlottyIntegration
-from vpype_plotty.utils import JobFormatter
+from vpype_vfab.database import PlottyIntegration
+from vpype_vfab.utils import JobFormatter
 
 
 # StatusFormatter replaced by unified JobFormatter from utils.py
 
 
 class SimplePlottyMonitor:
-    """Simplified ploTTY monitor with configurable polling rates."""
+    """Simplified vfab monitor with configurable polling rates."""
 
     def __init__(self, workspace: Optional[str] = None, poll_rate: float = 1.0):
-        """Initialize ploTTY monitor.
+        """Initialize vfab monitor.
 
         Args:
-            workspace: ploTTY workspace path
+            workspace: vfab workspace path
             poll_rate: Polling rate in seconds (0.1 = 100ms, 10.0 = 10s)
         """
         self.workspace = workspace
@@ -45,7 +45,7 @@ class SimplePlottyMonitor:
         # Header
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         poll_interval = f"{self.poll_rate:.1f}s"
-        click.echo(f"🔍 ploTTY Monitor - {now} (updates every {poll_interval})")
+        click.echo(f"🔍 vfab Monitor - {now} (updates every {poll_interval})")
         click.echo("=" * 60)
 
         try:
@@ -82,7 +82,7 @@ class SimplePlottyMonitor:
 
     def start_monitoring(self) -> None:
         """Start monitoring with configurable polling rate."""
-        click.echo(f"🚀 Starting ploTTY monitor (polling every {self.poll_rate:.1f}s)")
+        click.echo(f"🚀 Starting vfab monitor (polling every {self.poll_rate:.1f}s)")
         click.echo("   Press Ctrl+C to stop monitoring")
         click.echo()
 
@@ -97,14 +97,14 @@ class SimplePlottyMonitor:
 
     def static_snapshot(self) -> None:
         """Show a single static snapshot of current status."""
-        click.echo("📊 ploTTY Job Status")
+        click.echo("📊 vfab Job Status")
         click.echo("=" * 40)
         self.update_display()
 
 
 @click.command()
 @click.option(
-    "--workspace", "-w", help="ploTTY workspace path (default: XDG data directory)"
+    "--workspace", "-w", help="vfab workspace path (default: XDG data directory)"
 )
 @click.option("--follow", "-f", is_flag=True, help="Follow job progress with updates")
 @click.option(
@@ -119,7 +119,7 @@ class SimplePlottyMonitor:
 def plotty_monitor(
     workspace: Optional[str], follow: bool, poll_rate: float, fast: bool, slow: bool
 ) -> None:
-    """Monitor ploTTY jobs with configurable real-time updates.
+    """Monitor vfab jobs with configurable real-time updates.
 
     Examples:
         plotty-monitor --follow                    # 1s updates (default)
