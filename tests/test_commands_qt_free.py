@@ -11,9 +11,17 @@ mock_click.option = lambda *args, **kwargs: lambda f: f
 mock_click.echo = MagicMock()
 mock_click.secho = MagicMock()
 mock_click.style = MagicMock()
-mock_click.prompt = MagicMock()
+mock_click.prompt = MagicMock(return_value=1)
 mock_click.confirm = MagicMock()
 mock_click.Context = MagicMock
+
+
+# Create a proper Abort exception
+class MockAbort(Exception):
+    pass
+
+
+mock_click.Abort = MockAbort
 
 sys.modules["click"] = mock_click
 
@@ -53,9 +61,13 @@ sys.modules["yaml"] = mock_yaml
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "commands", "/home/bk/source/vpype-plotty/vpype_plotty/commands.py"
+    "commands", "/home/bk/source/vpype-plotty/src/commands.py"
 )
+if spec is None:
+    raise ImportError("Could not load commands module")
 commands_module = importlib.util.module_from_spec(spec)
+if spec.loader is None:
+    raise ImportError("Could not get loader for commands module")
 spec.loader.exec_module(commands_module)
 
 # Import the functions we need to test
@@ -70,33 +82,41 @@ plotty_delete = commands_module.plotty_delete
 class TestCommandsExtended:
     """Extended tests for commands module to increase coverage."""
 
+    def setup_method(self):
+        """Reset global mocks before each test."""
+        mock_click.echo.reset_mock()
+        mock_click.prompt.reset_mock()
+        mock_click.prompt.return_value = 1
+
     def test_interactive_pen_mapping_no_layers(self):
         """Test pen mapping with document that has no layers."""
         document = MagicMock()
         document.layers = {}  # No layers
 
-        with patch("click.echo") as mock_echo:
-            result = _interactive_pen_mapping(document, "test_job")
+        # Reset the mock echo call list
+        mock_click.echo.reset_mock()
+        result = _interactive_pen_mapping(document, "test_job")
 
-            # Implementation returns {0: 1} even for no layers (single layer behavior)
-            assert result == {0: 1}
-            # Should echo "Single layer detected - using pen 1" message
-            echo_calls = [str(call) for call in mock_echo.call_args_list]
-            assert any("single layer detected" in call.lower() for call in echo_calls)
+        # Implementation returns {0: 1} even for no layers (single layer behavior)
+        assert result == {0: 1}
+        # Should echo "Single layer detected - using pen 1" message
+        echo_calls = [str(call) for call in mock_click.echo.call_args_list]
+        assert any("single layer detected" in call.lower() for call in echo_calls)
 
     def test_interactive_pen_mapping_single_layer(self):
         """Test pen mapping with single layer (auto-assign pen 1)."""
         document = MagicMock()
         document.layers = {1: MagicMock()}
 
-        with patch("click.echo") as mock_echo:
-            result = _interactive_pen_mapping(document, "test_job")
+        # Reset the mock echo call list
+        mock_click.echo.reset_mock()
+        result = _interactive_pen_mapping(document, "test_job")
 
-            # Implementation returns {0: 1} for single layer, not {layer_id: 1}
-            assert result == {0: 1}
-            # Should echo single layer message
-            echo_calls = [str(call) for call in mock_echo.call_args_list]
-            assert any("single layer" in call.lower() for call in echo_calls)
+        # Implementation returns {0: 1} for single layer, not {layer_id: 1}
+        assert result == {0: 1}
+        # Should echo single layer message
+        echo_calls = [str(call) for call in mock_click.echo.call_args_list]
+        assert any("single layer" in call.lower() for call in echo_calls)
 
     def test_interactive_pen_mapping_multiple_layers(self):
         """Test pen mapping with multiple layers."""
@@ -109,15 +129,19 @@ class TestCommandsExtended:
         document = MagicMock()
         document.layers = {1: layer1, 2: layer2}
 
+        # Reset mocks and configure prompt side effect
+        mock_click.echo.reset_mock()
+        mock_click.prompt.side_effect = [1, 2]
+
         with (
-            patch("click.echo") as mock_echo,
-            patch("click.prompt", side_effect=[1, 2]) as mock_prompt,
+            patch("pathlib.Path.exists", return_value=False),
+            patch("pathlib.Path.mkdir"),
         ):
             result = _interactive_pen_mapping(document, "test_job")
 
             assert result == {1: 1, 2: 2}
             # Should prompt for pen selection
-            assert mock_prompt.call_count == 2
+            assert mock_click.prompt.call_count == 2
 
     def test_interactive_pen_mapping_with_existing_mappings(self):
         """Test pen mapping loads existing mappings from file."""
@@ -152,7 +176,8 @@ class TestCommandsExtended:
             patch("pathlib.Path.exists", return_value=False),
             patch("pathlib.Path.mkdir") as mock_mkdir,
             patch("click.echo"),
-            patch("click.prompt", side_effect=[1, 2]),  # Two prompts for two layers
+            patch("click.prompt", side_effect=[1, 2]),  # One prompt per layer
+            patch("src.commands.Abort", MockAbort),  # Patch the imported Abort
         ):
             result = _interactive_pen_mapping(document, "test_job")
 
@@ -172,6 +197,7 @@ class TestCommandsExtended:
             patch("pathlib.Path.exists", return_value=False),
             patch("click.echo") as mock_echo,
             patch("click.prompt", side_effect=[1, 2]),
+            patch("src.commands.Abort", MockAbort),
         ):
             result = _interactive_pen_mapping(document, "test_job")
 
@@ -195,6 +221,7 @@ class TestCommandsExtended:
             patch("pathlib.Path.exists", return_value=True),
             patch("click.echo") as mock_echo,
             patch("click.prompt", side_effect=[1, 2]),
+            patch("src.commands.Abort", MockAbort),
         ):
             result = _interactive_pen_mapping(document, "test_job")
 
@@ -216,6 +243,7 @@ class TestCommandsExtended:
         with (
             patch("click.echo") as mock_echo,
             patch("click.prompt", side_effect=[1, 2]),
+            patch("src.commands.Abort", MockAbort),
         ):
             result = _interactive_pen_mapping(document, "test_job")
 
@@ -238,6 +266,7 @@ class TestCommandsExtended:
         with (
             patch("click.echo") as mock_echo,
             patch("click.prompt", side_effect=[0, 1, 2]) as mock_prompt,
+            patch("src.commands.Abort", MockAbort),
         ):
             result = _interactive_pen_mapping(document, "test_job")
 

@@ -2,7 +2,7 @@
 
 from unittest.mock import Mock, patch
 
-from vpype_plotty.monitor import SimplePlottyMonitor, plotty_monitor
+from src.monitor import SimplePlottyMonitor, plotty_monitor
 
 
 class TestSimplePlottyMonitor:
@@ -38,7 +38,7 @@ class TestSimplePlottyMonitor:
         monitor = SimplePlottyMonitor(poll_rate=10.0)
         assert monitor.poll_rate == 10.0
 
-    @patch("vpype_plotty.monitor.PlottyIntegration")
+    @patch("src.monitor.PlottyIntegration")
     def test_init_plotty_integration(self, mock_integration):
         """Test that PlottyIntegration is properly initialized."""
         workspace = "/test/workspace"
@@ -158,10 +158,10 @@ class TestSimplePlottyMonitor:
             status = monitor.format_device_status(device)
             assert icon in status
 
-    @patch("vpype_plotty.monitor.PlottyIntegration")
-    @patch("vpype_plotty.monitor.click.clear")
-    @patch("vpype_plotty.monitor.click.echo")
-    @patch("vpype_plotty.monitor.datetime")
+    @patch("src.monitor.PlottyIntegration")
+    @patch("src.monitor.click.clear")
+    @patch("src.monitor.click.echo")
+    @patch("src.monitor.datetime")
     def test_update_display_with_jobs(
         self, mock_datetime, mock_echo, mock_clear, mock_integration
     ):
@@ -203,10 +203,10 @@ class TestSimplePlottyMonitor:
         assert any("test_job_1" in call for call in calls)
         assert any("test_job_2" in call for call in calls)
 
-    @patch("vpype_plotty.monitor.PlottyIntegration")
-    @patch("vpype_plotty.monitor.click.clear")
-    @patch("vpype_plotty.monitor.click.echo")
-    @patch("vpype_plotty.monitor.datetime")
+    @patch("src.monitor.PlottyIntegration")
+    @patch("src.monitor.click.clear")
+    @patch("src.monitor.click.echo")
+    @patch("src.monitor.datetime")
     def test_update_display_no_jobs(
         self, mock_datetime, mock_echo, mock_clear, mock_integration
     ):
@@ -224,9 +224,9 @@ class TestSimplePlottyMonitor:
         # Verify no jobs message
         mock_echo.assert_any_call("\n📋 No jobs found")
 
-    @patch("vpype_plotty.monitor.PlottyIntegration")
-    @patch("vpype_plotty.monitor.click.clear")
-    @patch("vpype_plotty.monitor.click.echo")
+    @patch("src.monitor.PlottyIntegration")
+    @patch("src.monitor.click.clear")
+    @patch("src.monitor.click.echo")
     def test_update_display_state_change_detection(
         self, mock_echo, mock_clear, mock_integration
     ):
@@ -254,9 +254,9 @@ class TestSimplePlottyMonitor:
         calls = [str(call) for call in mock_echo.call_args_list]
         assert any("State changed: running → completed" in call for call in calls)
 
-    @patch("vpype_plotty.monitor.PlottyIntegration")
-    @patch("vpype_plotty.monitor.click.clear")
-    @patch("vpype_plotty.monitor.click.echo")
+    @patch("src.monitor.PlottyIntegration")
+    @patch("src.monitor.click.clear")
+    @patch("src.monitor.click.echo")
     def test_update_display_error_handling(
         self, mock_echo, mock_clear, mock_integration
     ):
@@ -272,7 +272,7 @@ class TestSimplePlottyMonitor:
         calls = [str(call) for call in mock_echo.call_args_list]
         assert any("Error updating display: Database error" in call for call in calls)
 
-    @patch("vpype_plotty.monitor.click.echo")
+    @patch("src.monitor.click.echo")
     def test_static_snapshot(self, mock_echo):
         """Test static snapshot functionality."""
         monitor = SimplePlottyMonitor()
@@ -287,7 +287,7 @@ class TestSimplePlottyMonitor:
             # Verify update_display was called
             mock_update.assert_called_once()
 
-    @patch("vpype_plotty.monitor.click.echo")
+    @patch("src.monitor.click.echo")
     @patch("time.sleep")
     def test_start_monitoring_keyboard_interrupt(self, mock_sleep, mock_echo):
         """Test monitoring interruption with Ctrl+C."""
@@ -306,7 +306,7 @@ class TestSimplePlottyMonitor:
             calls = [str(call) for call in mock_echo.call_args_list]
             assert any("Monitor stopped by user" in call for call in calls)
 
-    @patch("vpype_plotty.monitor.click.echo")
+    @patch("src.monitor.click.echo")
     @patch("time.sleep")
     def test_start_monitoring_general_error(self, mock_sleep, mock_echo):
         """Test monitoring with general error."""
@@ -326,8 +326,8 @@ class TestSimplePlottyMonitor:
 class TestPlottyMonitorCommand:
     """Test the plotty_monitor click command."""
 
-    @patch("vpype_plotty.monitor.SimplePlottyMonitor")
-    @patch("vpype_plotty.monitor.click.echo")
+    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("src.monitor.click.echo")
     def test_plotty_monitor_static_default(self, mock_echo, mock_monitor_class):
         """Test static monitor with default parameters."""
         mock_monitor = Mock()
@@ -338,12 +338,12 @@ class TestPlottyMonitorCommand:
 
         runner = CliRunner()
 
-        with patch("vpype_plotty.monitor.SimplePlottyMonitor"):
+        with patch("src.monitor.SimplePlottyMonitor"):
             result = runner.invoke(plotty_monitor, [])
 
         assert result.exit_code == 0
 
-    @patch("vpype_plotty.monitor.SimplePlottyMonitor")
+    @patch("src.monitor.SimplePlottyMonitor")
     def test_plotty_monitor_follow_mode(self, mock_monitor_class):
         """Test monitor in follow mode."""
         mock_monitor = Mock()
@@ -354,12 +354,12 @@ class TestPlottyMonitorCommand:
 
         runner = CliRunner()
 
-        with patch("vpype_plotty.monitor.SimplePlottyMonitor"):
+        with patch("src.monitor.SimplePlottyMonitor"):
             result = runner.invoke(plotty_monitor, ["--follow"])
 
         assert result.exit_code == 0
 
-    @patch("vpype_plotty.monitor.SimplePlottyMonitor")
+    @patch("src.monitor.SimplePlottyMonitor")
     def test_plotty_monitor_custom_poll_rate(self, mock_monitor_class):
         """Test monitor with custom poll rate."""
         mock_monitor = Mock()
@@ -370,12 +370,12 @@ class TestPlottyMonitorCommand:
 
         runner = CliRunner()
 
-        with patch("vpype_plotty.monitor.SimplePlottyMonitor"):
+        with patch("src.monitor.SimplePlottyMonitor"):
             result = runner.invoke(plotty_monitor, ["--poll-rate", "2.5"])
 
         assert result.exit_code == 0
 
-    @patch("vpype_plotty.monitor.SimplePlottyMonitor")
+    @patch("src.monitor.SimplePlottyMonitor")
     def test_plotty_monitor_fast_option(self, mock_monitor_class):
         """Test monitor with fast option."""
         mock_monitor = Mock()
@@ -386,12 +386,12 @@ class TestPlottyMonitorCommand:
 
         runner = CliRunner()
 
-        with patch("vpype_plotty.monitor.SimplePlottyMonitor"):
+        with patch("src.monitor.SimplePlottyMonitor"):
             result = runner.invoke(plotty_monitor, ["--fast"])
 
         assert result.exit_code == 0
 
-    @patch("vpype_plotty.monitor.SimplePlottyMonitor")
+    @patch("src.monitor.SimplePlottyMonitor")
     def test_plotty_monitor_slow_option(self, mock_monitor_class):
         """Test monitor with slow option."""
         mock_monitor = Mock()
@@ -402,7 +402,7 @@ class TestPlottyMonitorCommand:
 
         runner = CliRunner()
 
-        with patch("vpype_plotty.monitor.SimplePlottyMonitor"):
+        with patch("src.monitor.SimplePlottyMonitor"):
             result = runner.invoke(plotty_monitor, ["--slow"])
 
         assert result.exit_code == 0
@@ -414,7 +414,7 @@ class TestPlottyMonitorCommand:
 
         runner = CliRunner()
 
-        with patch("vpype_plotty.monitor.SimplePlottyMonitor") as mock_class:
+        with patch("src.monitor.SimplePlottyMonitor") as mock_class:
             mock_monitor = Mock()
             mock_class.return_value = mock_monitor
 

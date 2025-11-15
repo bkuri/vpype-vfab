@@ -134,3 +134,6 @@ Thumbs.db
 
 # Project documentation (keep local, exclude from repo)
 IMPLEMENTATION.md
+
+# Testing sandbox - cloned repositories for integration testing
+sandbox/

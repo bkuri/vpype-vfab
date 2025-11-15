@@ -3,7 +3,7 @@
 import time
 import pytest
 
-from vpype_plotty.exceptions import (
+from src.exceptions import (
     PlottyError,
     PlottyNotFoundError,
     PlottyConfigError,

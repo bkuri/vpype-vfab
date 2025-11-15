@@ -1,4 +1,4 @@
-"""Qt-free tests for vpype_plotty.utils module."""
+"""Qt-free tests for src.utils module."""
 
 import pytest
 from unittest.mock import Mock, patch, MagicMock
@@ -18,13 +18,13 @@ sys.modules["vpype"] = Mock()
 sys.modules["vpype.Document"] = Mock()
 
 # Mock the exceptions module
-sys.modules["vpype_plotty.exceptions"] = Mock()
+sys.modules["src.exceptions"] = Mock()
 
 # Now import the utils module
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "utils", "/home/bk/source/vpype-plotty/vpype_plotty/utils.py"
+    "utils", "/home/bk/source/vpype-plotty/src/utils.py"
 )
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)

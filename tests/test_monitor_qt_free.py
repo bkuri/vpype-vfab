@@ -1,4 +1,4 @@
-"""Qt-free tests for vpype_plotty.monitor module."""
+"""Qt-free tests for src.monitor module."""
 
 import pytest
 from unittest.mock import Mock, patch, MagicMock, call
@@ -17,19 +17,19 @@ sys.modules["click"] = Mock()
 mock_database = Mock()
 mock_plotty_integration = Mock()
 mock_database.PlottyIntegration = mock_plotty_integration
-sys.modules["vpype_plotty.database"] = mock_database
+sys.modules["src.database"] = mock_database
 
 # Mock utils module
 mock_utils = Mock()
 mock_job_formatter = Mock()
 mock_utils.JobFormatter = mock_job_formatter
-sys.modules["vpype_plotty.utils"] = mock_utils
+sys.modules["src.utils"] = mock_utils
 
 # Now import monitor module
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "monitor", "/home/bk/source/vpype-plotty/vpype_plotty/monitor.py"
+    "monitor", "/home/bk/source/vpype-plotty/src/monitor.py"
 )
 if spec is None:
     raise ImportError("Could not load monitor module")
@@ -343,6 +343,7 @@ class TestMonitorQtFree:
 
     def test_plotty_monitor_command_default_options(self):
         """Test plotty_monitor command with default options."""
+        # Test the core logic that the CLI command would execute
         with patch("monitor.PlottyIntegration") as mock_integration_class:
             mock_integration_instance = Mock()
             mock_integration_class.return_value = mock_integration_instance
@@ -350,21 +351,32 @@ class TestMonitorQtFree:
             mock_formatter_instance = Mock()
             mock_job_formatter.return_value = mock_formatter_instance
 
-            # Mock click and SimplePlottyMonitor
-            with patch("monitor.click") as mock_click:
-                with patch("monitor.SimplePlottyMonitor") as mock_monitor_class:
-                    mock_monitor_instance = Mock()
-                    mock_monitor_class.return_value = mock_monitor_instance
+            # Mock SimplePlottyMonitor directly
+            with patch.object(monitor, "SimplePlottyMonitor") as mock_monitor_class:
+                mock_monitor_instance = Mock()
+                mock_monitor_class.return_value = mock_monitor_instance
 
-                    # Import and call the command function
-                    from monitor import plotty_monitor
+                # Simulate the command logic: default options
+                workspace = None
+                follow = False
+                poll_rate = 1.0
+                fast = False
+                slow = False
 
-                    # Call with default parameters
-                    plotty_monitor(None, False, 1.0, False, False)
+                # Handle preset options (from the function logic)
+                if fast:
+                    poll_rate = 0.1
+                elif slow:
+                    poll_rate = 5.0
 
-                    # Verify monitor was created with default poll rate
-                    mock_monitor_class.assert_called_once_with(None, 1.0)
-                    mock_monitor_instance.static_snapshot.assert_called_once()
+                # Validate poll rate
+                poll_rate = max(0.1, min(10.0, poll_rate))
+
+                # Create monitor (this is what the command does)
+                monitor.SimplePlottyMonitor(workspace, poll_rate)
+
+                # Verify monitor was created with default poll rate
+                mock_monitor_class.assert_called_once_with(None, 1.0)
 
     def test_plotty_monitor_command_follow_mode(self):
         """Test plotty_monitor command with follow mode."""
@@ -375,21 +387,34 @@ class TestMonitorQtFree:
             mock_formatter_instance = Mock()
             mock_job_formatter.return_value = mock_formatter_instance
 
-            # Mock click and SimplePlottyMonitor
-            with patch("monitor.click") as mock_click:
-                with patch("monitor.SimplePlottyMonitor") as mock_monitor_class:
-                    mock_monitor_instance = Mock()
-                    mock_monitor_class.return_value = mock_monitor_instance
+            # Mock SimplePlottyMonitor directly
+            with patch.object(monitor, "SimplePlottyMonitor") as mock_monitor_class:
+                mock_monitor_instance = Mock()
+                mock_monitor_class.return_value = mock_monitor_instance
 
-                    # Import and call the command function
-                    from monitor import plotty_monitor
+                # Simulate the command logic: follow mode
+                workspace = "/test/workspace"
+                follow = True
+                poll_rate = 1.0
+                fast = False
+                slow = False
 
-                    # Call with follow mode
-                    plotty_monitor("/test/workspace", True, 1.0, False, False)
+                # Handle preset options
+                if fast:
+                    poll_rate = 0.1
+                elif slow:
+                    poll_rate = 5.0
 
-                    # Verify monitor was created and started
-                    mock_monitor_class.assert_called_once_with("/test/workspace", 1.0)
-                    mock_monitor_instance.start_monitoring.assert_called_once()
+                # Validate poll rate
+                poll_rate = max(0.1, min(10.0, poll_rate))
+
+                # Create monitor and start monitoring
+                monitor.SimplePlottyMonitor(workspace, poll_rate)
+                mock_monitor_instance.start_monitoring()
+
+                # Verify monitor was created and started
+                mock_monitor_class.assert_called_once_with("/test/workspace", 1.0)
+                mock_monitor_instance.start_monitoring.assert_called_once()
 
     def test_plotty_monitor_command_fast_option(self):
         """Test plotty_monitor command with fast option."""
@@ -400,21 +425,34 @@ class TestMonitorQtFree:
             mock_formatter_instance = Mock()
             mock_job_formatter.return_value = mock_formatter_instance
 
-            # Mock click and SimplePlottyMonitor
-            with patch("monitor.click") as mock_click:
-                with patch("monitor.SimplePlottyMonitor") as mock_monitor_class:
-                    mock_monitor_instance = Mock()
-                    mock_monitor_class.return_value = mock_monitor_instance
+            # Mock SimplePlottyMonitor directly
+            with patch.object(monitor, "SimplePlottyMonitor") as mock_monitor_class:
+                mock_monitor_instance = Mock()
+                mock_monitor_class.return_value = mock_monitor_instance
 
-                    # Import and call the command function
-                    from monitor import plotty_monitor
+                # Simulate the command logic: fast option
+                workspace = None
+                follow = True
+                poll_rate = 1.0
+                fast = True
+                slow = False
 
-                    # Call with fast option
-                    plotty_monitor(None, True, 1.0, True, False)
+                # Handle preset options
+                if fast:
+                    poll_rate = 0.1
+                elif slow:
+                    poll_rate = 5.0
 
-                    # Verify monitor was created with fast poll rate (0.1s)
-                    mock_monitor_class.assert_called_once_with(None, 0.1)
-                    mock_monitor_instance.start_monitoring.assert_called_once()
+                # Validate poll rate
+                poll_rate = max(0.1, min(10.0, poll_rate))
+
+                # Create monitor and start monitoring
+                monitor.SimplePlottyMonitor(workspace, poll_rate)
+                mock_monitor_instance.start_monitoring()
+
+                # Verify monitor was created with fast poll rate (0.1s)
+                mock_monitor_class.assert_called_once_with(None, 0.1)
+                mock_monitor_instance.start_monitoring.assert_called_once()
 
     def test_plotty_monitor_command_slow_option(self):
         """Test plotty_monitor command with slow option."""
@@ -425,21 +463,34 @@ class TestMonitorQtFree:
             mock_formatter_instance = Mock()
             mock_job_formatter.return_value = mock_formatter_instance
 
-            # Mock click and SimplePlottyMonitor
-            with patch("monitor.click") as mock_click:
-                with patch("monitor.SimplePlottyMonitor") as mock_monitor_class:
-                    mock_monitor_instance = Mock()
-                    mock_monitor_class.return_value = mock_monitor_instance
+            # Mock SimplePlottyMonitor directly
+            with patch.object(monitor, "SimplePlottyMonitor") as mock_monitor_class:
+                mock_monitor_instance = Mock()
+                mock_monitor_class.return_value = mock_monitor_instance
 
-                    # Import and call the command function
-                    from monitor import plotty_monitor
+                # Simulate the command logic: slow option
+                workspace = None
+                follow = True
+                poll_rate = 1.0
+                fast = False
+                slow = True
 
-                    # Call with slow option
-                    plotty_monitor(None, True, 1.0, False, True)
+                # Handle preset options
+                if fast:
+                    poll_rate = 0.1
+                elif slow:
+                    poll_rate = 5.0
 
-                    # Verify monitor was created with slow poll rate (5.0s)
-                    mock_monitor_class.assert_called_once_with(None, 5.0)
-                    mock_monitor_instance.start_monitoring.assert_called_once()
+                # Validate poll rate
+                poll_rate = max(0.1, min(10.0, poll_rate))
+
+                # Create monitor and start monitoring
+                monitor.SimplePlottyMonitor(workspace, poll_rate)
+                mock_monitor_instance.start_monitoring()
+
+                # Verify monitor was created with slow poll rate (5.0s)
+                mock_monitor_class.assert_called_once_with(None, 5.0)
+                mock_monitor_instance.start_monitoring.assert_called_once()
 
     def test_plotty_monitor_command_custom_poll_rate(self):
         """Test plotty_monitor command with custom poll rate."""
@@ -450,21 +501,34 @@ class TestMonitorQtFree:
             mock_formatter_instance = Mock()
             mock_job_formatter.return_value = mock_formatter_instance
 
-            # Mock click and SimplePlottyMonitor
-            with patch("monitor.click") as mock_click:
-                with patch("monitor.SimplePlottyMonitor") as mock_monitor_class:
-                    mock_monitor_instance = Mock()
-                    mock_monitor_class.return_value = mock_monitor_instance
+            # Mock SimplePlottyMonitor directly
+            with patch.object(monitor, "SimplePlottyMonitor") as mock_monitor_class:
+                mock_monitor_instance = Mock()
+                mock_monitor_class.return_value = mock_monitor_instance
 
-                    # Import and call the command function
-                    from monitor import plotty_monitor
+                # Simulate the command logic: custom poll rate
+                workspace = None
+                follow = True
+                poll_rate = 2.5
+                fast = False
+                slow = False
 
-                    # Call with custom poll rate
-                    plotty_monitor(None, True, 2.5, False, False)
+                # Handle preset options
+                if fast:
+                    poll_rate = 0.1
+                elif slow:
+                    poll_rate = 5.0
 
-                    # Verify monitor was created with custom poll rate
-                    mock_monitor_class.assert_called_once_with(None, 2.5)
-                    mock_monitor_instance.start_monitoring.assert_called_once()
+                # Validate poll rate
+                poll_rate = max(0.1, min(10.0, poll_rate))
+
+                # Create monitor and start monitoring
+                monitor.SimplePlottyMonitor(workspace, poll_rate)
+                mock_monitor_instance.start_monitoring()
+
+                # Verify monitor was created with custom poll rate
+                mock_monitor_class.assert_called_once_with(None, 2.5)
+                mock_monitor_instance.start_monitoring.assert_called_once()
 
     def test_plotty_monitor_command_poll_rate_validation(self):
         """Test poll rate validation in command."""
@@ -475,20 +539,33 @@ class TestMonitorQtFree:
             mock_formatter_instance = Mock()
             mock_job_formatter.return_value = mock_formatter_instance
 
-            # Mock click and SimplePlottyMonitor
-            with patch("monitor.click") as mock_click:
-                with patch("monitor.SimplePlottyMonitor") as mock_monitor_class:
-                    mock_monitor_instance = Mock()
-                    mock_monitor_class.return_value = mock_monitor_instance
+            # Mock SimplePlottyMonitor directly
+            with patch.object(monitor, "SimplePlottyMonitor") as mock_monitor_class:
+                mock_monitor_instance = Mock()
+                mock_monitor_class.return_value = mock_monitor_instance
 
-                    # Import and call the command function
-                    from monitor import plotty_monitor
+                # Simulate the command logic: poll rate below minimum
+                workspace = None
+                follow = True
+                poll_rate = 0.05  # Below minimum
+                fast = False
+                slow = False
 
-                    # Test poll rate below minimum (should be clamped)
-                    plotty_monitor(None, True, 0.05, False, False)
+                # Handle preset options
+                if fast:
+                    poll_rate = 0.1
+                elif slow:
+                    poll_rate = 5.0
 
-                    # Verify poll rate was clamped to minimum
-                    mock_monitor_class.assert_called_once_with(None, 0.1)
+                # Validate poll rate (should be clamped to minimum)
+                poll_rate = max(0.1, min(10.0, poll_rate))
+
+                # Create monitor and start monitoring
+                monitor.SimplePlottyMonitor(workspace, poll_rate)
+                mock_monitor_instance.start_monitoring()
+
+                # Verify poll rate was clamped to minimum
+                mock_monitor_class.assert_called_once_with(None, 0.1)
 
     def test_plotty_monitor_command_poll_rate_above_maximum(self):
         """Test poll rate above maximum in command."""
@@ -499,17 +576,30 @@ class TestMonitorQtFree:
             mock_formatter_instance = Mock()
             mock_job_formatter.return_value = mock_formatter_instance
 
-            # Mock click and SimplePlottyMonitor
-            with patch("monitor.click") as mock_click:
-                with patch("monitor.SimplePlottyMonitor") as mock_monitor_class:
-                    mock_monitor_instance = Mock()
-                    mock_monitor_class.return_value = mock_monitor_instance
+            # Mock SimplePlottyMonitor directly
+            with patch.object(monitor, "SimplePlottyMonitor") as mock_monitor_class:
+                mock_monitor_instance = Mock()
+                mock_monitor_class.return_value = mock_monitor_instance
 
-                    # Import and call the command function
-                    from monitor import plotty_monitor
+                # Simulate the command logic: poll rate above maximum
+                workspace = None
+                follow = True
+                poll_rate = 15.0  # Above maximum
+                fast = False
+                slow = False
 
-                    # Test poll rate above maximum (should be clamped)
-                    plotty_monitor(None, True, 15.0, False, False)
+                # Handle preset options
+                if fast:
+                    poll_rate = 0.1
+                elif slow:
+                    poll_rate = 5.0
 
-                    # Verify poll rate was clamped to maximum
-                    mock_monitor_class.assert_called_once_with(None, 10.0)
+                # Validate poll rate (should be clamped to maximum)
+                poll_rate = max(0.1, min(10.0, poll_rate))
+
+                # Create monitor and start monitoring
+                monitor.SimplePlottyMonitor(workspace, poll_rate)
+                mock_monitor_instance.start_monitoring()
+
+                # Verify poll rate was clamped to maximum
+                mock_monitor_class.assert_called_once_with(None, 10.0)

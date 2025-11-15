@@ -6,14 +6,14 @@ from pathlib import Path
 import pytest
 from vpype import Document
 
-from vpype_plotty.utils import (
+from src.utils import (
     format_job_list,
     format_job_status,
     generate_job_name,
     save_document_for_plotty,
     validate_preset,
 )
-from vpype_plotty.exceptions import PlottyJobError
+from src.exceptions import PlottyJobError
 
 
 class TestUtils:

@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 import pytest
 from vpype import Document
 
-from vpype_plotty.exceptions import PlottyJobError
+from src.exceptions import PlottyJobError
 
 
 class TestPlottyIntegration:
@@ -16,7 +16,7 @@ class TestPlottyIntegration:
 
     def test_init_with_workspace_path(self):
         """Test initialization with explicit workspace path."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -25,7 +25,7 @@ class TestPlottyIntegration:
 
     def test_plotty_available_true(self):
         """Test ploTTY availability when installed."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with patch.dict(
             "sys.modules",
@@ -40,7 +40,7 @@ class TestPlottyIntegration:
 
     def test_add_job_with_plotty(self):
         """Test adding job with ploTTY integration."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -67,7 +67,7 @@ class TestPlottyIntegration:
 
     def test_queue_job(self):
         """Test queuing existing job."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -87,7 +87,7 @@ class TestPlottyIntegration:
 
     def test_queue_nonexistent_job(self):
         """Test queuing non-existent job."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -97,7 +97,7 @@ class TestPlottyIntegration:
 
     def test_get_job_status(self):
         """Test getting job status."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -114,7 +114,7 @@ class TestPlottyIntegration:
 
     def test_get_job_status_nonexistent(self):
         """Test getting status of non-existent job."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -124,7 +124,7 @@ class TestPlottyIntegration:
 
     def test_list_jobs(self):
         """Test listing jobs."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -144,7 +144,7 @@ class TestPlottyIntegration:
 
     def test_list_jobs_empty(self):
         """Test listing jobs when none exist."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -154,7 +154,7 @@ class TestPlottyIntegration:
 
     def test_delete_job(self):
         """Test deleting existing job."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -175,7 +175,7 @@ class TestPlottyIntegration:
 
     def test_delete_nonexistent_job(self):
         """Test deleting non-existent job."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -185,7 +185,7 @@ class TestPlottyIntegration:
 
     def test_save_job_metadata(self):
         """Test saving job metadata."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)
@@ -215,7 +215,7 @@ class TestPlottyIntegration:
 
     def test_save_job_metadata_creates_directory(self):
         """Test that _save_job_metadata creates directory if needed."""
-        from vpype_plotty.database import PlottyIntegration
+        from src.database import PlottyIntegration
 
         with tempfile.TemporaryDirectory() as temp_dir:
             plotty = PlottyIntegration(temp_dir)

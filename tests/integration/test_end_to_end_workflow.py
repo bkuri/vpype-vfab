@@ -244,7 +244,7 @@ class TestEndToEndWorkflow:
             f.write(svg_content)
 
         # Mock interactive pen mapping
-        with patch("vpype_plotty.commands._interactive_pen_mapping") as mock_mapping:
+        with patch("src.commands._interactive_pen_mapping") as mock_mapping:
             mock_mapping.return_value = {1: 1, 2: 2, 3: 3}
 
             result = subprocess.run(

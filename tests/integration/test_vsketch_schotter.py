@@ -247,7 +247,7 @@ class TestSchotterIntegration:
         vsk.save(svg_file)
 
         # Test interactive pen mapping (mocked)
-        with patch("vpype_plotty.commands._interactive_pen_mapping") as mock_mapping:
+        with patch("src.commands._interactive_pen_mapping") as mock_mapping:
             mock_mapping.return_value = {1: 1, 2: 2}
 
             result = subprocess.run(

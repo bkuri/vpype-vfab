@@ -295,7 +295,7 @@ class TestCommands:
         import vpype
         from vpype import Document
         from vpype.model import LineCollection
-        from vpype_plotty.commands import _interactive_pen_mapping
+        from src.commands import _interactive_pen_mapping
 
         with tempfile.TemporaryDirectory() as temp_dir:
             # Create a test document with multiple layers
@@ -327,7 +327,7 @@ class TestCommands:
         """Test interactive pen mapping with single layer document."""
         import tempfile
         from vpype import Document
-        from vpype_plotty.commands import _interactive_pen_mapping
+        from src.commands import _interactive_pen_mapping
 
         with tempfile.TemporaryDirectory() as temp_dir:
             # Create a document with single layer
@@ -349,7 +349,7 @@ class TestCommands:
 
             # Mock the interactive pen mapping to avoid user input
             with patch(
-                "vpype_plotty.commands._interactive_pen_mapping"
+                "src.commands._interactive_pen_mapping"
             ) as mock_mapping:
                 mock_mapping.return_value = {1: 1}
 

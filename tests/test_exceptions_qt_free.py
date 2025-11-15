@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "exceptions", "/home/bk/source/vpype-plotty/vpype_plotty/exceptions.py"
+    "exceptions", "/home/bk/source/vpype-plotty/src/exceptions.py"
 )
 exceptions = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(exceptions)

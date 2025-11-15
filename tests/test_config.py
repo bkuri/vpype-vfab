@@ -7,8 +7,8 @@ from unittest.mock import patch
 import pytest
 import yaml
 
-from vpype_plotty.config import PlottyConfig
-from vpype_plotty.exceptions import PlottyConfigError
+from src.config import PlottyConfig
+from src.exceptions import PlottyConfigError
 
 
 class TestPlottyConfig:

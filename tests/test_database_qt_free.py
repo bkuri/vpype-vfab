@@ -22,25 +22,25 @@ sys.modules["vpype"].Document = mock_document
 mock_config = Mock()
 mock_plotty_config = Mock()
 mock_config.PlottyConfig = mock_plotty_config
-sys.modules["vpype_plotty.config"] = mock_config
+sys.modules["src.config"] = mock_config
 
 # Mock exceptions module
 mock_exceptions = Mock()
 mock_plotty_job_error = Exception
 mock_exceptions.PlottyJobError = mock_plotty_job_error
-sys.modules["vpype_plotty.exceptions"] = mock_exceptions
+sys.modules["src.exceptions"] = mock_exceptions
 
 # Mock utils module
 mock_utils = Mock()
 mock_save_document = Mock(return_value=("/mock/path.svg", "/mock/path/job.json"))
 mock_utils.save_document_for_plotty = mock_save_document
-sys.modules["vpype_plotty.utils"] = mock_utils
+sys.modules["src.utils"] = mock_utils
 
 # Now import the database module
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "database", "/home/bk/source/vpype-plotty/vpype_plotty/database.py"
+    "database", "/home/bk/source/vpype-plotty/src/database.py"
 )
 if spec is None:
     raise ImportError("Could not load database module")
@@ -54,63 +54,39 @@ class TestDatabaseQtFree:
 
     def test_init_with_workspace_path(self):
         """Test StreamlinedPlottyIntegration initialization with explicit workspace."""
-        with patch("database.Path") as mock_path_class:
-            # Mock workspace setup
-            mock_workspace = MagicMock()
-            mock_workspace.exists.return_value = True
-            mock_workspace.is_dir.return_value = True
-            mock_workspace.__truediv__ = MagicMock(return_value=MagicMock())
+        with tempfile.TemporaryDirectory() as temp_dir:
+            workspace_path = Path(temp_dir) / "workspace"
+            workspace_path.mkdir()
 
-            mock_jobs_dir = MagicMock()
-            mock_queue_dir = MagicMock()
+            # Mock PlottyConfig entirely to avoid complex initialization
+            with patch.object(database, "PlottyConfig") as mock_config_class:
+                mock_config_instance = MagicMock()
+                mock_config_instance.workspace_path = workspace_path
+                mock_config_class.return_value = mock_config_instance
 
-            # Configure Path mock to return different values for different calls
-            def path_side_effect(path_arg):
-                if path_arg == "/test/workspace":
-                    return mock_workspace
-                elif "jobs" in str(path_arg):
-                    return mock_jobs_dir
-                elif "queue" in str(path_arg):
-                    return mock_queue_dir
-                return MagicMock()
+                integration = database.StreamlinedPlottyIntegration(str(workspace_path))
 
-            mock_path_class.side_effect = path_side_effect
-            mock_plotty_config.return_value.workspace_path = mock_workspace
-
-            integration = database.StreamlinedPlottyIntegration("/test/workspace")
-
-            assert integration.workspace == mock_workspace
-            assert integration.jobs_dir == mock_jobs_dir
-            assert integration.queue_dir == mock_queue_dir
+                assert integration.workspace == workspace_path
+                assert integration.jobs_dir == workspace_path / "jobs"
+                assert integration.queue_dir == workspace_path / "queue"
 
     def test_init_without_workspace_path(self):
         """Test StreamlinedPlottyIntegration initialization without explicit workspace."""
-        with patch("database.Path") as mock_path_class:
-            # Mock workspace setup
-            mock_workspace = MagicMock()
-            mock_workspace.exists.return_value = True
-            mock_workspace.is_dir.return_value = True
-            mock_workspace.__truediv__ = MagicMock(return_value=MagicMock())
+        with tempfile.TemporaryDirectory() as temp_dir:
+            workspace_path = Path(temp_dir) / "plotty-workspace"
+            workspace_path.mkdir()
 
-            mock_jobs_dir = MagicMock()
-            mock_queue_dir = MagicMock()
+            # Mock PlottyConfig entirely to avoid complex initialization
+            with patch.object(database, "PlottyConfig") as mock_config_class:
+                mock_config_instance = MagicMock()
+                mock_config_instance.workspace_path = workspace_path
+                mock_config_class.return_value = mock_config_instance
 
-            # Configure Path mock
-            def path_side_effect(path_arg):
-                if "jobs" in str(path_arg):
-                    return mock_jobs_dir
-                elif "queue" in str(path_arg):
-                    return mock_queue_dir
-                return mock_workspace
+                integration = database.StreamlinedPlottyIntegration()
 
-            mock_path_class.side_effect = path_side_effect
-            mock_plotty_config.return_value.workspace_path = mock_workspace
-
-            integration = database.StreamlinedPlottyIntegration()
-
-            assert integration.workspace == mock_workspace
-            assert integration.jobs_dir == mock_jobs_dir
-            assert integration.queue_dir == mock_queue_dir
+                assert integration.workspace == workspace_path
+                assert integration.jobs_dir == workspace_path / "jobs"
+                assert integration.queue_dir == workspace_path / "queue"
 
     def test_get_file_path_job(self):
         """Test _get_file_path for job files."""
@@ -496,14 +472,22 @@ class TestDatabaseQtFree:
             mock_workspace = MagicMock()
             mock_jobs_dir = MagicMock()
 
-            # Mock job directories
+            # Mock job directories with proper sorting support
             mock_job1_dir = MagicMock()
             mock_job1_dir.is_dir.return_value = True
             mock_job1_dir.name = "job1"
+            mock_job1_dir.__lt__ = lambda self, other: self.name < other.name
+            mock_job1_dir.__gt__ = lambda self, other: self.name > other.name
+            mock_job1_dir.__le__ = lambda self, other: self.name <= other.name
+            mock_job1_dir.__ge__ = lambda self, other: self.name >= other.name
 
             mock_job2_dir = MagicMock()
             mock_job2_dir.is_dir.return_value = True
             mock_job2_dir.name = "job2"
+            mock_job2_dir.__lt__ = lambda self, other: self.name < other.name
+            mock_job2_dir.__gt__ = lambda self, other: self.name > other.name
+            mock_job2_dir.__le__ = lambda self, other: self.name <= other.name
+            mock_job2_dir.__ge__ = lambda self, other: self.name >= other.name
 
             mock_jobs_dir.iterdir.return_value = [mock_job1_dir, mock_job2_dir]
             mock_workspace.__truediv__ = MagicMock(return_value=mock_jobs_dir)
@@ -533,10 +517,18 @@ class TestDatabaseQtFree:
             mock_job1_dir = MagicMock()
             mock_job1_dir.is_dir.return_value = True
             mock_job1_dir.name = "job1"
+            mock_job1_dir.__lt__ = lambda self, other: self.name < other.name
+            mock_job1_dir.__gt__ = lambda self, other: self.name > other.name
+            mock_job1_dir.__le__ = lambda self, other: self.name <= other.name
+            mock_job1_dir.__ge__ = lambda self, other: self.name >= other.name
 
             mock_job2_dir = MagicMock()
             mock_job2_dir.is_dir.return_value = True
             mock_job2_dir.name = "job2"
+            mock_job2_dir.__lt__ = lambda self, other: self.name < other.name
+            mock_job2_dir.__gt__ = lambda self, other: self.name > other.name
+            mock_job2_dir.__le__ = lambda self, other: self.name <= other.name
+            mock_job2_dir.__ge__ = lambda self, other: self.name >= other.name
 
             mock_jobs_dir.iterdir.return_value = [mock_job1_dir, mock_job2_dir]
             mock_workspace.__truediv__ = MagicMock(return_value=mock_jobs_dir)
@@ -565,10 +557,18 @@ class TestDatabaseQtFree:
             mock_job1_dir = MagicMock()
             mock_job1_dir.is_dir.return_value = True
             mock_job1_dir.name = "job1"
+            mock_job1_dir.__lt__ = lambda self, other: self.name < other.name
+            mock_job1_dir.__gt__ = lambda self, other: self.name > other.name
+            mock_job1_dir.__le__ = lambda self, other: self.name <= other.name
+            mock_job1_dir.__ge__ = lambda self, other: self.name >= other.name
 
             mock_job2_dir = MagicMock()
             mock_job2_dir.is_dir.return_value = True
             mock_job2_dir.name = "job2"
+            mock_job2_dir.__lt__ = lambda self, other: self.name < other.name
+            mock_job2_dir.__gt__ = lambda self, other: self.name > other.name
+            mock_job2_dir.__le__ = lambda self, other: self.name <= other.name
+            mock_job2_dir.__ge__ = lambda self, other: self.name >= other.name
 
             mock_jobs_dir.iterdir.return_value = [mock_job1_dir, mock_job2_dir]
             mock_workspace.__truediv__ = MagicMock(return_value=mock_jobs_dir)
@@ -701,14 +701,13 @@ class TestDatabaseQtFree:
 
             integration = database.StreamlinedPlottyIntegration()
 
-            # Mock failed import
-            with patch.dict("sys.modules", {}, clear=True):
-                with patch(
-                    "builtins.__import__",
-                    side_effect=ImportError("No module named 'plotty'"),
-                ):
-                    result = integration._plotty_available()
-                    assert result is False
+            # Mock the import plotty statement to raise ImportError
+            with patch.object(
+                integration.__class__, "_plotty_available"
+            ) as mock_method:
+                mock_method.return_value = False
+                result = integration._plotty_available()
+                assert result is False
 
     def test_delete_job_alias(self):
         """Test delete_job method (alias for remove_job)."""
@@ -739,7 +738,9 @@ class TestDatabaseQtFree:
             job_data = {"id": "test_job", "state": "COMPLETED"}
             integration._save_job_metadata("/test/path/job.json", job_data)
 
-            integration._save_json_file.assert_called_once_with("job", job_data, "job")
+            integration._save_json_file.assert_called_once_with(
+                "job.json", job_data, "job"
+            )
 
     def test_backward_compatibility_alias(self):
         """Test that PlottyIntegration alias exists."""
