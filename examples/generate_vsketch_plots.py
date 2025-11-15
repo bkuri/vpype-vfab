@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate configurable-sized plots using vsketch + vpype-plotty + plotty workflow.
+Generate configurable-sized plots using vsketch + vpype-vfab + vfab workflow.
 
 This script creates multiple generative art pieces using vsketch examples,
 optimizes them for plotting, and adds them to vfab queue automatically.
@@ -67,7 +67,7 @@ def create_output_dir(output_dir: str) -> Path:
     return output_path
 
 
-def finalize_with_plotty(
+def finalize_with_vfab(
     vsk: vsketch.Vsketch,
     job_name: str,
     workspace: str,
@@ -139,7 +139,7 @@ def generate_quickdraw_plot(
         sketch.draw(vsk)
 
         # Finalize and add to vfab
-        finalize_with_plotty(
+        finalize_with_vfab(
             vsk, job_name, workspace, preset, queue, True, output_dir, verbose
         )
 
@@ -182,7 +182,7 @@ def generate_schotter_plot(
         sketch.draw(vsk)
 
         # Finalize and add to vfab
-        finalize_with_plotty(
+        finalize_with_vfab(
             vsk, job_name, workspace, preset, queue, True, output_dir, verbose
         )
 
@@ -224,7 +224,7 @@ def generate_randomflower_plot(
         sketch.draw(vsk)
 
         # Finalize and add to vfab
-        finalize_with_plotty(
+        finalize_with_vfab(
             vsk, job_name, workspace, preset, queue, True, output_dir, verbose
         )
 
@@ -236,14 +236,14 @@ def generate_randomflower_plot(
 
 
 def check_vpype_vfab():
-    """Check if vpype-plotty is available."""
+    """Check if vpype-vfab is available."""
     try:
         result = subprocess.run(["vpype", "--help"], capture_output=True, text=True)
-        if "plotty" in result.stdout:
+        if "vfab" in result.stdout:
             return True
         else:
-            print("❌ vpype-plotty plugin not found in vpype")
-            print("Install with: pipx inject vpype vpype-plotty")
+            print("❌ vpype-vfab plugin not found in vpype")
+            print("Install with: pipx inject vpype vpype-vfab")
             return False
     except FileNotFoundError:
         print("❌ vpype not found. Please install it with: pip install vpype")
@@ -308,7 +308,7 @@ def generate_plot_configs(
 def main():
     """Main function to generate A4 plots."""
     parser = argparse.ArgumentParser(
-        description="Generate configurable-sized plots using vsketch + vpype-plotty + plotty"
+        description="Generate configurable-sized plots using vsketch + vpype-vfab + vfab"
     )
     parser.add_argument(
         "--workspace",
@@ -359,7 +359,7 @@ def main():
         "--verbose",
         "-V",
         action="store_true",
-        help="Show vsketch/vpype/plotty commands being executed",
+        help="Show vsketch/vpype/vfab commands being executed",
     )
     parser.add_argument("--version", "-v", action="version", version="%(prog)s 1.0.0")
 
