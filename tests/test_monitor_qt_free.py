@@ -1,4 +1,4 @@
-"""Qt-free tests for src.monitor module."""
+"""Qt-free tests for vpype_vfab.monitor module."""
 
 import pytest
 from unittest.mock import Mock, patch, MagicMock, call
@@ -17,19 +17,19 @@ sys.modules["click"] = Mock()
 mock_database = Mock()
 mock_plotty_integration = Mock()
 mock_database.PlottyIntegration = mock_plotty_integration
-sys.modules["src.database"] = mock_database
+sys.modules["vpype_vfab.database"] = mock_database
 
 # Mock utils module
 mock_utils = Mock()
 mock_job_formatter = Mock()
 mock_utils.JobFormatter = mock_job_formatter
-sys.modules["src.utils"] = mock_utils
+sys.modules["vpype_vfab.utils"] = mock_utils
 
 # Now import monitor module
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "monitor", "/home/bk/source/vpype-plotty/src/monitor.py"
+    "monitor", "/home/bk/source/vpype-vfab/src/monitor.py"
 )
 if spec is None:
     raise ImportError("Could not load monitor module")

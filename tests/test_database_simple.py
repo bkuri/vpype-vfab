@@ -13,8 +13,8 @@ import sys
 sys.modules["vpype"] = MagicMock()
 sys.modules["vpype.Document"] = MagicMock()
 
-from src.database import StreamlinedPlottyIntegration
-from src.exceptions import PlottyJobError
+from vpype_vfab.database import StreamlinedPlottyIntegration
+from vpype_vfab.exceptions import VfabJobError
 
 
 class TestStreamlinedPlottyIntegration:
@@ -52,8 +52,8 @@ class TestStreamlinedPlottyIntegration:
 
     def test_add_job_success(self, integration, mock_document):
         """Test successful job addition."""
-        # Mock the save_document_for_plotty function
-        with patch("src.database.save_document_for_plotty") as mock_save:
+        # Mock the save_document_for_vfab function
+        with patch("vpype_vfab.database.save_document_for_vfab") as mock_save:
             mock_save.return_value = (Path("/fake/test.svg"), Path("/fake/job.json"))
             # Mock the job.json content
             with open(mock_save.return_value[1], "w") as f:
@@ -71,7 +71,7 @@ class TestStreamlinedPlottyIntegration:
 
     def test_load_job_not_found(self, integration):
         """Test loading non-existent job."""
-        with pytest.raises(PlottyJobError, match="Job 'nonexistent' not found"):
+        with pytest.raises(VfabJobError, match="Job 'nonexistent' not found"):
             integration.load_job("nonexistent")
 
     def test_save_job_success(self, integration):
@@ -106,7 +106,7 @@ class TestStreamlinedPlottyIntegration:
 
     def test_remove_job_not_found(self, integration):
         """Test removing non-existent job."""
-        with pytest.raises(PlottyJobError, match="Job 'nonexistent' not found"):
+        with pytest.raises(VfabJobError, match="Job 'nonexistent' not found"):
             integration.remove_job("nonexistent")
 
     def test_list_jobs_empty(self, integration):
@@ -131,12 +131,12 @@ class TestStreamlinedPlottyIntegration:
 
     def test_get_job_status_not_found(self, integration):
         """Test getting status of non-existent job."""
-        with pytest.raises(PlottyJobError, match="Job 'nonexistent' not found"):
+        with pytest.raises(VfabJobError, match="Job 'nonexistent' not found"):
             integration.get_job_status("nonexistent")
 
     def test_find_job_not_found(self, integration):
         """Test finding non-existent job."""
-        with pytest.raises(PlottyJobError, match="Job 'nonexistent' not found"):
+        with pytest.raises(VfabJobError, match="Job 'nonexistent' not found"):
             integration.find_job("nonexistent")
 
     def test_create_job_metadata(self, integration):
@@ -150,15 +150,15 @@ class TestStreamlinedPlottyIntegration:
         assert metadata["priority"] == 5
         assert metadata["metadata"]["preset"] == "fast"
         assert metadata["metadata"]["version"] == "streamlined"
-        assert metadata["metadata"]["created_by"] == "vpype-plotty"
+        assert metadata["metadata"]["created_by"] == "vpype-vfab"
         assert metadata["metadata"]["source"] == "vpype document"
         assert "created_at" in metadata
 
-    def test_notify_plotty_success(self, integration):
+    def test_notify_vfab_success(self, integration):
         """Test vfab notification success."""
         job_data = {"state": "QUEUED", "name": "test"}
 
-        integration._notify_plotty("test", job_data)
+        integration._notify_vfab("test", job_data)
 
         # Check notification file was created
         notify_file = integration.queue_dir / "test.notify"
@@ -170,17 +170,17 @@ class TestStreamlinedPlottyIntegration:
         assert notification["action"] == "update"
         assert "timestamp" in notification
 
-    def test_notify_plotty_failure(self, integration):
+    def test_notify_vfab_failure(self, integration):
         """Test vfab notification failure (should not raise)."""
         # Mock queue_dir to cause permission error
         integration.queue_dir = Path("/nonexistent/directory")
 
         # This should not raise an exception
-        integration._notify_plotty("test", {"state": "QUEUED"})
+        integration._notify_vfab("test", {"state": "QUEUED"})
 
     def test_backward_compatibility_alias(self):
         """Test that PlottyIntegration alias works."""
-        from src.database import PlottyIntegration
+        from vpype_vfab.database import PlottyIntegration
 
         # Should be the same class
         assert PlottyIntegration is StreamlinedPlottyIntegration
@@ -202,5 +202,5 @@ class TestStreamlinedPlottyIntegration:
 
     def test_queue_job_not_found(self, integration):
         """Test queuing non-existent job."""
-        with pytest.raises(PlottyJobError, match="Job 'nonexistent' not found"):
+        with pytest.raises(VfabJobError, match="Job 'nonexistent' not found"):
             integration.queue_job("nonexistent")

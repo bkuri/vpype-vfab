@@ -7,7 +7,7 @@ from pathlib import Path
 import tempfile
 
 # Set up Qt mocks before any imports
-sys.path.insert(0, "/home/bk/source/vpype-plotty")
+sys.path.insert(0, "/home/bk/source/vpype-vfab")
 from tests.conftest import setup_qt_mocks
 
 setup_qt_mocks()
@@ -21,19 +21,19 @@ def test_comprehensive_coverage():
     cov.start()
 
     # Import all modules after Qt mocks are set up
-    from src import config, database, utils, exceptions, monitor
+    from vpype_vfab import config, database, utils, exceptions, monitor
 
     # Test exceptions module (already covered well)
     error = exceptions.PlottyError("Test error")
     assert str(error) == "Test error"
 
-    not_found = exceptions.PlottyNotFoundError("Not found", "/path")
+    not_found = exceptions.VfabNotFoundError("Not found", "/path")
     assert "Not found" in str(not_found)
 
-    job_error = exceptions.PlottyJobError("Job failed", "job123")
+    job_error = exceptions.VfabJobError("Job failed", "job123")
     assert "Job failed" in str(job_error)
 
-    config_error = exceptions.PlottyConfigError("Config error", "/config/path")
+    config_error = exceptions.VfabConfigError("Config error", "/config/path")
     assert "Config error" in str(config_error)
 
     connection_error = exceptions.PlottyConnectionError("Connection failed", 5.0)
@@ -57,7 +57,7 @@ def test_comprehensive_coverage():
         assert integration.workspace.exists()
 
         # Test plotty availability check
-        available = integration._plotty_available()
+        available = integration._vfab_available()
         assert isinstance(available, bool)
 
     # Test utils module
@@ -68,7 +68,7 @@ def test_comprehensive_coverage():
         doc = Document()
 
         # Test save document function
-        svg_path, job_json_path = utils.save_document_for_plotty(
+        svg_path, job_json_path = utils.save_document_for_vfab(
             doc, job_path, "test_job"
         )
         assert svg_path.exists()
@@ -118,12 +118,12 @@ def test_comprehensive_coverage():
     cov2.load()
 
     modules_to_check = [
-        "src.exceptions",
-        "src.config",
-        "src.database",
-        "src.utils",
-        "src.monitor",
-        "src.commands",
+        "vpype_vfab.exceptions",
+        "vpype_vfab.config",
+        "vpype_vfab.database",
+        "vpype_vfab.utils",
+        "vpype_vfab.monitor",
+        "vpype_vfab.commands",
     ]
 
     total_statements = 0

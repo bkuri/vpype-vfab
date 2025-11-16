@@ -1,5 +1,5 @@
 """
-Direct tests for src.commands module.
+Direct tests for vpype_vfab.commands module.
 
 This test file uses direct import to bypass vpype_cli import issues
 and provides comprehensive coverage of command functionality.
@@ -15,7 +15,7 @@ os.environ["DISPLAY"] = ""
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
 
 # Add project root to path
-sys.path.insert(0, "/home/bk/source/vpype-plotty")
+sys.path.insert(0, "/home/bk/source/vpype-vfab")
 
 # Use built-in assert for assertions
 
@@ -71,7 +71,7 @@ for module_name, mock_module in external_mocks.items():
 spec = None
 try:
     spec = importlib.util.spec_from_file_location(
-        "commands", "/home/bk/source/vpype-plotty/src/commands.py"
+        "commands", "/home/bk/source/vpype-vfab/src/commands.py"
     )
     if spec is not None and spec.loader is not None:
         commands = importlib.util.module_from_spec(spec)

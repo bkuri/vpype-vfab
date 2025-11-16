@@ -16,7 +16,7 @@ except ImportError:
 
     Document = MagicMock()
     LineCollection = MagicMock()
-from src.commands import _interactive_pen_mapping
+from vpype_vfab.commands import _interactive_pen_mapping
 
 
 class TestCommandsUnit:
@@ -157,7 +157,7 @@ class TestCommandsUnit:
 
     def test_generate_job_name_function(self):
         """Test job name generation function."""
-        from src.utils import generate_job_name
+        from vpype_vfab.utils import generate_job_name
         from vpype import Document
 
         # Test basic name generation (requires document parameter)
@@ -175,7 +175,7 @@ class TestCommandsUnit:
 
     def test_validate_preset_function(self):
         """Test preset validation function."""
-        from src.utils import validate_preset
+        from vpype_vfab.utils import validate_preset
         import click
 
         # Test valid presets
@@ -189,7 +189,7 @@ class TestCommandsUnit:
 
     def test_format_job_list_function(self):
         """Test job list formatting function."""
-        from src.utils import format_job_list
+        from vpype_vfab.utils import format_job_list
 
         jobs = [
             {"id": "job1", "name": "Job 1", "state": "QUEUED"},
@@ -212,7 +212,7 @@ class TestCommandsUnit:
 
     def test_format_job_status_function(self):
         """Test job status formatting function."""
-        from src.utils import format_job_status
+        from vpype_vfab.utils import format_job_status
 
         job_data = {
             "id": "test_job",

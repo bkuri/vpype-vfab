@@ -1,4 +1,4 @@
-"""Streamlined vpype commands for vpype-plotty."""
+"""Streamlined vpype commands for vpype-vfab."""
 
 from typing import Optional
 

@@ -1,1 +1,1 @@
-"""Test configuration for vpype-plotty."""
+"""Test configuration for vpype-vfab."""

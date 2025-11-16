@@ -28,8 +28,8 @@ for module in qt_modules:
     sys.modules[module] = MagicMock()
 
 # Now we can safely import vpype modules
-from src.config import PlottyConfig
-from src.exceptions import PlottyConfigError, PlottyNotFoundError
+from vpype_vfab.config import PlottyConfig
+from vpype_vfab.exceptions import VfabConfigError, VfabNotFoundError
 
 
 class TestPlottyConfigEnhanced:
@@ -139,7 +139,7 @@ class TestPlottyConfigEnhanced:
                 with patch("pathlib.Path.mkdir") as mock_mkdir:
                     mock_mkdir.side_effect = OSError("Permission denied")
 
-                    with pytest.raises(PlottyNotFoundError) as exc_info:
+                    with pytest.raises(VfabNotFoundError) as exc_info:
                         PlottyConfig()
 
                     assert "vfab workspace not found" in str(exc_info.value)
@@ -204,7 +204,7 @@ class TestPlottyConfigEnhanced:
                 f.write("invalid: yaml: content:")
 
             config = PlottyConfig(temp_dir)
-            with pytest.raises(PlottyConfigError) as exc_info:
+            with pytest.raises(VfabConfigError) as exc_info:
                 config.load_config()
 
             assert "Failed to load vfab config" in str(exc_info.value)
@@ -218,7 +218,7 @@ class TestPlottyConfigEnhanced:
             config = PlottyConfig(temp_dir)
 
             with patch("builtins.open", side_effect=OSError("Permission denied")):
-                with pytest.raises(PlottyConfigError) as exc_info:
+                with pytest.raises(VfabConfigError) as exc_info:
                     config.load_config()
 
                 assert "Failed to load vfab config" in str(exc_info.value)
@@ -264,7 +264,7 @@ class TestPlottyConfigEnhanced:
             config = PlottyConfig(temp_dir)
 
             with patch("yaml.dump", side_effect=yaml.YAMLError("YAML error")):
-                with pytest.raises(PlottyConfigError) as exc_info:
+                with pytest.raises(VfabConfigError) as exc_info:
                     config.save_config(test_config)
 
                 assert "Failed to save vfab config" in str(exc_info.value)
@@ -277,7 +277,7 @@ class TestPlottyConfigEnhanced:
             config = PlottyConfig(temp_dir)
 
             with patch("builtins.open", side_effect=OSError("Disk full")):
-                with pytest.raises(PlottyConfigError) as exc_info:
+                with pytest.raises(VfabConfigError) as exc_info:
                     config.save_config(test_config)
 
                 assert "Failed to save vfab config" in str(exc_info.value)

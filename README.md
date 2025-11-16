@@ -112,9 +112,9 @@ pip install -e ".[dev]"
 ## 🔧 Requirements
 
 - **Python**: 3.11+
-- **vpype**: 1.14+ (for vpype users)
-- **vsketch**: 1.0+ (for vsketch users)  
-- **vfab**: 1.0+ (optional, for full integration)
+- **vpype**: 1.14+
+- **vsketch**: 1.0+ (if you use vsketch)
+- **vfab**: 1.0+
 
 ## 🏗️ Development
 
@@ -125,7 +125,7 @@ pytest
 
 ### Code Quality
 ```bash
-black . && ruff check . && mypy vpype_plotty/
+black . && ruff check . && mypy vpype_vfab/
 ```
 
 ### Contributing

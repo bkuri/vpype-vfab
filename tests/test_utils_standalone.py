@@ -12,21 +12,21 @@ import pytest
 
 
 # Define the exception locally to avoid imports
-class PlottyJobError(Exception):
+class VfabJobError(Exception):
     """Exception for vfab job-related errors."""
 
     pass
 
 
 # Copy utility functions directly to avoid import chain issues
-def save_document_for_plotty(document, job_path, name):
+def save_document_for_vfab(document, job_path, name):
     """Save vpype document as vfab-compatible job."""
     try:
         # Ensure job directory exists
         job_path.mkdir(parents=True, exist_ok=True)
 
         # Save optimized SVG
-        svg_path = job_path / "src.svg"
+        svg_path = job_path / "vpype_vfab.svg"
         with open(svg_path, "w", encoding="utf-8") as f:
             # Mock vpype.write_svg call
             pass
@@ -39,7 +39,7 @@ def save_document_for_plotty(document, job_path, name):
             "state": "NEW",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "metadata": {
-                "created_by": "vpype-plotty",
+                "created_by": "vpype-vfab",
                 "source": "vpype document",
             },
         }
@@ -52,7 +52,7 @@ def save_document_for_plotty(document, job_path, name):
         return svg_path, job_json_path
 
     except Exception as e:
-        raise PlottyJobError(f"Failed to save document for vfab: {e}")
+        raise VfabJobError(f"Failed to save document for vfab: {e}")
 
 
 def generate_job_name(document, fallback_name=None):
@@ -130,7 +130,7 @@ def format_job_list(jobs, output_format="table"):
 
 
 class TestSaveDocumentForPlotty:
-    """Test cases for save_document_for_plotty function."""
+    """Test cases for save_document_for_vfab function."""
 
     @pytest.fixture
     def temp_dir(self):
@@ -149,12 +149,12 @@ class TestSaveDocumentForPlotty:
         """Test successful document saving."""
         job_path = temp_dir / "test_job"
 
-        svg_path, job_json_path = save_document_for_plotty(
+        svg_path, job_json_path = save_document_for_vfab(
             mock_document, job_path, "test_job"
         )
 
         # Check return paths
-        assert svg_path == job_path / "src.svg"
+        assert svg_path == job_path / "vpype_vfab.svg"
         assert job_json_path == job_path / "job.json"
 
         # Check files exist
@@ -174,7 +174,7 @@ class TestSaveDocumentForPlotty:
         """Test that job directory is created."""
         job_path = temp_dir / "new_job" / "subdir"
 
-        save_document_for_plotty(mock_document, job_path, "test_job")
+        save_document_for_vfab(mock_document, job_path, "test_job")
 
         # Check directory was created
         assert job_path.exists()
@@ -186,9 +186,9 @@ class TestSaveDocumentForPlotty:
 
         with patch("builtins.open", side_effect=OSError("Permission denied")):
             with pytest.raises(
-                PlottyJobError, match="Failed to save document for vfab"
+                VfabJobError, match="Failed to save document for vfab"
             ):
-                save_document_for_plotty(mock_document, job_path, "test_job")
+                save_document_for_vfab(mock_document, job_path, "test_job")
 
 
 class TestGenerateJobName:

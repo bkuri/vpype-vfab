@@ -47,7 +47,7 @@ sys.modules["vpype_cli.show"] = MagicMock()
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "utils", "/home/bk/source/vpype-plotty/src/utils.py"
+    "utils", "/home/bk/source/vpype-vfab/src/utils.py"
 )
 utils_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils_module)
@@ -136,7 +136,7 @@ class TestJobFormatterExtended:
 
     def test_validate_preset_edge_cases(self):
         """Test preset validation with edge cases."""
-        from src.utils import validate_preset
+        from vpype_vfab.utils import validate_preset
 
         # Test with None
         assert validate_preset(None) is False
@@ -149,22 +149,22 @@ class TestJobFormatterExtended:
 
     def test_generate_job_name_edge_cases(self):
         """Test job name generation with edge cases."""
-        from src.utils import generate_job_name
+        from vpype_vfab.utils import generate_job_name
 
         # Test with empty metadata
         result = generate_job_name({})
         assert result.startswith("job_")
         assert len(result) > 4
 
-    def test_save_document_for_plotty_permission_error(self):
+    def test_save_document_for_vfab_permission_error(self):
         """Test document saving with permission error."""
-        from src.utils import save_document_for_plotty
+        from vpype_vfab.utils import save_document_for_vfab
 
         document = MagicMock()
 
         with patch("builtins.open", side_effect=PermissionError("Permission denied")):
             with patch("click.echo") as mock_echo:
-                result = save_document_for_plotty(document, "/restricted/path.svg")
+                result = save_document_for_vfab(document, "/restricted/path.svg")
 
                 assert result is False
                 mock_echo.assert_called()

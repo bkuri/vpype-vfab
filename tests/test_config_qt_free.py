@@ -1,4 +1,4 @@
-"""Qt-free tests for src.config module."""
+"""Qt-free tests for vpype_vfab.config module."""
 
 import pytest
 from unittest.mock import Mock, patch, MagicMock, mock_open
@@ -21,15 +21,15 @@ sys.modules["platformdirs"] = mock_platformdirs
 mock_exceptions = Mock()
 mock_plotty_config_error = Exception
 mock_plotty_not_found_error = Exception
-mock_exceptions.PlottyConfigError = mock_plotty_config_error
-mock_exceptions.PlottyNotFoundError = mock_plotty_not_found_error
-sys.modules["src.exceptions"] = mock_exceptions
+mock_exceptions.VfabConfigError = mock_plotty_config_error
+mock_exceptions.VfabNotFoundError = mock_plotty_not_found_error
+sys.modules["vpype_vfab.exceptions"] = mock_exceptions
 
 # Now import the config module
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "config", "/home/bk/source/vpype-plotty/src/config.py"
+    "config", "/home/bk/source/vpype-vfab/src/config.py"
 )
 if spec is None:
     raise ImportError("Could not load config module")
@@ -206,7 +206,7 @@ class TestConfigQtFree:
             with patch("config.Path.home") as mock_home:
                 mock_home.return_value = temp_path
 
-                with pytest.raises(Exception):  # PlottyNotFoundError
+                with pytest.raises(Exception):  # VfabNotFoundError
                     config.PlottyConfig()
 
     def test_load_config_existing_file(self):
@@ -268,7 +268,7 @@ class TestConfigQtFree:
 
                     pc = config.PlottyConfig()
 
-                    with pytest.raises(Exception):  # PlottyConfigError
+                    with pytest.raises(Exception):  # VfabConfigError
                         pc.load_config()
 
     def test_load_config_os_error(self):
@@ -281,7 +281,7 @@ class TestConfigQtFree:
 
                 pc = config.PlottyConfig()
 
-                with pytest.raises(Exception):  # PlottyConfigError
+                with pytest.raises(Exception):  # VfabConfigError
                     pc.load_config()
 
     def test_save_config_success(self):
@@ -312,7 +312,7 @@ class TestConfigQtFree:
 
             # Mock yaml.dump to raise an exception
             with patch("yaml.dump", side_effect=yaml.YAMLError("YAML error")):
-                with pytest.raises(Exception):  # PlottyConfigError
+                with pytest.raises(Exception):  # VfabConfigError
                     pc.save_config(test_config)
 
     def test_save_config_os_error(self):
@@ -327,7 +327,7 @@ class TestConfigQtFree:
 
                 pc = config.PlottyConfig()
 
-                with pytest.raises(Exception):  # PlottyConfigError
+                with pytest.raises(Exception):  # VfabConfigError
                     pc.save_config(test_config)
 
     def test_default_config_structure(self):

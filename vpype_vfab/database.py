@@ -10,7 +10,7 @@ from vpype import Document
 
 from vpype_vfab.config import VfabConfig
 from vpype_vfab.exceptions import VfabJobError
-from vpype_vfab.utils import save_document_for_plotty
+from vpype_vfab.utils import save_document_for_vfab
 
 
 class StreamlinedVfabIntegration:
@@ -122,7 +122,7 @@ class StreamlinedVfabIntegration:
             job_data = self._create_job_metadata(name, preset, paper, priority)
 
             # Save job files using existing utility
-            svg_path, job_json_path = save_document_for_plotty(
+            svg_path, job_json_path = save_document_for_vfab(
                 document, self.jobs_dir / name, name
             )
 
@@ -132,7 +132,7 @@ class StreamlinedVfabIntegration:
             self._save_json_file(name, job_data, "job")
 
             # Notify vfab via simple file system queue
-            self._notify_plotty(name, job_data)
+            self._notify_vfab(name, job_data)
 
             return name
 
@@ -161,7 +161,7 @@ class StreamlinedVfabIntegration:
             self.save_job(name, job_data)
 
             # Notify vfab
-            self._notify_plotty(name, job_data)
+            self._notify_vfab(name, job_data)
 
         except Exception as e:
             raise VfabJobError(f"Failed to queue job '{name}': {e}")
@@ -314,14 +314,14 @@ class StreamlinedVfabIntegration:
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat(),
             "metadata": {
-                "created_by": "vpype-plotty",
+                "created_by": "vpype-vfab",
                 "source": "vpype document",
                 "preset": preset,
                 "version": "streamlined",
             },
         }
 
-    def _notify_plotty(self, name: str, job_data: Dict[str, Any]) -> None:
+    def _notify_vfab(self, name: str, job_data: Dict[str, Any]) -> None:
         """Notify vfab about job changes via simple file system queue.
 
         Args:
@@ -342,7 +342,7 @@ class StreamlinedVfabIntegration:
             # Queue notification is optional - don't fail if it doesn't work
             pass
 
-    def _plotty_available(self) -> bool:
+    def _vfab_available(self) -> bool:
         """Check if vfab is available (for backward compatibility)."""
         try:
             import plotty  # noqa: F401

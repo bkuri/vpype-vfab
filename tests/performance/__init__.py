@@ -1,1 +1,1 @@
-"""Performance tests for vpype-plotty."""
+"""Performance tests for vpype-vfab."""

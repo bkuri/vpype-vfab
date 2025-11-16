@@ -8,12 +8,12 @@ from unittest.mock import Mock, patch
 import pytest
 
 # Set up Qt mocks before any imports
-sys.path.insert(0, "/home/bk/source/vpype-plotty")
+sys.path.insert(0, "/home/bk/source/vpype-vfab")
 from tests.conftest import setup_qt_mocks
 
 setup_qt_mocks()
 
-from src.database import PlottyIntegration
+from vpype_vfab.database import PlottyIntegration
 
 
 class TestPlottyIntegrationEnhanced:
@@ -42,7 +42,7 @@ class TestPlottyIntegrationEnhanced:
 
     def test_init_with_none_workspace(self):
         """Test initialization with None workspace (uses default)."""
-        with patch("src.config.PlottyConfig") as mock_config:
+        with patch("vpype_vfab.config.PlottyConfig") as mock_config:
             mock_workspace = Path("/mock/workspace")
             mock_config.return_value.workspace_path = mock_workspace
 
@@ -61,14 +61,14 @@ class TestPlottyIntegrationEnhanced:
             },
         ):
             plotty = PlottyIntegration()
-            assert plotty._plotty_available() is True
+            assert plotty._vfab_available() is True
 
     def test_vfab_available_false(self):
         """Test vfab availability when not installed."""
         with patch.dict("sys.modules", {}, clear=True):
             with patch("builtins.__import__", side_effect=ImportError("No module")):
                 plotty = PlottyIntegration()
-                assert plotty._plotty_available() is False
+                assert plotty._vfab_available() is False
 
     def test_add_job_basic(self):
         """Test basic job addition."""
@@ -83,7 +83,7 @@ class TestPlottyIntegrationEnhanced:
         # Verify job directory was created
         job_dir = self.plotty.jobs_dir / job_id
         assert job_dir.exists()
-        assert (job_dir / "src.svg").exists()
+        assert (job_dir / "vpype_vfab.svg").exists()
         assert (job_dir / "job.json").exists()
 
     def test_add_job_with_pen_mapping(self):
@@ -384,7 +384,7 @@ class TestPlottyIntegrationEnhanced:
         # This should be handled by the validate_preset function in utils
         # but we test the integration here
         with patch(
-            "src.utils.validate_preset",
+            "vpype_vfab.utils.validate_preset",
             side_effect=ValueError("Invalid preset"),
         ):
             with pytest.raises(ValueError):

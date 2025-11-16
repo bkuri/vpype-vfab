@@ -1,4 +1,4 @@
-"""Custom exceptions for vpype-plotty."""
+"""Custom exceptions for vpype-vfab."""
 
 import time
 from typing import Optional, Any, Callable
@@ -6,7 +6,7 @@ from functools import wraps
 
 
 class PlottyError(Exception):
-    """Base exception for vpype-plotty."""
+    """Base exception for vpype-vfab."""
 
     def __init__(
         self,

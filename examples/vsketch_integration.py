@@ -4,7 +4,7 @@ import vsketch
 
 
 class MySketch(vsketch.SketchClass):
-    """Example sketch demonstrating vpype-plotty integration."""
+    """Example sketch demonstrating vpype-vfab integration."""
 
     def draw(self, vsk: vsketch.Vsketch) -> None:
         """Draw the sketch."""

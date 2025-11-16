@@ -6,14 +6,14 @@ from pathlib import Path
 import pytest
 from vpype import Document
 
-from src.utils import (
+from vpype_vfab.utils import (
     format_job_list,
     format_job_status,
     generate_job_name,
-    save_document_for_plotty,
+    save_document_for_vfab,
     validate_preset,
 )
-from src.exceptions import PlottyJobError
+from vpype_vfab.exceptions import VfabJobError
 
 
 class TestUtils:
@@ -50,29 +50,29 @@ class TestUtils:
         with pytest.raises(Exception):  # click.BadParameter
             validate_preset("invalid")
 
-    def test_save_document_for_plotty(self):
+    def test_save_document_for_vfab(self):
         """Test saving document for vfab."""
         with tempfile.TemporaryDirectory() as temp_dir:
             document = Document()
             job_path = Path(temp_dir) / "test_job"
 
-            svg_path, job_json_path = save_document_for_plotty(
+            svg_path, job_json_path = save_document_for_vfab(
                 document, job_path, "test_job"
             )
 
             assert svg_path.exists()
             assert job_json_path.exists()
-            assert svg_path.name == "src.svg"
+            assert svg_path.name == "vpype_vfab.svg"
             assert job_json_path.name == "job.json"
 
-    def test_save_document_for_plotty_error(self):
+    def test_save_document_for_vfab_error(self):
         """Test error handling when saving document."""
         document = Document()
         # Use invalid path that should cause an error
         invalid_path = Path("/invalid/path/that/does/not/exist")
 
-        with pytest.raises(PlottyJobError):
-            save_document_for_plotty(document, invalid_path, "test_job")
+        with pytest.raises(VfabJobError):
+            save_document_for_vfab(document, invalid_path, "test_job")
 
     def test_format_job_status_table(self):
         """Test formatting job status as table."""

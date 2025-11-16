@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 from click.testing import CliRunner
 
-from src.commands import plotty_monitor
+from vpype_vfab.commands import plotty_monitor
 
 
 class TestPlottyMonitorCommand:
@@ -14,7 +14,7 @@ class TestPlottyMonitorCommand:
         """Set up test environment."""
         self.runner = CliRunner()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_static_default(self, mock_monitor_class):
         """Test static monitor with default parameters."""
         mock_monitor = Mock()
@@ -26,7 +26,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 1.0)
         mock_monitor.static_snapshot.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_follow_mode(self, mock_monitor_class):
         """Test monitor in follow mode."""
         mock_monitor = Mock()
@@ -38,7 +38,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 1.0)
         mock_monitor.start_monitoring.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_custom_poll_rate(self, mock_monitor_class):
         """Test monitor with custom poll rate."""
         mock_monitor = Mock()
@@ -50,7 +50,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 2.5)
         mock_monitor.static_snapshot.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_fast_option(self, mock_monitor_class):
         """Test monitor with fast option."""
         mock_monitor = Mock()
@@ -62,7 +62,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 0.1)
         mock_monitor.static_snapshot.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_slow_option(self, mock_monitor_class):
         """Test monitor with slow option."""
         mock_monitor = Mock()
@@ -74,7 +74,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 5.0)
         mock_monitor.static_snapshot.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_workspace_option(self, mock_monitor_class):
         """Test monitor with workspace option."""
         mock_monitor = Mock()
@@ -87,7 +87,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(workspace, 1.0)
         mock_monitor.static_snapshot.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_follow_with_workspace(self, mock_monitor_class):
         """Test monitor follow mode with workspace."""
         mock_monitor = Mock()
@@ -102,7 +102,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(workspace, 1.0)
         mock_monitor.start_monitoring.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_fast_follow(self, mock_monitor_class):
         """Test monitor fast option with follow mode."""
         mock_monitor = Mock()
@@ -114,7 +114,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 0.1)
         mock_monitor.start_monitoring.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_slow_follow(self, mock_monitor_class):
         """Test monitor slow option with follow mode."""
         mock_monitor = Mock()
@@ -126,7 +126,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 5.0)
         mock_monitor.start_monitoring.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_poll_rate_validation_minimum(self, mock_monitor_class):
         """Test poll rate validation at minimum boundary."""
         mock_monitor = Mock()
@@ -142,7 +142,7 @@ class TestPlottyMonitorCommand:
         )  # Command passes raw value
         mock_monitor.static_snapshot.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_poll_rate_validation_maximum(self, mock_monitor_class):
         """Test poll rate validation at maximum boundary."""
         mock_monitor = Mock()
@@ -158,7 +158,7 @@ class TestPlottyMonitorCommand:
         )  # Command passes raw value
         mock_monitor.static_snapshot.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_poll_rate_priority_fast_overrides_custom(self, mock_monitor_class):
         """Test that --fast option overrides custom poll rate."""
         mock_monitor = Mock()
@@ -171,7 +171,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 0.1)
         mock_monitor.static_snapshot.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_poll_rate_priority_slow_overrides_custom(self, mock_monitor_class):
         """Test that --slow option overrides custom poll rate."""
         mock_monitor = Mock()
@@ -184,7 +184,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 5.0)
         mock_monitor.static_snapshot.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_poll_rate_priority_fast_overrides_slow(self, mock_monitor_class):
         """Test that --fast option overrides --slow option."""
         mock_monitor = Mock()
@@ -197,8 +197,8 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 0.1)
         mock_monitor.static_snapshot.assert_called_once()
 
-    @patch("src.commands.click.echo")
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.commands.click.echo")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_exception_handling(self, mock_monitor_class, mock_echo):
         """Test exception handling in monitor command."""
         # Simulate exception from SimplePlottyMonitor
@@ -210,8 +210,8 @@ class TestPlottyMonitorCommand:
         # Verify error was echoed
         mock_echo.assert_called_with("✗ Error: Test error", err=True)
 
-    @patch("src.commands.click.echo")
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.commands.click.echo")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_vfab_monitor_monitor_exception(self, mock_monitor_class, mock_echo):
         """Test exception from monitor methods."""
         mock_monitor = Mock()
@@ -224,7 +224,7 @@ class TestPlottyMonitorCommand:
         # Verify error was echoed
         mock_echo.assert_called_with("✗ Error: Monitor error", err=True)
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_command_help_message(self, mock_monitor_class):
         """Test that command help is displayed correctly."""
         result = self.runner.invoke(plotty_monitor, ["--help"])
@@ -237,7 +237,7 @@ class TestPlottyMonitorCommand:
         assert "--fast" in result.output
         assert "--slow" in result.output
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_all_options_combination(self, mock_monitor_class):
         """Test all options used together."""
         mock_monitor = Mock()
@@ -253,7 +253,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(workspace, 0.1)
         mock_monitor.start_monitoring.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_document_return_value(self, mock_monitor_class):
         """Test that document is returned from command."""
         mock_monitor = Mock()
@@ -261,7 +261,7 @@ class TestPlottyMonitorCommand:
 
         # Mock a document
         with patch(
-            "src.commands.vpype_cli.global_processor"
+            "vpype_vfab.commands.vpype_cli.global_processor"
         ) as mock_processor:
             mock_doc = Mock()
             mock_processor.return_value = lambda f: f(mock_doc)

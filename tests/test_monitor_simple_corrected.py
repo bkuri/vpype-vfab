@@ -39,7 +39,7 @@ sys.modules["vpype_cli.show"] = MagicMock()
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "monitor", "/home/bk/source/vpype-plotty/src/monitor.py"
+    "monitor", "/home/bk/source/vpype-vfab/src/monitor.py"
 )
 monitor_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(monitor_module)

@@ -26,16 +26,16 @@ def run_command(cmd, description):
 
 
 def main():
-    """Demonstrate standalone vpype-plotty usage."""
-    print("vpype-plotty Standalone Usage Examples")
+    """Demonstrate standalone vpype-vfab usage."""
+    print("vpype-vfab Standalone Usage Examples")
     print("=====================================")
 
-    # Check if vpype-plotty is available
+    # Check if vpype-vfab is available
     if not run_command(
-        "vpype --help | grep plotty", "Checking vpype-plotty installation"
+        "vpype --help | grep plotty", "Checking vpype-vfab installation"
     ):
-        print("\n❌ vpype-plotty not found. Please install it first:")
-        print("pipx inject vpype vpype-plotty")
+        print("\n❌ vpype-vfab not found. Please install it first:")
+        print("pipx inject vpype vpype-vfab")
         sys.exit(1)
 
     # Example 1: Create simple generative art and add to vfab

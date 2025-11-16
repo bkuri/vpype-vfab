@@ -1,4 +1,4 @@
-"""Qt-free tests for src.utils module."""
+"""Qt-free tests for vpype_vfab.utils module."""
 
 import pytest
 from unittest.mock import Mock, patch, MagicMock
@@ -18,13 +18,13 @@ sys.modules["vpype"] = Mock()
 sys.modules["vpype.Document"] = Mock()
 
 # Mock the exceptions module
-sys.modules["src.exceptions"] = Mock()
+sys.modules["vpype_vfab.exceptions"] = Mock()
 
 # Now import the utils module
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "utils", "/home/bk/source/vpype-plotty/src/utils.py"
+    "utils", "/home/bk/source/vpype-vfab/src/utils.py"
 )
 utils = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(utils)
@@ -206,7 +206,7 @@ class TestUtilsQtFree:
         assert "❓" in result  # Unknown status icon
 
     @patch("vpype.write_svg")
-    def test_save_document_for_plotty_success(self, mock_write_svg):
+    def test_save_document_for_vfab_success(self, mock_write_svg):
         """Test successful document saving."""
         # Mock document
         document = Mock()
@@ -219,16 +219,16 @@ class TestUtilsQtFree:
             with patch("json.dump") as mock_json_dump:
                 mock_open.return_value.__enter__.return_value = Mock()
 
-                svg_path, job_json_path = utils.save_document_for_plotty(
+                svg_path, job_json_path = utils.save_document_for_vfab(
                     document, job_path, name
                 )
 
-                assert svg_path.name == "src.svg"
+                assert svg_path.name == "vpype_vfab.svg"
                 assert job_json_path.name == "job.json"
                 mock_write_svg.assert_called_once()
 
     @patch("vpype.write_svg")
-    def test_save_document_for_plotty_with_metadata(self, mock_write_svg):
+    def test_save_document_for_vfab_with_metadata(self, mock_write_svg):
         """Test document saving with metadata."""
         document = Mock()
         document.metadata = {"name": "custom_name", "title": "Custom Title"}
@@ -240,7 +240,7 @@ class TestUtilsQtFree:
             with patch("json.dump") as mock_json_dump:
                 mock_open.return_value.__enter__.return_value = Mock()
 
-                svg_path, job_json_path = utils.save_document_for_plotty(
+                svg_path, job_json_path = utils.save_document_for_vfab(
                     document, job_path, name
                 )
 
@@ -251,7 +251,7 @@ class TestUtilsQtFree:
                 assert job_data["paper"] == "A4"
                 assert job_data["state"] == "NEW"
 
-    def test_save_document_for_plotty_error(self):
+    def test_save_document_for_vfab_error(self):
         """Test document saving error handling."""
         document = Mock()
         job_path = Path("/invalid/path")
@@ -259,7 +259,7 @@ class TestUtilsQtFree:
 
         # Since we mocked the exceptions module, we'll test that an exception is raised
         with pytest.raises(Exception):
-            utils.save_document_for_plotty(document, job_path, name)
+            utils.save_document_for_vfab(document, job_path, name)
 
     def test_generate_job_name_from_metadata(self):
         """Test job name generation from document metadata."""

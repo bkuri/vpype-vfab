@@ -3,11 +3,11 @@
 import time
 import pytest
 
-from src.exceptions import (
+from vpype_vfab.exceptions import (
     PlottyError,
-    PlottyNotFoundError,
-    PlottyConfigError,
-    PlottyJobError,
+    VfabNotFoundError,
+    VfabConfigError,
+    VfabJobError,
     PlottyConnectionError,
     PlottyTimeoutError,
     PlottyResourceError,
@@ -40,21 +40,21 @@ class TestSpecificExceptions:
     """Test specific exception classes."""
 
     def test_vfab_not_found_error(self):
-        error = PlottyNotFoundError("vfab not found", "/path/to/plotty")
+        error = VfabNotFoundError("vfab not found", "/path/to/plotty")
         assert "vfab not found" in str(error)
         assert "/path/to/plotty" in error.recovery_hint
 
     def test_vfab_not_found_error_no_path(self):
-        error = PlottyNotFoundError("vfab not found")
+        error = VfabNotFoundError("vfab not found")
         assert "Verify vfab is properly installed" in error.recovery_hint
 
     def test_vfab_config_error(self):
-        error = PlottyConfigError("Invalid config", "/path/to/config")
+        error = VfabConfigError("Invalid config", "/path/to/config")
         assert "Invalid config" in str(error)
         assert "/path/to/config" in error.recovery_hint
 
     def test_vfab_job_error(self):
-        error = PlottyJobError("Job failed", "job123")
+        error = VfabJobError("Job failed", "job123")
         assert "Job failed" in str(error)
         assert "job123" in error.recovery_hint
 
@@ -132,9 +132,9 @@ class TestRetryDecorator:
     def test_no_retry_on_non_transient_exception(self):
         @retry_on_failure(max_retries=3)
         def raising_config_error():
-            raise PlottyConfigError("Bad config")
+            raise VfabConfigError("Bad config")
 
-        with pytest.raises(PlottyConfigError):
+        with pytest.raises(VfabConfigError):
             raising_config_error()
 
 
@@ -155,7 +155,7 @@ class TestErrorHandlingDecorator:
         def file_not_found():
             raise FileNotFoundError("No such file")
 
-        with pytest.raises(PlottyNotFoundError) as exc_info:
+        with pytest.raises(VfabNotFoundError) as exc_info:
             file_not_found()
         assert "Required file or directory not found" in str(exc_info.value)
 
@@ -164,7 +164,7 @@ class TestErrorHandlingDecorator:
         def permission_error():
             raise PermissionError("Access denied")
 
-        with pytest.raises(PlottyConfigError) as exc_info:
+        with pytest.raises(VfabConfigError) as exc_info:
             permission_error()
         assert "Permission denied" in str(exc_info.value)
 
@@ -220,6 +220,6 @@ class TestIntegration:
                 raise ConnectionError("Connection failed")
             raise FileNotFoundError("File not found")
 
-        with pytest.raises(PlottyNotFoundError):
+        with pytest.raises(VfabNotFoundError):
             connection_then_file_error()
         assert call_count == 2

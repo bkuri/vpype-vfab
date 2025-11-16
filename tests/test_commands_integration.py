@@ -1,4 +1,4 @@
-"""Integration tests for vpype-plotty commands."""
+"""Integration tests for vpype-vfab commands."""
 
 import tempfile
 import os

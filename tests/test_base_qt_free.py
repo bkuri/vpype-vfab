@@ -10,13 +10,13 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 # Mock the database module before importing base
-sys.modules["src.database"] = Mock()
+sys.modules["vpype_vfab.database"] = Mock()
 
 # Now import the base module
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "base", "/home/bk/source/vpype-plotty/src/base.py"
+    "base", "/home/bk/source/vpype-vfab/src/base.py"
 )
 base = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(base)

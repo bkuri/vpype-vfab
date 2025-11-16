@@ -32,13 +32,13 @@ class MockPlottyIntegration:
 
 
 mock_database.PlottyIntegration = MockPlottyIntegration
-sys.modules["src.database"] = mock_database
+sys.modules["vpype_vfab.database"] = mock_database
 
 # Import monitor module directly using importlib
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "src.monitor", "/home/bk/source/vpype-plotty/src/monitor.py"
+    "vpype_vfab.monitor", "/home/bk/source/vpype-vfab/src/monitor.py"
 )
 monitor_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(monitor_module)
@@ -339,7 +339,7 @@ class TestSimplePlottyMonitor:
 class TestPlottyMonitorCommand:
     """Test cases for plotty_monitor command function."""
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_command_default_static(self, mock_monitor_class):
         """Test command with default static behavior."""
         mock_monitor = MagicMock()
@@ -352,7 +352,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.static_snapshot.assert_called_once()
         mock_monitor.start_monitoring.assert_not_called()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_command_follow_default_rate(self, mock_monitor_class):
         """Test command with follow and default rate."""
         mock_monitor = MagicMock()
@@ -364,7 +364,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.static_snapshot.assert_not_called()
         mock_monitor.start_monitoring.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_command_custom_poll_rate(self, mock_monitor_class):
         """Test command with custom poll rate."""
         mock_monitor = MagicMock()
@@ -375,7 +375,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with("/workspace", 2.5)
         mock_monitor.start_monitoring.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_command_fast_preset(self, mock_monitor_class):
         """Test command with fast preset."""
         mock_monitor = MagicMock()
@@ -386,7 +386,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 0.1)  # Fast preset rate
         mock_monitor.start_monitoring.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_command_slow_preset(self, mock_monitor_class):
         """Test command with slow preset."""
         mock_monitor = MagicMock()
@@ -397,7 +397,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.assert_called_once_with(None, 5.0)  # Slow preset rate
         mock_monitor.start_monitoring.assert_called_once()
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_command_poll_rate_clamping(self, mock_monitor_class):
         """Test command poll rate clamping."""
         mock_monitor = MagicMock()
@@ -414,7 +414,7 @@ class TestPlottyMonitorCommand:
         plotty_monitor(None, True, 15.0, False, False)
         mock_monitor_class.assert_called_with(None, 10.0)
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_command_fast_overrides_slow(self, mock_monitor_class):
         """Test that fast preset overrides slow preset."""
         mock_monitor = MagicMock()
@@ -425,7 +425,7 @@ class TestPlottyMonitorCommand:
         # Fast should take precedence
         mock_monitor_class.assert_called_once_with(None, 0.1)
 
-    @patch("src.monitor.SimplePlottyMonitor")
+    @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_command_custom_overrides_presets(self, mock_monitor_class):
         """Test that custom rate overrides presets."""
         mock_monitor = MagicMock()

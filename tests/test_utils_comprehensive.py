@@ -1,4 +1,4 @@
-"""Comprehensive tests for vpype-plotty utilities."""
+"""Comprehensive tests for vpype-vfab utilities."""
 
 import json
 import sys
@@ -20,18 +20,18 @@ sys.modules["vpype.Document"] = MagicMock()
 sys.modules["click"] = MagicMock()
 
 # Import after mocking
-from src.utils import (
-    save_document_for_plotty,
+from vpype_vfab.utils import (
+    save_document_for_vfab,
     generate_job_name,
     validate_preset,
     format_job_status,
     format_job_list,
 )
-from src.exceptions import PlottyJobError
+from vpype_vfab.exceptions import VfabJobError
 
 
 class TestSaveDocumentForPlotty:
-    """Test cases for save_document_for_plotty function."""
+    """Test cases for save_document_for_vfab function."""
 
     @pytest.fixture
     def temp_dir(self):
@@ -52,12 +52,12 @@ class TestSaveDocumentForPlotty:
 
         with patch("builtins.open", mock_open()) as mock_file:
             with patch("vpype.write_svg") as mock_write_svg:
-                svg_path, job_json_path = save_document_for_plotty(
+                svg_path, job_json_path = save_document_for_vfab(
                     mock_document, job_path, "test_job"
                 )
 
         # Check return paths
-        assert svg_path == job_path / "src.svg"
+        assert svg_path == job_path / "vpype_vfab.svg"
         assert job_json_path == job_path / "job.json"
 
         # Check vpype.write_svg was called
@@ -69,7 +69,7 @@ class TestSaveDocumentForPlotty:
 
         with patch("builtins.open", mock_open()):
             with patch("vpype.write_svg"):
-                save_document_for_plotty(mock_document, job_path, "test_job")
+                save_document_for_vfab(mock_document, job_path, "test_job")
 
         # Check directory was created
         assert job_path.exists()
@@ -81,7 +81,7 @@ class TestSaveDocumentForPlotty:
 
         with patch("builtins.open", mock_open()) as mock_file:
             with patch("vpype.write_svg"):
-                save_document_for_plotty(mock_document, job_path, "test_job")
+                save_document_for_vfab(mock_document, job_path, "test_job")
 
         # Find the JSON write call
         json_write_call = None
@@ -102,7 +102,7 @@ class TestSaveDocumentForPlotty:
         assert json_write_call["paper"] == "A4"
         assert json_write_call["state"] == "NEW"
         assert "created_at" in json_write_call
-        assert json_write_call["metadata"]["created_by"] == "vpype-plotty"
+        assert json_write_call["metadata"]["created_by"] == "vpype-vfab"
         assert json_write_call["metadata"]["source"] == "vpype document"
 
     def test_save_document_vpype_error(self, temp_dir, mock_document):
@@ -111,9 +111,9 @@ class TestSaveDocumentForPlotty:
 
         with patch("vpype.write_svg", side_effect=Exception("SVG write failed")):
             with pytest.raises(
-                PlottyJobError, match="Failed to save document for vfab"
+                VfabJobError, match="Failed to save document for vfab"
             ):
-                save_document_for_plotty(mock_document, job_path, "test_job")
+                save_document_for_vfab(mock_document, job_path, "test_job")
 
     def test_save_document_file_error(self, temp_dir, mock_document):
         """Test handling of file system error."""
@@ -121,9 +121,9 @@ class TestSaveDocumentForPlotty:
 
         with patch("builtins.open", side_effect=OSError("Permission denied")):
             with pytest.raises(
-                PlottyJobError, match="Failed to save document for vfab"
+                VfabJobError, match="Failed to save document for vfab"
             ):
-                save_document_for_plotty(mock_document, job_path, "test_job")
+                save_document_for_vfab(mock_document, job_path, "test_job")
 
 
 class TestGenerateJobName:
@@ -172,7 +172,7 @@ class TestGenerateJobName:
         mock_document.metadata = {}
         mock_document.hasattr.return_value = False  # No metadata attribute
 
-        with patch("src.utils.datetime") as mock_datetime:
+        with patch("vpype_vfab.utils.datetime") as mock_datetime:
             mock_datetime.now.return_value.strftime.return_value = "20240101_120000"
 
             result = generate_job_name(mock_document)
@@ -216,7 +216,7 @@ class TestValidatePreset:
 
     def test_validate_preset_invalid(self):
         """Test validating invalid preset."""
-        with patch("src.utils.click") as mock_click:
+        with patch("vpype_vfab.utils.click") as mock_click:
             mock_bad_param = MagicMock()
             mock_click.BadParameter = mock_bad_param
 
@@ -227,7 +227,7 @@ class TestValidatePreset:
 
     def test_validate_preset_case_sensitive(self):
         """Test that preset validation is case sensitive."""
-        with patch("src.utils.click") as mock_click:
+        with patch("vpype_vfab.utils.click") as mock_click:
             mock_bad_param = MagicMock()
             mock_click.BadParameter = mock_bad_param
 

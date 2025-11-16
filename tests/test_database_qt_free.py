@@ -22,25 +22,25 @@ sys.modules["vpype"].Document = mock_document
 mock_config = Mock()
 mock_plotty_config = Mock()
 mock_config.PlottyConfig = mock_plotty_config
-sys.modules["src.config"] = mock_config
+sys.modules["vpype_vfab.config"] = mock_config
 
 # Mock exceptions module
 mock_exceptions = Mock()
 mock_plotty_job_error = Exception
-mock_exceptions.PlottyJobError = mock_plotty_job_error
-sys.modules["src.exceptions"] = mock_exceptions
+mock_exceptions.VfabJobError = mock_plotty_job_error
+sys.modules["vpype_vfab.exceptions"] = mock_exceptions
 
 # Mock utils module
 mock_utils = Mock()
 mock_save_document = Mock(return_value=("/mock/path.svg", "/mock/path/job.json"))
-mock_utils.save_document_for_plotty = mock_save_document
-sys.modules["src.utils"] = mock_utils
+mock_utils.save_document_for_vfab = mock_save_document
+sys.modules["vpype_vfab.utils"] = mock_utils
 
 # Now import the database module
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "database", "/home/bk/source/vpype-plotty/src/database.py"
+    "database", "/home/bk/source/vpype-vfab/src/database.py"
 )
 if spec is None:
     raise ImportError("Could not load database module")
@@ -178,7 +178,7 @@ class TestDatabaseQtFree:
             integration = database.StreamlinedPlottyIntegration()
             integration._get_file_path = MagicMock(return_value=mock_file_path)
 
-            with pytest.raises(Exception):  # PlottyJobError
+            with pytest.raises(Exception):  # VfabJobError
                 integration._load_json_file("test_job", "job")
 
     def test_load_json_file_json_error(self):
@@ -195,7 +195,7 @@ class TestDatabaseQtFree:
                 integration = database.StreamlinedPlottyIntegration()
                 integration._get_file_path = MagicMock(return_value=mock_file_path)
 
-                with pytest.raises(Exception):  # PlottyJobError
+                with pytest.raises(Exception):  # VfabJobError
                     integration._load_json_file("test_job", "job")
 
     def test_save_json_file_success(self):
@@ -234,7 +234,7 @@ class TestDatabaseQtFree:
                 integration = database.StreamlinedPlottyIntegration()
                 integration._get_file_path = MagicMock(return_value=mock_file_path)
 
-                with pytest.raises(Exception):  # PlottyJobError
+                with pytest.raises(Exception):  # VfabJobError
                     integration._save_json_file("test_job", test_data, "job")
 
     def test_create_job_metadata(self):
@@ -281,7 +281,7 @@ class TestDatabaseQtFree:
                 return_value={"svg_path": "/test.svg"}
             )
             integration._save_json_file = MagicMock()
-            integration._notify_plotty = MagicMock()
+            integration._notify_vfab = MagicMock()
 
             result = integration.add_job(test_document, "test_job", "fast", "A4", 1)
 
@@ -291,7 +291,7 @@ class TestDatabaseQtFree:
             )
             mock_save_document.assert_called_once()
             integration._save_json_file.assert_called_once()
-            integration._notify_plotty.assert_called_once()
+            integration._notify_vfab.assert_called_once()
 
     def test_add_job_failure(self):
         """Test job addition with failure."""
@@ -310,7 +310,7 @@ class TestDatabaseQtFree:
                 side_effect=Exception("Creation failed")
             )
 
-            with pytest.raises(Exception):  # PlottyJobError
+            with pytest.raises(Exception):  # VfabJobError
                 integration.add_job(test_document, "test_job", "fast", "A4", 1)
 
     def test_queue_job_success(self):
@@ -328,7 +328,7 @@ class TestDatabaseQtFree:
                 return_value={"id": "test_job", "state": "NEW"}
             )
             integration.save_job = MagicMock()
-            integration._notify_plotty = MagicMock()
+            integration._notify_vfab = MagicMock()
 
             with patch("database.datetime") as mock_datetime:
                 mock_now = datetime(2023, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
@@ -355,7 +355,7 @@ class TestDatabaseQtFree:
             # Mock failure in load_job
             integration.load_job = MagicMock(side_effect=Exception("Job not found"))
 
-            with pytest.raises(Exception):  # PlottyJobError
+            with pytest.raises(Exception):  # VfabJobError
                 integration.queue_job("test_job", 1)
 
     def test_load_job(self):
@@ -426,7 +426,7 @@ class TestDatabaseQtFree:
 
             integration = database.StreamlinedPlottyIntegration()
 
-            with pytest.raises(Exception):  # PlottyJobError
+            with pytest.raises(Exception):  # VfabJobError
                 integration.remove_job("test_job")
 
     def test_remove_job_os_error(self):
@@ -447,7 +447,7 @@ class TestDatabaseQtFree:
             ):
                 integration = database.StreamlinedPlottyIntegration()
 
-                with pytest.raises(Exception):  # PlottyJobError
+                with pytest.raises(Exception):  # VfabJobError
                     integration.remove_job("test_job")
 
     def test_list_jobs_empty(self):
@@ -639,7 +639,7 @@ class TestDatabaseQtFree:
 
             assert result == {"id": "test_job", "state": "COMPLETED"}
 
-    def test_notify_plotty_success(self):
+    def test_notify_vfab_success(self):
         """Test successful vfab notification."""
         with patch("database.Path") as mock_path_class:
             mock_workspace = MagicMock()
@@ -651,14 +651,14 @@ class TestDatabaseQtFree:
             integration._save_json_file = MagicMock()
 
             job_data = {"id": "test_job", "state": "QUEUED"}
-            integration._notify_plotty("test_job", job_data)
+            integration._notify_vfab("test_job", job_data)
 
             integration._save_json_file.assert_called_once()
             call_args = integration._save_json_file.call_args[0]
             assert call_args[0] == "test_job"
             assert call_args[2] == "queue"
 
-    def test_notify_plotty_failure(self):
+    def test_notify_vfab_failure(self):
         """Test vfab notification failure (should not raise)."""
         with patch("database.Path") as mock_path_class:
             mock_workspace = MagicMock()
@@ -674,7 +674,7 @@ class TestDatabaseQtFree:
             job_data = {"id": "test_job", "state": "QUEUED"}
 
             # Should not raise exception
-            integration._notify_plotty("test_job", job_data)
+            integration._notify_vfab("test_job", job_data)
 
     def test_vfab_available_true(self):
         """Test vfab availability check when available."""
@@ -688,7 +688,7 @@ class TestDatabaseQtFree:
 
             # Mock successful import
             with patch.dict("sys.modules", {"plotty": Mock()}):
-                result = integration._plotty_available()
+                result = integration._vfab_available()
                 assert result is True
 
     def test_vfab_available_false(self):
@@ -703,10 +703,10 @@ class TestDatabaseQtFree:
 
             # Mock the import plotty statement to raise ImportError
             with patch.object(
-                integration.__class__, "_plotty_available"
+                integration.__class__, "_vfab_available"
             ) as mock_method:
                 mock_method.return_value = False
-                result = integration._plotty_available()
+                result = integration._vfab_available()
                 assert result is False
 
     def test_delete_job_alias(self):

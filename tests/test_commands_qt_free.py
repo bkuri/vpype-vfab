@@ -61,7 +61,7 @@ sys.modules["yaml"] = mock_yaml
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "commands", "/home/bk/source/vpype-plotty/src/commands.py"
+    "commands", "/home/bk/source/vpype-vfab/src/commands.py"
 )
 if spec is None:
     raise ImportError("Could not load commands module")
@@ -177,7 +177,7 @@ class TestCommandsExtended:
             patch("pathlib.Path.mkdir") as mock_mkdir,
             patch("click.echo"),
             patch("click.prompt", side_effect=[1, 2]),  # One prompt per layer
-            patch("src.commands.Abort", MockAbort),  # Patch the imported Abort
+            patch("vpype_vfab.commands.Abort", MockAbort),  # Patch the imported Abort
         ):
             result = _interactive_pen_mapping(document, "test_job")
 
@@ -197,7 +197,7 @@ class TestCommandsExtended:
             patch("pathlib.Path.exists", return_value=False),
             patch("click.echo") as mock_echo,
             patch("click.prompt", side_effect=[1, 2]),
-            patch("src.commands.Abort", MockAbort),
+            patch("vpype_vfab.commands.Abort", MockAbort),
         ):
             result = _interactive_pen_mapping(document, "test_job")
 
@@ -221,7 +221,7 @@ class TestCommandsExtended:
             patch("pathlib.Path.exists", return_value=True),
             patch("click.echo") as mock_echo,
             patch("click.prompt", side_effect=[1, 2]),
-            patch("src.commands.Abort", MockAbort),
+            patch("vpype_vfab.commands.Abort", MockAbort),
         ):
             result = _interactive_pen_mapping(document, "test_job")
 
@@ -243,7 +243,7 @@ class TestCommandsExtended:
         with (
             patch("click.echo") as mock_echo,
             patch("click.prompt", side_effect=[1, 2]),
-            patch("src.commands.Abort", MockAbort),
+            patch("vpype_vfab.commands.Abort", MockAbort),
         ):
             result = _interactive_pen_mapping(document, "test_job")
 
@@ -266,7 +266,7 @@ class TestCommandsExtended:
         with (
             patch("click.echo") as mock_echo,
             patch("click.prompt", side_effect=[0, 1, 2]) as mock_prompt,
-            patch("src.commands.Abort", MockAbort),
+            patch("vpype_vfab.commands.Abort", MockAbort),
         ):
             result = _interactive_pen_mapping(document, "test_job")
 

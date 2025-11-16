@@ -128,7 +128,7 @@ database:
 
 logging:
   level: INFO
-  file: logs/plotty.log
+  file: logs/vfab.log
 """
 
     config_file = workspace_path / "config.yaml"

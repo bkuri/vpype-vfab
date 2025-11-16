@@ -1,4 +1,4 @@
-"""Command decorators for vpype-plotty to eliminate DRY violations."""
+"""Command decorators for vpype-vfab to eliminate DRY violations."""
 
 from functools import wraps
 from typing import Callable, Optional

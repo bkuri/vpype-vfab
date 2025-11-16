@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-"""Simple test script to verify vpype-plotty functionality."""
+"""Simple test script to verify vpype-vfab functionality."""
 
 import tempfile
 from pathlib import Path
 
-from src.config import PlottyConfig
-from src.database import PlottyIntegration
-from src.utils import generate_job_name, validate_preset
+from vpype_vfab.config import PlottyConfig
+from vpype_vfab.database import PlottyIntegration
+from vpype_vfab.utils import generate_job_name, validate_preset
 
 import vpype
 
 
 def test_basic_functionality():
-    """Test basic functionality of vpype-plotty."""
-    print("Testing vpype-plotty basic functionality...")
+    """Test basic functionality of vpype-vfab."""
+    print("Testing vpype-vfab basic functionality...")
 
     # Test 1: Configuration
     print("\n1. Testing configuration...")
@@ -67,18 +67,18 @@ def test_basic_functionality():
     # Test 5: Import commands
     print("\n5. Testing command imports...")
     try:
-        import src.commands
+        import vpype_vfab.commands
 
         # Test that commands are available
-        assert hasattr(src.commands, "plotty_add")
-        assert hasattr(src.commands, "plotty_queue")
+        assert hasattr(vpype_vfab.commands, "plotty_add")
+        assert hasattr(vpype_vfab.commands, "plotty_queue")
 
         print("✓ Command imports work")
     except ImportError as e:
         print(f"✗ Command import failed: {e}")
         return False
 
-    print("\n🎉 All tests passed! vpype-plotty is working correctly.")
+    print("\n🎉 All tests passed! vpype-vfab is working correctly.")
     return True
 
 

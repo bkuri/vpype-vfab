@@ -67,7 +67,7 @@ def monitor_jobs(job_ids):
 
 def main():
     """Main batch processing workflow."""
-    print("=== vpype-plotty Batch Processing Example ===\n")
+    print("=== vpype-vfab Batch Processing Example ===\n")
 
     # Configuration
     base_name = "batch_sketch"

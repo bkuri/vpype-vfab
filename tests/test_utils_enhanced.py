@@ -30,14 +30,14 @@ for module in qt_modules:
 # Now we can safely import vpype modules
 from vpype import Document
 
-from src.utils import (
+from vpype_vfab.utils import (
     format_job_list,
     format_job_status,
     generate_job_name,
-    save_document_for_plotty,
+    save_document_for_vfab,
     validate_preset,
 )
-from src.exceptions import PlottyJobError
+from vpype_vfab.exceptions import VfabJobError
 
 
 class TestUtilsEnhanced:
@@ -100,28 +100,28 @@ class TestUtilsEnhanced:
         with pytest.raises(Exception):  # click.BadParameter
             validate_preset("Fast")  # Should be "fast"
 
-    def test_save_document_for_plotty_basic(self):
+    def test_save_document_for_vfab_basic(self):
         """Test basic document saving for vfab."""
         with tempfile.TemporaryDirectory() as temp_dir:
             document = Document()
             job_path = Path(temp_dir) / "test_job"
 
-            svg_path, job_json_path = save_document_for_plotty(
+            svg_path, job_json_path = save_document_for_vfab(
                 document, job_path, "test_job"
             )
 
             assert svg_path.exists()
             assert job_json_path.exists()
-            assert svg_path.name == "src.svg"
+            assert svg_path.name == "vpype_vfab.svg"
             assert job_json_path.name == "job.json"
 
-    def test_save_document_for_plotty_content(self):
+    def test_save_document_for_vfab_content(self):
         """Test that saved document contains correct content."""
         with tempfile.TemporaryDirectory() as temp_dir:
             document = Document()
             job_path = Path(temp_dir) / "test_job"
 
-            svg_path, job_json_path = save_document_for_plotty(
+            svg_path, job_json_path = save_document_for_vfab(
                 document, job_path, "test_job"
             )
 
@@ -134,30 +134,30 @@ class TestUtilsEnhanced:
             assert job_data["paper"] == "A4"
             assert job_data["state"] == "NEW"
             assert "created_at" in job_data
-            assert job_data["metadata"]["created_by"] == "vpype-plotty"
+            assert job_data["metadata"]["created_by"] == "vpype-vfab"
             assert job_data["metadata"]["source"] == "vpype document"
 
-    def test_save_document_for_plotty_existing_dir(self):
+    def test_save_document_for_vfab_existing_dir(self):
         """Test saving to existing directory."""
         with tempfile.TemporaryDirectory() as temp_dir:
             document = Document()
             job_path = Path(temp_dir) / "existing_job"
             job_path.mkdir()  # Create directory first
 
-            svg_path, job_json_path = save_document_for_plotty(
+            svg_path, job_json_path = save_document_for_vfab(
                 document, job_path, "test_job"
             )
 
             assert svg_path.exists()
             assert job_json_path.exists()
 
-    def test_save_document_for_plotty_nested_dirs(self):
+    def test_save_document_for_vfab_nested_dirs(self):
         """Test saving to nested directory structure."""
         with tempfile.TemporaryDirectory() as temp_dir:
             document = Document()
             job_path = Path(temp_dir) / "level1" / "level2" / "test_job"
 
-            svg_path, job_json_path = save_document_for_plotty(
+            svg_path, job_json_path = save_document_for_vfab(
                 document, job_path, "test_job"
             )
 
@@ -165,19 +165,19 @@ class TestUtilsEnhanced:
             assert job_json_path.exists()
             assert job_path.exists()
 
-    def test_save_document_for_plotty_error(self):
+    def test_save_document_for_vfab_error(self):
         """Test error handling when saving document."""
         document = Document()
         # Use invalid path that should cause an error
         invalid_path = Path("/invalid/path/that/does/not/exist")
 
-        with pytest.raises(PlottyJobError) as exc_info:
-            save_document_for_plotty(document, invalid_path, "test_job")
+        with pytest.raises(VfabJobError) as exc_info:
+            save_document_for_vfab(document, invalid_path, "test_job")
 
         assert "Failed to save document for vfab" in str(exc_info.value)
 
     @patch("vpype.write_svg")
-    def test_save_document_for_plotty_vpype_error(self, mock_write_svg):
+    def test_save_document_for_vfab_vpype_error(self, mock_write_svg):
         """Test handling of vpype write_svg errors."""
         mock_write_svg.side_effect = Exception("vpype error")
 
@@ -185,8 +185,8 @@ class TestUtilsEnhanced:
             document = Document()
             job_path = Path(temp_dir) / "test_job"
 
-            with pytest.raises(PlottyJobError) as exc_info:
-                save_document_for_plotty(document, job_path, "test_job")
+            with pytest.raises(VfabJobError) as exc_info:
+                save_document_for_vfab(document, job_path, "test_job")
 
             assert "Failed to save document for vfab" in str(exc_info.value)
 

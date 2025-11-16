@@ -1,4 +1,4 @@
-"""Shared utilities for vpype-plotty."""
+"""Shared utilities for vpype-vfab."""
 
 import json
 from datetime import datetime, timezone
@@ -151,7 +151,7 @@ class JobFormatter:
             return f"{icon} {name} - {status}"
 
 
-def save_document_for_plotty(
+def save_document_for_vfab(
     document: Document, job_path: Path, name: str
 ) -> tuple[Path, Path]:
     """Save vpype document as vfab-compatible job.
@@ -184,7 +184,7 @@ def save_document_for_plotty(
             "state": "NEW",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "metadata": {
-                "created_by": "vpype-plotty",
+                "created_by": "vpype-vfab",
                 "source": "vpype document",
             },
         }

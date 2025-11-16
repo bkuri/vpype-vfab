@@ -1,4 +1,4 @@
-"""Test coverage for vpype-plotty monitor module."""
+"""Test coverage for vpype-vfab monitor module."""
 
 import tempfile
 from unittest.mock import MagicMock, patch
@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from src.monitor import SimplePlottyMonitor
-from src.utils import JobFormatter
+from vpype_vfab.monitor import SimplePlottyMonitor
+from vpype_vfab.utils import JobFormatter
 
 
 class TestMonitorCoverage:
@@ -33,7 +33,7 @@ class TestMonitorCoverage:
         assert monitor.poll_rate == 1.0
         assert hasattr(monitor, "formatter")
 
-    @patch("src.monitor.PlottyIntegration")
+    @patch("vpype_vfab.monitor.PlottyIntegration")
     def test_update_display_success(self, mock_integration):
         """Test successful display update."""
         # Mock integration
@@ -56,7 +56,7 @@ class TestMonitorCoverage:
         except Exception as e:
             pytest.fail(f"update_display() raised {e} unexpectedly!")
 
-    @patch("src.monitor.PlottyIntegration")
+    @patch("vpype_vfab.monitor.PlottyIntegration")
     def test_update_display_no_jobs(self, mock_integration):
         """Test display update with no jobs."""
         mock_integration.return_value.list_jobs.return_value = []
@@ -70,7 +70,7 @@ class TestMonitorCoverage:
         except Exception as e:
             pytest.fail(f"update_display() with no jobs raised {e} unexpectedly!")
 
-    @patch("src.monitor.PlottyIntegration")
+    @patch("vpype_vfab.monitor.PlottyIntegration")
     @patch("time.sleep")
     def test_start_monitoring_keyboard_interrupt(self, mock_sleep, mock_integration):
         """Test monitoring interrupted by user."""
@@ -88,7 +88,7 @@ class TestMonitorCoverage:
         # Should handle KeyboardInterrupt gracefully
         assert mock_sleep.call_count == 2
 
-    @patch("src.monitor.PlottyIntegration")
+    @patch("vpype_vfab.monitor.PlottyIntegration")
     @patch("time.sleep")
     def test_start_monitoring_exception(self, mock_sleep, mock_integration):
         """Test monitoring with exception."""
@@ -108,7 +108,7 @@ class TestMonitorCoverage:
 
     def test_static_snapshot(self):
         """Test static snapshot functionality."""
-        with patch("src.monitor.PlottyIntegration") as mock_integration:
+        with patch("vpype_vfab.monitor.PlottyIntegration") as mock_integration:
             mock_integration.return_value.list_jobs.return_value = []
 
             monitor = SimplePlottyMonitor("/tmp")
@@ -152,11 +152,11 @@ class TestMonitorCoverage:
         assert "connected" in result
         assert "axidraw" in result
 
-    @patch("src.monitor.click.clear")
-    @patch("src.monitor.click.echo")
+    @patch("vpype_vfab.monitor.click.clear")
+    @patch("vpype_vfab.monitor.click.echo")
     def test_update_display_header(self, mock_echo, mock_clear):
         """Test display header formatting."""
-        with patch("src.monitor.PlottyIntegration") as mock_integration:
+        with patch("vpype_vfab.monitor.PlottyIntegration") as mock_integration:
             mock_integration.return_value.list_jobs.return_value = []
             mock_integration.return_value.workspace = Path("/test/workspace")
 
@@ -175,10 +175,10 @@ class TestMonitorCoverage:
             assert len(header_calls) > 0
             assert "updates every 2.0s" in str(header_calls[0])
 
-    @patch("src.monitor.click.echo")
+    @patch("vpype_vfab.monitor.click.echo")
     def test_update_display_device_info(self, mock_echo):
         """Test device information display."""
-        with patch("src.monitor.PlottyIntegration") as mock_integration:
+        with patch("vpype_vfab.monitor.PlottyIntegration") as mock_integration:
             mock_integration.return_value.list_jobs.return_value = []
 
             monitor = SimplePlottyMonitor("/tmp")
@@ -207,12 +207,12 @@ class TestMonitorCoverage:
         default_monitor = SimplePlottyMonitor("/tmp")
         assert default_monitor.poll_rate == 1.0
 
-    @patch("src.monitor.datetime")
+    @patch("vpype_vfab.monitor.datetime")
     def test_update_display_timestamp(self, mock_datetime):
         """Test timestamp display in update."""
         mock_datetime.now.return_value.strftime.return_value = "2023-01-01 12:00:00"
 
-        with patch("src.monitor.PlottyIntegration") as mock_integration:
+        with patch("vpype_vfab.monitor.PlottyIntegration") as mock_integration:
             mock_integration.return_value.list_jobs.return_value = []
 
             monitor = SimplePlottyMonitor("/tmp")

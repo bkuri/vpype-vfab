@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import importlib.util
 
 spec = importlib.util.spec_from_file_location(
-    "exceptions", "/home/bk/source/vpype-plotty/src/exceptions.py"
+    "exceptions", "/home/bk/source/vpype-vfab/src/exceptions.py"
 )
 exceptions = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(exceptions)
@@ -49,25 +49,25 @@ class TestExceptionsQtFree:
         assert error.retry_after == retry_after
 
     def test_vfab_not_found_error_init(self):
-        """Test PlottyNotFoundError initialization."""
+        """Test VfabNotFoundError initialization."""
         message = "vfab not found"
-        error = exceptions.PlottyNotFoundError(message)
+        error = exceptions.VfabNotFoundError(message)
 
         assert str(error) == message
         assert "Verify vfab is properly installed" in error.recovery_hint
 
     def test_vfab_not_found_error_with_workspace(self):
-        """Test PlottyNotFoundError with workspace path."""
+        """Test VfabNotFoundError with workspace path."""
         message = "Workspace not found"
         workspace_path = "/path/to/workspace"
-        error = exceptions.PlottyNotFoundError(message, workspace_path)
+        error = exceptions.VfabNotFoundError(message, workspace_path)
 
         assert str(error) == message
         assert workspace_path in error.recovery_hint
 
     def test_vfab_not_found_error_inheritance(self):
-        """Test PlottyNotFoundError inheritance."""
-        error = exceptions.PlottyNotFoundError("test")
+        """Test VfabNotFoundError inheritance."""
+        error = exceptions.VfabNotFoundError("test")
 
         assert isinstance(error, exceptions.PlottyError)
         assert isinstance(error, Exception)
@@ -89,49 +89,49 @@ class TestExceptionsQtFree:
         assert isinstance(error, Exception)
 
     def test_vfab_job_error_init(self):
-        """Test PlottyJobError initialization."""
+        """Test VfabJobError initialization."""
         message = "Job failed"
-        error = exceptions.PlottyJobError(message)
+        error = exceptions.VfabJobError(message)
 
         assert str(error) == message
         assert "Verify job parameters" in error.recovery_hint
 
     def test_vfab_job_error_with_job_id(self):
-        """Test PlottyJobError with job ID."""
+        """Test VfabJobError with job ID."""
         message = "Job failed"
         job_id = "job123"
-        error = exceptions.PlottyJobError(message, job_id)
+        error = exceptions.VfabJobError(message, job_id)
 
         assert str(error) == message
         assert job_id in error.recovery_hint
 
     def test_vfab_job_error_inheritance(self):
-        """Test PlottyJobError inheritance."""
-        error = exceptions.PlottyJobError("test")
+        """Test VfabJobError inheritance."""
+        error = exceptions.VfabJobError("test")
 
         assert isinstance(error, exceptions.PlottyError)
         assert isinstance(error, Exception)
 
     def test_vfab_config_error_init(self):
-        """Test PlottyConfigError initialization."""
+        """Test VfabConfigError initialization."""
         message = "Config error"
-        error = exceptions.PlottyConfigError(message)
+        error = exceptions.VfabConfigError(message)
 
         assert str(error) == message
         assert "Verify vfab configuration" in error.recovery_hint
 
     def test_vfab_config_error_with_config_file(self):
-        """Test PlottyConfigError with config file."""
+        """Test VfabConfigError with config file."""
         message = "Config error"
         config_file = "/path/to/config"
-        error = exceptions.PlottyConfigError(message, config_file)
+        error = exceptions.VfabConfigError(message, config_file)
 
         assert str(error) == message
         assert config_file in error.recovery_hint
 
     def test_vfab_config_error_inheritance(self):
-        """Test PlottyConfigError inheritance."""
-        error = exceptions.PlottyConfigError("test")
+        """Test VfabConfigError inheritance."""
+        error = exceptions.VfabConfigError("test")
 
         assert isinstance(error, exceptions.PlottyError)
         assert isinstance(error, Exception)
@@ -180,10 +180,10 @@ class TestExceptionsQtFree:
     def test_exception_hierarchy_consistency(self):
         """Test that all custom exceptions inherit from PlottyError."""
         exception_classes = [
-            exceptions.PlottyNotFoundError,
+            exceptions.VfabNotFoundError,
             exceptions.PlottyConnectionError,
-            exceptions.PlottyJobError,
-            exceptions.PlottyConfigError,
+            exceptions.VfabJobError,
+            exceptions.VfabConfigError,
             exceptions.PlottyTimeoutError,
             exceptions.PlottyResourceError,
         ]
@@ -194,11 +194,11 @@ class TestExceptionsQtFree:
             assert issubclass(exc_class, Exception)
 
             # Test instantiation
-            if exc_class == exceptions.PlottyNotFoundError:
+            if exc_class == exceptions.VfabNotFoundError:
                 instance = exc_class("test", "/path")
-            elif exc_class == exceptions.PlottyJobError:
+            elif exc_class == exceptions.VfabJobError:
                 instance = exc_class("test", "job123")
-            elif exc_class == exceptions.PlottyConfigError:
+            elif exc_class == exceptions.VfabConfigError:
                 instance = exc_class("test", "/config")
             elif exc_class == exceptions.PlottyTimeoutError:
                 instance = exc_class("test", 30.0)
@@ -273,7 +273,7 @@ class TestExceptionsQtFree:
         def file_func():
             raise FileNotFoundError("No such file", "test.txt")
 
-        with pytest.raises(exceptions.PlottyNotFoundError) as exc_info:
+        with pytest.raises(exceptions.VfabNotFoundError) as exc_info:
             file_func()
 
         assert "test.txt" in str(exc_info.value)
@@ -285,7 +285,7 @@ class TestExceptionsQtFree:
         def permission_func():
             raise PermissionError("Access denied", "config.yaml")
 
-        with pytest.raises(exceptions.PlottyConfigError) as exc_info:
+        with pytest.raises(exceptions.VfabConfigError) as exc_info:
             permission_func()
 
         assert "config.yaml" in str(exc_info.value)
@@ -332,9 +332,9 @@ class TestExceptionsQtFree:
 
         @exceptions.handle_plotty_errors
         def plotty_error_func():
-            raise exceptions.PlottyJobError("Job failed", "job123")
+            raise exceptions.VfabJobError("Job failed", "job123")
 
-        with pytest.raises(exceptions.PlottyJobError) as exc_info:
+        with pytest.raises(exceptions.VfabJobError) as exc_info:
             plotty_error_func()
 
         assert str(exc_info.value) == "Job failed"

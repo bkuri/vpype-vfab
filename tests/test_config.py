@@ -7,8 +7,8 @@ from unittest.mock import patch
 import pytest
 import yaml
 
-from src.config import PlottyConfig
-from src.exceptions import PlottyConfigError
+from vpype_vfab.config import PlottyConfig
+from vpype_vfab.exceptions import VfabConfigError
 
 
 class TestPlottyConfig:
@@ -70,7 +70,7 @@ class TestPlottyConfig:
                 f.write("invalid: yaml: content:")
 
             config = PlottyConfig(temp_dir)
-            with pytest.raises(PlottyConfigError):
+            with pytest.raises(VfabConfigError):
                 config.load_config()
 
     def test_save_config(self):

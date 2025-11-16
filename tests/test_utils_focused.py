@@ -1,4 +1,4 @@
-"""Focused tests for vpype-plotty utilities that avoid Qt import issues."""
+"""Focused tests for vpype-vfab utilities that avoid Qt import issues."""
 
 import json
 import sys
@@ -25,20 +25,20 @@ mock_click.BadParameter = mock_bad_param
 sys.modules["click"] = mock_click
 
 # Now we can safely import our utils module
-from src.exceptions import PlottyJobError
+from vpype_vfab.exceptions import VfabJobError
 
 # Import utils functions directly by copying their implementations
 # This avoids the import chain issues
 
 
-def save_document_for_plotty(document, job_path, name):
+def save_document_for_vfab(document, job_path, name):
     """Copy of utils function for testing."""
     try:
         # Ensure job directory exists
         job_path.mkdir(parents=True, exist_ok=True)
 
         # Save optimized SVG
-        svg_path = job_path / "src.svg"
+        svg_path = job_path / "vpype_vfab.svg"
         with open(svg_path, "w", encoding="utf-8") as f:
             mock_vpype.write_svg(f, document)
 
@@ -50,7 +50,7 @@ def save_document_for_plotty(document, job_path, name):
             "state": "NEW",
             "created_at": datetime.now(timezone.utc).isoformat(),
             "metadata": {
-                "created_by": "vpype-plotty",
+                "created_by": "vpype-vfab",
                 "source": "vpype document",
             },
         }
@@ -63,7 +63,7 @@ def save_document_for_plotty(document, job_path, name):
         return svg_path, job_json_path
 
     except Exception as e:
-        raise PlottyJobError(f"Failed to save document for vfab: {e}")
+        raise VfabJobError(f"Failed to save document for vfab: {e}")
 
 
 def generate_job_name(document, fallback_name=None):
@@ -136,7 +136,7 @@ def format_job_list(jobs, output_format="table"):
 
 
 class TestSaveDocumentForPlotty:
-    """Test cases for save_document_for_plotty function."""
+    """Test cases for save_document_for_vfab function."""
 
     @pytest.fixture
     def temp_dir(self):
@@ -155,12 +155,12 @@ class TestSaveDocumentForPlotty:
         """Test successful document saving."""
         job_path = temp_dir / "test_job"
 
-        svg_path, job_json_path = save_document_for_plotty(
+        svg_path, job_json_path = save_document_for_vfab(
             mock_document, job_path, "test_job"
         )
 
         # Check return paths
-        assert svg_path == job_path / "src.svg"
+        assert svg_path == job_path / "vpype_vfab.svg"
         assert job_json_path == job_path / "job.json"
 
         # Check files exist
@@ -183,7 +183,7 @@ class TestSaveDocumentForPlotty:
         """Test that job directory is created."""
         job_path = temp_dir / "new_job" / "subdir"
 
-        save_document_for_plotty(mock_document, job_path, "test_job")
+        save_document_for_vfab(mock_document, job_path, "test_job")
 
         # Check directory was created
         assert job_path.exists()
@@ -195,8 +195,8 @@ class TestSaveDocumentForPlotty:
 
         mock_vpype.write_svg.side_effect = Exception("SVG write failed")
 
-        with pytest.raises(PlottyJobError, match="Failed to save document for vfab"):
-            save_document_for_plotty(mock_document, job_path, "test_job")
+        with pytest.raises(VfabJobError, match="Failed to save document for vfab"):
+            save_document_for_vfab(mock_document, job_path, "test_job")
 
     def test_save_document_file_error(self, temp_dir, mock_document):
         """Test handling of file system error."""
@@ -204,9 +204,9 @@ class TestSaveDocumentForPlotty:
 
         with patch("builtins.open", side_effect=OSError("Permission denied")):
             with pytest.raises(
-                PlottyJobError, match="Failed to save document for vfab"
+                VfabJobError, match="Failed to save document for vfab"
             ):
-                save_document_for_plotty(mock_document, job_path, "test_job")
+                save_document_for_vfab(mock_document, job_path, "test_job")
 
 
 class TestGenerateJobName:
@@ -254,7 +254,7 @@ class TestGenerateJobName:
         """Test generating timestamp-based name."""
         mock_document.metadata = {}
 
-        with patch("src.utils.datetime") as mock_datetime:
+        with patch("vpype_vfab.utils.datetime") as mock_datetime:
             mock_datetime.now.return_value.strftime.return_value = "20240101_120000"
 
             result = generate_job_name(mock_document)

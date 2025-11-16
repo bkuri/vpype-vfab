@@ -1,4 +1,4 @@
-"""Test coverage for vpype-plotty utils module."""
+"""Test coverage for vpype-vfab utils module."""
 
 import tempfile
 from unittest.mock import MagicMock, patch, mock_open
@@ -7,9 +7,9 @@ import json
 
 import pytest
 
-from src.utils import (
+from vpype_vfab.utils import (
     JobFormatter,
-    save_document_for_plotty,
+    save_document_for_vfab,
     generate_job_name,
     validate_preset,
     format_job_status,
@@ -165,9 +165,9 @@ class TestUtilsCoverage:
         assert "axidraw" in result
         assert "connected" in result
 
-    @patch("src.utils.vpype.write_svg")
+    @patch("vpype_vfab.utils.vpype.write_svg")
     @patch("builtins.open", new_callable=mock_open)
-    def test_save_document_for_plotty_success(self, mock_file, mock_write_svg):
+    def test_save_document_for_vfab_success(self, mock_file, mock_write_svg):
         """Test successful document saving."""
         # Mock document
         mock_doc = MagicMock()
@@ -175,12 +175,12 @@ class TestUtilsCoverage:
         with tempfile.TemporaryDirectory() as temp_dir:
             job_path = Path(temp_dir) / "test_job"
 
-            svg_path, json_path = save_document_for_plotty(
+            svg_path, json_path = save_document_for_vfab(
                 mock_doc, job_path, "test_job"
             )
 
             # Should return correct paths
-            assert svg_path == job_path / "src.svg"
+            assert svg_path == job_path / "vpype_vfab.svg"
             assert json_path == job_path / "job.json"
 
             # Should create directory
@@ -195,7 +195,7 @@ class TestUtilsCoverage:
             assert written_data["name"] == "test_job"
             assert written_data["state"] == "NEW"
 
-    def test_save_document_for_plotty_failure(self):
+    def test_save_document_for_vfab_failure(self):
         """Test document saving failure."""
         mock_doc = MagicMock()
 
@@ -204,8 +204,8 @@ class TestUtilsCoverage:
 
             # Mock file operation to raise exception
             with patch("builtins.open", side_effect=OSError("Permission denied")):
-                with pytest.raises(Exception):  # Should raise PlottyJobError
-                    save_document_for_plotty(mock_doc, job_path, "test_job")
+                with pytest.raises(Exception):  # Should raise VfabJobError
+                    save_document_for_vfab(mock_doc, job_path, "test_job")
 
     def test_generate_job_name_from_metadata(self):
         """Test job name generation from document metadata."""
@@ -236,7 +236,7 @@ class TestUtilsCoverage:
         mock_doc = MagicMock()
         mock_doc.metadata = {}
 
-        with patch("src.utils.datetime") as mock_datetime:
+        with patch("vpype_vfab.utils.datetime") as mock_datetime:
             mock_datetime.now.return_value.strftime.return_value = "20230101_120000"
 
             result = generate_job_name(mock_doc)
@@ -282,7 +282,7 @@ class TestUtilsCoverage:
         result = formatter.format_device_status(device)
         assert "unknown" in result.lower()
 
-    @patch("src.utils.datetime")
+    @patch("vpype_vfab.utils.datetime")
     def test_job_formatter_timing(self, mock_datetime):
         """Test timing formatting in monitor mode."""
         mock_datetime.fromisoformat.return_value.strftime.return_value = "12:00:00"

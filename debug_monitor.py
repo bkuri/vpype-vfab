@@ -3,7 +3,7 @@
 import os
 import sys
 
-sys.path.insert(0, "/home/bk/source/vpype-plotty")
+sys.path.insert(0, "/home/bk/source/vpype-vfab")
 
 # Set environment variables
 os.environ["DISPLAY"] = ""
@@ -14,7 +14,7 @@ from unittest.mock import MagicMock, patch
 
 # Import monitor module directly
 spec = importlib.util.spec_from_file_location(
-    "monitor", "/home/bk/source/vpype-plotty/vpype_plotty/monitor.py"
+    "monitor", "/home/bk/source/vpype-vfab/vpype_plotty/monitor.py"
 )
 monitor = importlib.util.module_from_spec(spec)
 sys.modules["monitor"] = monitor

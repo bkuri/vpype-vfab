@@ -1,4 +1,4 @@
-"""Performance and concurrency tests for vpype-plotty."""
+"""Performance and concurrency tests for vpype-vfab."""
 
 import os
 import time
@@ -257,7 +257,7 @@ class TestPerformanceConcurrency:
     @skip_if_no_sandbox
     def test_database_performance(self, workspace_dir):
         """Test database performance with many jobs."""
-        from src.database import PlottyIntegration
+        from vpype_vfab.database import PlottyIntegration
 
         plotty = PlottyIntegration(workspace_dir)
 
@@ -436,7 +436,7 @@ class TestPerformanceConcurrency:
     @skip_if_no_sandbox
     def test_resource_cleanup(self, workspace_dir):
         """Test resource cleanup after operations."""
-        from src.database import PlottyIntegration
+        from vpype_vfab.database import PlottyIntegration
 
         plotty = PlottyIntegration(workspace_dir)
 

@@ -1,4 +1,4 @@
-"""Integration tests for Schotter sketch with vpype-plotty."""
+"""Integration tests for Schotter sketch with vpype-vfab."""
 
 import os
 import sys
@@ -17,7 +17,7 @@ if vsketch_path.exists():
 
 
 class TestSchotterIntegration:
-    """Test Schotter sketch integration with vpype-plotty."""
+    """Test Schotter sketch integration with vpype-vfab."""
 
     @pytest.fixture
     def schotter_sketch(self):
@@ -247,7 +247,7 @@ class TestSchotterIntegration:
         vsk.save(svg_file)
 
         # Test interactive pen mapping (mocked)
-        with patch("src.commands._interactive_pen_mapping") as mock_mapping:
+        with patch("vpype_vfab.commands._interactive_pen_mapping") as mock_mapping:
             mock_mapping.return_value = {1: 1, 2: 2}
 
             result = subprocess.run(
@@ -300,7 +300,7 @@ class TestSchotterIntegration:
         assert len(vsk.document.layers) >= 0
 
     def test_schotter_finalize_integration(self, schotter_sketch, workspace_dir):
-        """Test Schotter finalize method with vpype-plotty."""
+        """Test Schotter finalize method with vpype-vfab."""
         import vsketch
 
         # Create Schotter pattern

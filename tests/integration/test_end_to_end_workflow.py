@@ -1,4 +1,4 @@
-"""End-to-end workflow validation tests for vpype-plotty."""
+"""End-to-end workflow validation tests for vpype-vfab."""
 
 import os
 import time
@@ -27,7 +27,7 @@ class TestEndToEndWorkflow:
     @skip_if_no_sandbox
     @skip_if_no_vsketch
     def test_complete_schotter_workflow(self, workspace_dir):
-        """Test complete Schotter workflow: vsketch → vpype-plotty → vfab."""
+        """Test complete Schotter workflow: vsketch → vpype-vfab → vfab."""
         import vsketch
 
         # Step 1: Generate Schotter pattern with vsketch
@@ -51,7 +51,7 @@ class TestEndToEndWorkflow:
         assert os.path.exists(svg_file)
         assert os.path.getsize(svg_file) > 0
 
-        # Step 4: Add to vfab with vpype-plotty
+        # Step 4: Add to vfab with vpype-vfab
         result = subprocess.run(
             [
                 "vpype",
@@ -244,7 +244,7 @@ class TestEndToEndWorkflow:
             f.write(svg_content)
 
         # Mock interactive pen mapping
-        with patch("src.commands._interactive_pen_mapping") as mock_mapping:
+        with patch("vpype_vfab.commands._interactive_pen_mapping") as mock_mapping:
             mock_mapping.return_value = {1: 1, 2: 2, 3: 3}
 
             result = subprocess.run(

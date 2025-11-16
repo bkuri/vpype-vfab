@@ -1,4 +1,4 @@
-"""Integration tests for Quick Draw sketch with vpype-plotty."""
+"""Integration tests for Quick Draw sketch with vpype-vfab."""
 
 import os
 import sys
@@ -17,7 +17,7 @@ if vsketch_path.exists():
 
 
 class TestQuickDrawIntegration:
-    """Test Quick Draw sketch integration with vpype-plotty."""
+    """Test Quick Draw sketch integration with vpype-vfab."""
 
     @pytest.fixture
     def quickdraw_sketch(self):
@@ -427,7 +427,7 @@ class TestQuickDrawIntegration:
             assert len(vsk.document.layers) >= 0
 
     def test_quickdraw_finalize_integration(self, quickdraw_sketch, workspace_dir):
-        """Test Quick Draw finalize method with vpype-plotty."""
+        """Test Quick Draw finalize method with vpype-vfab."""
         try:
             import vsketch
         except ImportError:
