@@ -348,9 +348,7 @@ class TestCommands:
                 f.write(create_test_svg())
 
             # Mock the interactive pen mapping to avoid user input
-            with patch(
-                "vpype_vfab.commands._interactive_pen_mapping"
-            ) as mock_mapping:
+            with patch("vpype_vfab.commands._interactive_pen_mapping") as mock_mapping:
                 mock_mapping.return_value = {1: 1}
 
                 # Add job with interactive pen mapping

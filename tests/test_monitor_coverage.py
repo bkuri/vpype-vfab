@@ -168,9 +168,7 @@ class TestMonitorCoverage:
             # Should display header with poll interval
             mock_clear.assert_called_once()
             header_calls = [
-                call
-                for call in mock_echo.call_args_list
-                if "vfab Monitor" in str(call)
+                call for call in mock_echo.call_args_list if "vfab Monitor" in str(call)
             ]
             assert len(header_calls) > 0
             assert "updates every 2.0s" in str(header_calls[0])

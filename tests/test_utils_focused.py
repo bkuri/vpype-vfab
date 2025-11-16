@@ -203,9 +203,7 @@ class TestSaveDocumentForPlotty:
         job_path = temp_dir / "test_job"
 
         with patch("builtins.open", side_effect=OSError("Permission denied")):
-            with pytest.raises(
-                VfabJobError, match="Failed to save document for vfab"
-            ):
+            with pytest.raises(VfabJobError, match="Failed to save document for vfab"):
                 save_document_for_vfab(mock_document, job_path, "test_job")
 
 

@@ -175,9 +175,7 @@ class TestUtilsCoverage:
         with tempfile.TemporaryDirectory() as temp_dir:
             job_path = Path(temp_dir) / "test_job"
 
-            svg_path, json_path = save_document_for_vfab(
-                mock_doc, job_path, "test_job"
-            )
+            svg_path, json_path = save_document_for_vfab(mock_doc, job_path, "test_job")
 
             # Should return correct paths
             assert svg_path == job_path / "vpype_vfab.svg"

@@ -702,9 +702,7 @@ class TestDatabaseQtFree:
             integration = database.StreamlinedPlottyIntegration()
 
             # Mock the import plotty statement to raise ImportError
-            with patch.object(
-                integration.__class__, "_vfab_available"
-            ) as mock_method:
+            with patch.object(integration.__class__, "_vfab_available") as mock_method:
                 mock_method.return_value = False
                 result = integration._vfab_available()
                 assert result is False

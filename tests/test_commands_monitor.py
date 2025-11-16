@@ -260,9 +260,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.return_value = mock_monitor
 
         # Mock a document
-        with patch(
-            "vpype_vfab.commands.vpype_cli.global_processor"
-        ) as mock_processor:
+        with patch("vpype_vfab.commands.vpype_cli.global_processor") as mock_processor:
             mock_doc = Mock()
             mock_processor.return_value = lambda f: f(mock_doc)
 
