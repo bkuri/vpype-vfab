@@ -1,11 +1,10 @@
 """Qt-free tests for vpype_vfab.utils module."""
 
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import json
 import csv
 import io
-from datetime import datetime, timezone
 from pathlib import Path
 import sys
 import os

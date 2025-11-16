@@ -3,7 +3,6 @@
 import pytest
 from unittest.mock import Mock, patch, MagicMock, mock_open
 import json
-import shutil
 from pathlib import Path
 import sys
 import os

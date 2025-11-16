@@ -84,8 +84,6 @@ except Exception as e:
     # Create minimal mock for testing
     commands = MagicMock()
 
-import importlib.util
-
 
 class TestCommandsCore:
     """Test core command functions without CLI dependencies."""
@@ -112,9 +110,6 @@ class TestCommandsCore:
 
     def test_save_job_metadata_structure(self):
         """Test job metadata saving with valid structure."""
-        # Mock database operations
-        mock_db = MagicMock()
-
         job_data = {
             "id": "test_job_123",
             "name": "test_job",
@@ -179,7 +174,7 @@ class TestCommandsCore:
 
         # Should handle empty case gracefully
         try:
-            min_x = min(coord[0] for coord in empty_coords)
+            min(coord[0] for coord in empty_coords)
             assert False, "Should raise exception for empty coordinates"
         except ValueError:
             # Expected behavior
@@ -331,7 +326,7 @@ class TestCommandsErrorHandling:
         # Should handle gracefully
         try:
             with open(file_path, "r") as f:
-                content = f.read()
+                f.read()
             assert False, "Should raise FileNotFoundError"
         except FileNotFoundError:
             # Expected behavior
@@ -384,10 +379,6 @@ class TestCommandsIntegration:
 
     def test_workflow_add_to_list(self):
         """Test complete workflow from add to list operations."""
-        # Mock the entire workflow
-        mock_db = MagicMock()
-        mock_vpype = MagicMock()
-
         # Simulate add operation
         job_id = "test_job_123"
         job_data = {"id": job_id, "name": "test_job", "state": "queued"}

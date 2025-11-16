@@ -1,7 +1,6 @@
 """Test coverage for vpype-vfab monitor module."""
 
-import tempfile
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from pathlib import Path
 
 import pytest

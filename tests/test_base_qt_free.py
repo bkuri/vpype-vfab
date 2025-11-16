@@ -1,10 +1,9 @@
 """Qt-free tests for vpype_vfab.base module with mocked dependencies."""
 
-import pytest
-from unittest.mock import Mock, patch, MagicMock
-import click
+import importlib.util
 import sys
 import os
+from unittest.mock import Mock
 
 # Add the project root to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -12,14 +11,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 # Mock the database module before importing base
 sys.modules["vpype_vfab.database"] = Mock()
 
-# Now import the base module
-import importlib.util
-
 spec = importlib.util.spec_from_file_location(
     "base", "/home/bk/source/vpype-vfab/src/base.py"
 )
-base = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(base)
+if spec and spec.loader:
+    base = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(base)
 
 
 class TestBaseQtFree:

@@ -1,7 +1,5 @@
 """Additional utils coverage tests without Qt dependencies."""
 
-import tempfile
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 import sys
 

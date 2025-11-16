@@ -1,8 +1,8 @@
 """Qt-independent tests for commands module to increase coverage."""
 
-import tempfile
-from unittest.mock import MagicMock, patch
+import importlib.util
 import sys
+from unittest.mock import MagicMock, patch
 
 # Mock all dependencies before importing commands
 mock_click = MagicMock()
@@ -58,7 +58,6 @@ mock_yaml.safe_dump = lambda x, **kwargs: ""
 sys.modules["yaml"] = mock_yaml
 
 # Now import commands directly
-import importlib.util
 
 spec = importlib.util.spec_from_file_location(
     "commands", "/home/bk/source/vpype-vfab/src/commands.py"
@@ -172,7 +171,7 @@ class TestCommandsExtended:
 
         with (
             patch("yaml.dump") as mock_dump,
-            patch("builtins.open") as mock_open,
+            patch("builtins.open"),
             patch("pathlib.Path.exists", return_value=False),
             patch("pathlib.Path.mkdir") as mock_mkdir,
             patch("click.echo"),
@@ -264,7 +263,7 @@ class TestCommandsExtended:
 
         # First prompt returns invalid (0), then valid (1), then valid (2)
         with (
-            patch("click.echo") as mock_echo,
+            patch("click.echo"),
             patch("click.prompt", side_effect=[0, 1, 2]) as mock_prompt,
             patch("vpype_vfab.commands.Abort", MockAbort),
         ):

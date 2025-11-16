@@ -1,9 +1,6 @@
 """Qt-free tests for vpype_vfab.monitor module."""
 
-import pytest
-from unittest.mock import Mock, patch, MagicMock, call
-import time
-from datetime import datetime
+from unittest.mock import Mock, patch
 import sys
 import os
 

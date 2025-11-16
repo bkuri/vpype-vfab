@@ -1,7 +1,6 @@
 """Qt-free tests for vpype_vfab.exceptions module."""
 
 import pytest
-from unittest.mock import Mock
 import sys
 import os
 
