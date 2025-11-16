@@ -64,7 +64,7 @@ def vfab_command(
             command_func = opt(command_func)
 
         # Finally apply click.command to make it a proper Click command
-        command_func = click.command()(command_func)
+        command_func = click.command()(command_func)  # type: ignore
 
         return command_func
 
