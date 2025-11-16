@@ -68,6 +68,9 @@ exclude = ["sandbox*", "tests*"]
 line-length = 88
 target-version = "py311"
 
+[tool.ruff.lint]
+ignore = ["E402"]  # Allow module level imports not at top of file (needed for test mocking)
+
 [tool.black]
 line-length = 88
 target-version = ['py311']
