@@ -7,7 +7,7 @@ name = "vpype-vfab"
 version = "0.4.1"
 description = "vpype plugin for vfab plotter management integration"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.11"
 authors = [
     {name = "bkuri", email = "ben@kurita.org"}
@@ -17,7 +17,6 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Artistic",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -62,7 +61,8 @@ vfab-list = "vpype_vfab.commands:vfab_list"
 vfab-monitor = "vpype_vfab.commands:vfab_monitor"
 
 [tool.setuptools.packages.find]
-where = ["."]
+include = ["vpype_vfab*"]
+exclude = ["sandbox*", "tests*"]
 
 [tool.ruff]
 line-length = 88
