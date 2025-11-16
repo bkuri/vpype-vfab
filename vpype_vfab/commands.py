@@ -1,6 +1,6 @@
 """Streamlined vpype commands for vpype-vfab."""
 
-from typing import Optional
+from typing import Optional, Dict, Any
 
 import click
 from click import Abort
