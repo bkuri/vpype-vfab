@@ -172,7 +172,7 @@ def save_document_for_vfab(
         job_path.mkdir(parents=True, exist_ok=True)
 
         # Save optimized SVG
-        svg_path = job_path / "src.svg"
+        svg_path = job_path / "vpype_vfab.svg"
         with open(svg_path, "w", encoding="utf-8") as f:
             vpype.write_svg(f, document)
 

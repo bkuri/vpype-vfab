@@ -28,17 +28,17 @@ for module in qt_modules:
     sys.modules[module] = MagicMock()
 
 # Now we can safely import vpype modules
-from vpype_vfab.config import PlottyConfig
+from vpype_vfab.config import VfabConfig
 from vpype_vfab.exceptions import VfabConfigError, VfabNotFoundError
 
 
-class TestPlottyConfigEnhanced:
+class TestVfabConfigEnhanced:
     """Enhanced vfab configuration management tests."""
 
     def test_init_with_explicit_path(self):
         """Test initialization with explicit workspace path."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             assert config.workspace_path == Path(temp_dir)
             assert config.config_path == Path(temp_dir) / "config.yaml"
             assert config.vpype_presets_path == Path(temp_dir) / "vpype-presets.yaml"
@@ -52,14 +52,14 @@ class TestPlottyConfigEnhanced:
                 mock_exists.return_value = False  # All candidates don't exist
 
                 with patch("pathlib.Path.mkdir") as mock_mkdir:
-                    config = PlottyConfig()
+                    config = VfabConfig()
                     # Should create default workspace
                     mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
 
     def test_find_workspace_explicit_path(self):
         """Test workspace finding with explicit valid path."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             workspace = config._find_workspace(temp_dir)
             assert workspace == Path(temp_dir)
 
@@ -72,7 +72,7 @@ class TestPlottyConfigEnhanced:
             with patch("pathlib.Path.cwd") as mock_cwd:
                 mock_cwd.return_value = Path(temp_dir)
 
-                config = PlottyConfig()
+                config = VfabConfig()
                 workspace = config._find_workspace(None)
                 assert workspace == workspace_dir
 
@@ -85,7 +85,7 @@ class TestPlottyConfigEnhanced:
             with patch("pathlib.Path.home") as mock_home:
                 mock_home.return_value = Path(temp_dir)
 
-                config = PlottyConfig()
+                config = VfabConfig()
                 workspace = config._find_workspace(None)
                 assert workspace == workspace_dir
 
@@ -102,7 +102,7 @@ class TestPlottyConfigEnhanced:
 
                     mock_exists.side_effect = exists_side_effect
 
-                    config = PlottyConfig()
+                    config = VfabConfig()
                     workspace = config._find_workspace(None)
                     assert workspace == Path(temp_dir)
 
@@ -123,7 +123,7 @@ class TestPlottyConfigEnhanced:
 
                     mock_exists.side_effect = exists_side_effect
 
-                    config = PlottyConfig()
+                    config = VfabConfig()
                     expected_workspace = fake_home / "vfab-workspace"
                     assert config.workspace_path == expected_workspace
                     assert expected_workspace.exists()
@@ -140,7 +140,7 @@ class TestPlottyConfigEnhanced:
                     mock_mkdir.side_effect = OSError("Permission denied")
 
                     with pytest.raises(VfabNotFoundError) as exc_info:
-                        PlottyConfig()
+                        VfabConfig()
 
                     assert "vfab workspace not found" in str(exc_info.value)
                     assert "Permission denied" in str(exc_info.value)
@@ -148,7 +148,7 @@ class TestPlottyConfigEnhanced:
     def test_load_config_default(self):
         """Test loading default configuration when no file exists."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             default_config = config.load_config()
 
             assert "workspace" in default_config
@@ -174,7 +174,7 @@ class TestPlottyConfigEnhanced:
             with open(config_path, "w") as f:
                 yaml.dump(test_config, f)
 
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             loaded_config = config.load_config()
 
             assert loaded_config["vpype"]["preset"] == "hq"
@@ -189,7 +189,7 @@ class TestPlottyConfigEnhanced:
             config_path = Path(temp_dir) / "config.yaml"
             config_path.touch()  # Create empty file
 
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             loaded_config = config.load_config()
 
             # When file exists but is empty, yaml.safe_load returns None
@@ -203,7 +203,7 @@ class TestPlottyConfigEnhanced:
             with open(config_path, "w") as f:
                 f.write("invalid: yaml: content:")
 
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             with pytest.raises(VfabConfigError) as exc_info:
                 config.load_config()
 
@@ -215,7 +215,7 @@ class TestPlottyConfigEnhanced:
             config_path = Path(temp_dir) / "config.yaml"
             config_path.write_text("valid: yaml")
 
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
 
             with patch("builtins.open", side_effect=OSError("Permission denied")):
                 with pytest.raises(VfabConfigError) as exc_info:
@@ -231,7 +231,7 @@ class TestPlottyConfigEnhanced:
         }
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             config.save_config(test_config)
 
             # Verify file was created
@@ -249,7 +249,7 @@ class TestPlottyConfigEnhanced:
         test_config = {"vpype": {"preset": "hq"}}
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             # Remove config directory to test creation
             config.config_path.parent.rmdir()
 
@@ -261,7 +261,7 @@ class TestPlottyConfigEnhanced:
         test_config = {"vpype": {"preset": "default"}}
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
 
             with patch("yaml.dump", side_effect=yaml.YAMLError("YAML error")):
                 with pytest.raises(VfabConfigError) as exc_info:
@@ -274,7 +274,7 @@ class TestPlottyConfigEnhanced:
         test_config = {"vpype": {"preset": "default"}}
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
 
             with patch("builtins.open", side_effect=OSError("Disk full")):
                 with pytest.raises(VfabConfigError) as exc_info:
@@ -285,7 +285,7 @@ class TestPlottyConfigEnhanced:
     def test_default_config_structure(self):
         """Test default configuration structure."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             default_config = config._default_config()
 
             # Check required sections
@@ -310,7 +310,7 @@ class TestPlottyConfigEnhanced:
     def test_get_vpype_preset_default(self):
         """Test getting vpype preset from default config."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             preset = config.get_vpype_preset()
             assert preset == "fast"
 
@@ -319,7 +319,7 @@ class TestPlottyConfigEnhanced:
         test_config = {"vpype": {"preset": "hq"}}
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             config.save_config(test_config)
 
             preset = config.get_vpype_preset()
@@ -330,7 +330,7 @@ class TestPlottyConfigEnhanced:
         test_config = {"paper": {"default_size": "A3"}}
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             config.save_config(test_config)
 
             preset = config.get_vpype_preset()
@@ -341,7 +341,7 @@ class TestPlottyConfigEnhanced:
         test_config = {"vpype": {"other_setting": "value"}}
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             config.save_config(test_config)
 
             preset = config.get_vpype_preset()
@@ -350,7 +350,7 @@ class TestPlottyConfigEnhanced:
     def test_get_default_paper_size_default(self):
         """Test getting default paper size from default config."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             paper_size = config.get_default_paper_size()
             assert paper_size == "A4"
 
@@ -359,7 +359,7 @@ class TestPlottyConfigEnhanced:
         test_config = {"paper": {"default_size": "A3"}}
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             config.save_config(test_config)
 
             paper_size = config.get_default_paper_size()
@@ -370,7 +370,7 @@ class TestPlottyConfigEnhanced:
         test_config = {"vpype": {"preset": "hq"}}
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             config.save_config(test_config)
 
             paper_size = config.get_default_paper_size()
@@ -381,7 +381,7 @@ class TestPlottyConfigEnhanced:
         test_config = {"paper": {"default_margin_mm": 15.0}}
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
             config.save_config(test_config)
 
             paper_size = config.get_default_paper_size()
@@ -407,13 +407,13 @@ class TestPlottyConfigEnhanced:
                     mock_home.return_value = Path(temp_dir)
 
                     # Explicit path should take priority
-                    config = PlottyConfig(str(explicit_dir))
+                    config = VfabConfig(str(explicit_dir))
                     assert config.workspace_path == explicit_dir
 
     def test_config_and_presets_paths(self):
         """Test that config and vpype-presets paths are correctly set."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            config = PlottyConfig(temp_dir)
+            config = VfabConfig(temp_dir)
 
             assert config.config_path == config.workspace_path / "config.yaml"
             assert (

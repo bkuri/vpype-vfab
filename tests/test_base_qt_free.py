@@ -1,6 +1,5 @@
 """Qt-free tests for vpype_vfab.base module with mocked dependencies."""
 
-import importlib.util
 import sys
 import os
 from unittest.mock import Mock
@@ -11,12 +10,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 # Mock the database module before importing base
 sys.modules["vpype_vfab.database"] = Mock()
 
-spec = importlib.util.spec_from_file_location(
-    "base", "/home/bk/source/vpype-vfab/src/base.py"
-)
-if spec and spec.loader:
-    base = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(base)
+# Import base module directly since project root is in sys.path
+from vpype_vfab import base
 
 
 class TestBaseQtFree:
@@ -24,7 +19,7 @@ class TestBaseQtFree:
 
     def test_get_pen_mapping_single_layer(self):
         """Test pen mapping for single layer document."""
-        command = base.StreamlinedPlottyCommand()
+        command = base.StreamlinedVfabCommand()
         document = Mock()
         document.layers = [0]  # Single layer
 
@@ -34,7 +29,7 @@ class TestBaseQtFree:
 
     def test_get_pen_mapping_auto_preset(self):
         """Test pen mapping with auto preset."""
-        command = base.StreamlinedPlottyCommand()
+        command = base.StreamlinedVfabCommand()
         document = Mock()
         document.layers = [0, 1, 2, 3, 4, 5]  # Multiple layers
 
@@ -45,7 +40,7 @@ class TestBaseQtFree:
 
     def test_get_pen_mapping_sequential_preset(self):
         """Test pen mapping with sequential preset."""
-        command = base.StreamlinedPlottyCommand()
+        command = base.StreamlinedVfabCommand()
         document = Mock()
         document.layers = [0, 1, 2, 3]  # Multiple layers
 
@@ -56,7 +51,7 @@ class TestBaseQtFree:
 
     def test_get_pen_mapping_default_preset(self):
         """Test pen mapping with unknown preset (defaults to auto)."""
-        command = base.StreamlinedPlottyCommand()
+        command = base.StreamlinedVfabCommand()
         document = Mock()
         document.layers = [0, 1, 2, 3, 4]  # Multiple layers
 
@@ -67,7 +62,7 @@ class TestBaseQtFree:
 
     def test_get_pen_mapping_default_parameter(self):
         """Test pen mapping with default parameter (auto)."""
-        command = base.StreamlinedPlottyCommand()
+        command = base.StreamlinedVfabCommand()
         document = Mock()
         document.layers = [0, 1, 2]  # Multiple layers
 
@@ -78,7 +73,7 @@ class TestBaseQtFree:
 
     def test_get_pen_mapping_empty_layers(self):
         """Test pen mapping with empty layers list."""
-        command = base.StreamlinedPlottyCommand()
+        command = base.StreamlinedVfabCommand()
         document = Mock()
         document.layers = []  # No layers
 
@@ -88,7 +83,7 @@ class TestBaseQtFree:
 
     def test_get_pen_mapping_many_layers_auto(self):
         """Test pen mapping with many layers using auto preset."""
-        command = base.StreamlinedPlottyCommand()
+        command = base.StreamlinedVfabCommand()
         document = Mock()
         document.layers = list(range(10))  # 10 layers
 

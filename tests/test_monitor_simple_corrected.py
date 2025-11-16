@@ -34,15 +34,7 @@ sys.modules["vpype_cli"] = MagicMock()
 sys.modules["vpype_cli.show"] = MagicMock()
 
 # Now import monitor directly
-import importlib.util
-
-spec = importlib.util.spec_from_file_location(
-    "monitor", "/home/bk/source/vpype-vfab/src/monitor.py"
-)
-monitor_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(monitor_module)
-
-SimplePlottyMonitor = monitor_module.SimplePlottyMonitor
+from vpype_vfab.monitor import SimplePlottyMonitor
 
 
 class TestSimplePlottyMonitor:

@@ -7,14 +7,8 @@ import os
 # Add the project root to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-# Import the exceptions module using importlib to avoid Qt issues
-import importlib.util
-
-spec = importlib.util.spec_from_file_location(
-    "exceptions", "/home/bk/source/vpype-vfab/src/exceptions.py"
-)
-exceptions = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(exceptions)
+# Import the exceptions module
+from vpype_vfab import exceptions
 
 
 class TestExceptionsQtFree:

@@ -1,6 +1,5 @@
 """Qt-independent tests for commands module to increase coverage."""
 
-import importlib.util
 import sys
 from unittest.mock import MagicMock, patch
 
@@ -59,23 +58,16 @@ sys.modules["yaml"] = mock_yaml
 
 # Now import commands directly
 
-spec = importlib.util.spec_from_file_location(
-    "commands", "/home/bk/source/vpype-vfab/src/commands.py"
-)
-if spec is None:
-    raise ImportError("Could not load commands module")
-commands_module = importlib.util.module_from_spec(spec)
-if spec.loader is None:
-    raise ImportError("Could not get loader for commands module")
-spec.loader.exec_module(commands_module)
+# Import commands module directly since project root is in sys.path
+from vpype_vfab import commands
 
-# Import the functions we need to test
-_interactive_pen_mapping = commands_module._interactive_pen_mapping
-plotty_add = commands_module.plotty_add
-plotty_queue = commands_module.plotty_queue
-plotty_status = commands_module.plotty_status
-plotty_list = commands_module.plotty_list
-plotty_delete = commands_module.plotty_delete
+# Import functions we need to test
+_interactive_pen_mapping = commands._interactive_pen_mapping
+vfab_add = commands.vfab_add
+vfab_queue = commands.vfab_queue
+vfab_status = commands.vfab_status
+vfab_list = commands.vfab_list
+vfab_delete = commands.vfab_delete
 
 
 class TestCommandsExtended:

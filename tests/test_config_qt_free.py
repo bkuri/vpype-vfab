@@ -26,18 +26,7 @@ mock_exceptions.VfabNotFoundError = mock_plotty_not_found_error
 sys.modules["vpype_vfab.exceptions"] = mock_exceptions
 
 # Now import the config module
-import importlib.util
-
-spec = importlib.util.spec_from_file_location(
-    "config", "/home/bk/source/vpype-vfab/src/config.py"
-)
-if spec is None:
-    raise ImportError("Could not load config module")
-config = importlib.util.module_from_spec(spec)
-sys.modules["config"] = config  # Register in sys.modules for patching
-if spec.loader is None:
-    raise ImportError("Could not get loader for config module")
-spec.loader.exec_module(config)
+from vpype_vfab import config
 
 
 class TestConfigQtFree:

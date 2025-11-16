@@ -1,6 +1,5 @@
 """Comprehensive monitor tests using direct import to avoid Qt issues."""
 
-import importlib
 import os
 import sys
 from unittest.mock import MagicMock, patch
@@ -34,18 +33,8 @@ class MockPlottyIntegration:
 mock_database.PlottyIntegration = MockPlottyIntegration
 sys.modules["vpype_vfab.database"] = mock_database
 
-# Import monitor module directly using importlib
-import importlib.util
-
-spec = importlib.util.spec_from_file_location(
-    "vpype_vfab.monitor", "/home/bk/source/vpype-vfab/src/monitor.py"
-)
-monitor_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(monitor_module)
-
-# Get classes and functions we need to test
-SimplePlottyMonitor = monitor_module.SimplePlottyMonitor
-plotty_monitor = monitor_module.plotty_monitor
+# Import monitor module directly
+from vpype_vfab.monitor import SimplePlottyMonitor, plotty_monitor
 
 
 class TestSimplePlottyMonitor:

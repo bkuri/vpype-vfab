@@ -411,7 +411,7 @@ class TestQuickDrawIntegration:
                 pass
 
         # Test with zero grid size
-        vsk.clear()
+        vsk = vsketch.Vsketch()
         sketch.category = "cat"
         sketch.columns = 0
         sketch.rows = 0

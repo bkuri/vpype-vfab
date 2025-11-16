@@ -42,7 +42,7 @@ def test_comprehensive_coverage():
     # Test config module
     with tempfile.TemporaryDirectory() as tmp_dir:
         workspace_path = Path(tmp_dir)
-        config_manager = config.PlottyConfig(str(workspace_path))
+        config_manager = config.VfabConfig(str(workspace_path))
         assert config_manager.workspace_path == workspace_path
 
         # Test workspace finding
@@ -52,7 +52,7 @@ def test_comprehensive_coverage():
     # Test database module
     with tempfile.TemporaryDirectory() as tmp_dir:
         db_path = Path(tmp_dir)
-        integration = database.PlottyIntegration(str(db_path))
+        integration = database.StreamlinedVfabIntegration(str(db_path))
         assert integration is not None
         assert integration.workspace.exists()
 

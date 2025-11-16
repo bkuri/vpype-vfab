@@ -19,14 +19,16 @@ sys.modules["vpype.Document"] = Mock()
 # Mock the exceptions module
 sys.modules["vpype_vfab.exceptions"] = Mock()
 
-# Now import the utils module
+# Now import the utils module using importlib to avoid dependency chain
 import importlib.util
 
-spec = importlib.util.spec_from_file_location(
-    "utils", "/home/bk/source/vpype-vfab/src/utils.py"
-)
-utils = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(utils)
+utils_path = Path(__file__).parent.parent / "vpype_vfab" / "utils.py"
+spec = importlib.util.spec_from_file_location("utils", str(utils_path))
+if spec and spec.loader:
+    utils = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(utils)
+else:
+    raise ImportError("Could not load utils module")
 
 
 class TestUtilsQtFree:

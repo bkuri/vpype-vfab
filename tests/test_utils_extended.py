@@ -42,15 +42,7 @@ sys.modules["vpype_cli"] = MagicMock()
 sys.modules["vpype_cli.show"] = MagicMock()
 
 # Now import utils directly
-import importlib.util
-
-spec = importlib.util.spec_from_file_location(
-    "utils", "/home/bk/source/vpype-vfab/src/utils.py"
-)
-utils_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(utils_module)
-
-JobFormatter = utils_module.JobFormatter
+from vpype_vfab.utils import JobFormatter
 
 
 class TestJobFormatterExtended:

@@ -225,7 +225,7 @@ class TestSchotterIntegration:
 
         # Modify to create multiple layers with different colors
         # This simulates a more complex multi-layer Schotter
-        vsk.clear()
+        vsk = vsketch.Vsketch()
 
         # Layer 1: Red squares (low distortion)
         lc1 = vsk.createLayer()
@@ -291,7 +291,7 @@ class TestSchotterIntegration:
         assert len(vsk.document.layers) > 0
 
         # Test with zero parameters
-        vsk.clear()
+        vsk = vsketch.Vsketch()
         sketch.columns = 0
         sketch.rows = 0
         sketch.draw(vsk)

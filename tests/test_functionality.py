@@ -4,8 +4,8 @@
 import tempfile
 from pathlib import Path
 
-from vpype_vfab.config import PlottyConfig
-from vpype_vfab.database import PlottyIntegration
+from vpype_vfab.config import VfabConfig
+from vpype_vfab.database import StreamlinedVfabIntegration
 from vpype_vfab.utils import generate_job_name, validate_preset
 
 import vpype
@@ -18,7 +18,7 @@ def test_basic_functionality():
     # Test 1: Configuration
     print("\n1. Testing configuration...")
     with tempfile.TemporaryDirectory() as temp_dir:
-        config = PlottyConfig(temp_dir)
+        config = VfabConfig(temp_dir)
         assert config.workspace_path == Path(temp_dir)
         print("✓ Configuration works")
 
@@ -39,7 +39,7 @@ def test_basic_functionality():
     # Test 4: Database integration
     print("\n4. Testing database integration...")
     with tempfile.TemporaryDirectory() as temp_dir:
-        plotty = PlottyIntegration(temp_dir)
+        plotty = StreamlinedVfabIntegration(temp_dir)
 
         # Create a simple document
         document = vpype.Document()
@@ -70,8 +70,8 @@ def test_basic_functionality():
         import vpype_vfab.commands
 
         # Test that commands are available
-        assert hasattr(vpype_vfab.commands, "plotty_add")
-        assert hasattr(vpype_vfab.commands, "plotty_queue")
+        assert hasattr(vpype_vfab.commands, "vfab_add")
+        assert hasattr(vpype_vfab.commands, "vfab_queue")
 
         print("✓ Command imports work")
     except ImportError as e:

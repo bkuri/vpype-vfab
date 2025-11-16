@@ -7,7 +7,6 @@ and provides comprehensive coverage of command functionality.
 
 import os
 import sys
-import importlib.util
 from unittest.mock import MagicMock, patch
 
 # Set environment variables to bypass Qt display issues
@@ -67,18 +66,9 @@ external_mocks = {
 for module_name, mock_module in external_mocks.items():
     sys.modules[module_name] = mock_module
 
-# Import commands module directly
-spec = None
+# Import commands module directly since project root is in sys.path
 try:
-    spec = importlib.util.spec_from_file_location(
-        "commands", "/home/bk/source/vpype-vfab/src/commands.py"
-    )
-    if spec is not None and spec.loader is not None:
-        commands = importlib.util.module_from_spec(spec)
-        sys.modules["commands"] = commands
-        spec.loader.exec_module(commands)
-    else:
-        raise ImportError("Could not load commands module spec")
+    from vpype_vfab import commands
 except Exception as e:
     print(f"Error importing commands module: {e}")
     # Create minimal mock for testing

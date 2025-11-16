@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vpype-vfab"
-version = "0.4.1"
+version = "0.4.2"
 description = "vpype plugin for vfab plotter management integration"
 readme = "README.md"
 license = "MIT"

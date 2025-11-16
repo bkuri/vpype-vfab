@@ -36,16 +36,7 @@ mock_utils.save_document_for_vfab = mock_save_document
 sys.modules["vpype_vfab.utils"] = mock_utils
 
 # Now import the database module
-import importlib.util
-
-spec = importlib.util.spec_from_file_location(
-    "database", "/home/bk/source/vpype-vfab/src/database.py"
-)
-if spec is None:
-    raise ImportError("Could not load database module")
-database = importlib.util.module_from_spec(spec)
-sys.modules["database"] = database  # Register in sys.modules for patching
-spec.loader.exec_module(database)
+from vpype_vfab import database
 
 
 class TestDatabaseQtFree:

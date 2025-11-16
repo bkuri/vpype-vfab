@@ -4,11 +4,11 @@ from unittest.mock import Mock, patch
 
 from click.testing import CliRunner
 
-from vpype_vfab.commands import plotty_monitor
+from vpype_vfab.commands import vfab_monitor
 
 
 class TestPlottyMonitorCommand:
-    """Test the plotty_monitor command functionality."""
+    """Test the vfab_monitor command functionality."""
 
     def setup_method(self):
         """Set up test environment."""
@@ -20,7 +20,7 @@ class TestPlottyMonitorCommand:
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, [])
+        result = self.runner.invoke(vfab_monitor, [])
 
         assert result.exit_code == 0
         mock_monitor_class.assert_called_once_with(None, 1.0)
@@ -32,7 +32,7 @@ class TestPlottyMonitorCommand:
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, ["--follow"])
+        result = self.runner.invoke(vfab_monitor, ["--follow"])
 
         assert result.exit_code == 0
         mock_monitor_class.assert_called_once_with(None, 1.0)
@@ -44,7 +44,7 @@ class TestPlottyMonitorCommand:
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, ["--poll-rate", "2.5"])
+        result = self.runner.invoke(vfab_monitor, ["--poll-rate", "2.5"])
 
         assert result.exit_code == 0
         mock_monitor_class.assert_called_once_with(None, 2.5)
@@ -56,7 +56,7 @@ class TestPlottyMonitorCommand:
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, ["--fast"])
+        result = self.runner.invoke(vfab_monitor, ["--fast"])
 
         assert result.exit_code == 0
         mock_monitor_class.assert_called_once_with(None, 0.1)
@@ -68,7 +68,7 @@ class TestPlottyMonitorCommand:
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, ["--slow"])
+        result = self.runner.invoke(vfab_monitor, ["--slow"])
 
         assert result.exit_code == 0
         mock_monitor_class.assert_called_once_with(None, 5.0)
@@ -81,7 +81,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.return_value = mock_monitor
 
         workspace = "/test/workspace"
-        result = self.runner.invoke(plotty_monitor, ["--workspace", workspace])
+        result = self.runner.invoke(vfab_monitor, ["--workspace", workspace])
 
         assert result.exit_code == 0
         mock_monitor_class.assert_called_once_with(workspace, 1.0)
@@ -95,7 +95,7 @@ class TestPlottyMonitorCommand:
 
         workspace = "/test/workspace"
         result = self.runner.invoke(
-            plotty_monitor, ["--follow", "--workspace", workspace]
+            vfab_monitor, ["--follow", "--workspace", workspace]
         )
 
         assert result.exit_code == 0
@@ -108,7 +108,7 @@ class TestPlottyMonitorCommand:
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, ["--fast", "--follow"])
+        result = self.runner.invoke(vfab_monitor, ["--fast", "--follow"])
 
         assert result.exit_code == 0
         mock_monitor_class.assert_called_once_with(None, 0.1)
@@ -120,7 +120,7 @@ class TestPlottyMonitorCommand:
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, ["--slow", "--follow"])
+        result = self.runner.invoke(vfab_monitor, ["--slow", "--follow"])
 
         assert result.exit_code == 0
         mock_monitor_class.assert_called_once_with(None, 5.0)
@@ -133,7 +133,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.return_value = mock_monitor
 
         # Test with poll rate below minimum - should be clamped
-        result = self.runner.invoke(plotty_monitor, ["--poll-rate", "0.05"])
+        result = self.runner.invoke(vfab_monitor, ["--poll-rate", "0.05"])
 
         assert result.exit_code == 0
         # Should be clamped to 0.1 by SimplePlottyMonitor constructor
@@ -149,7 +149,7 @@ class TestPlottyMonitorCommand:
         mock_monitor_class.return_value = mock_monitor
 
         # Test with poll rate above maximum
-        result = self.runner.invoke(plotty_monitor, ["--poll-rate", "15.0"])
+        result = self.runner.invoke(vfab_monitor, ["--poll-rate", "15.0"])
 
         assert result.exit_code == 0
         # Should be clamped to 10.0 by SimplePlottyMonitor constructor
@@ -164,7 +164,7 @@ class TestPlottyMonitorCommand:
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, ["--poll-rate", "2.0", "--fast"])
+        result = self.runner.invoke(vfab_monitor, ["--poll-rate", "2.0", "--fast"])
 
         assert result.exit_code == 0
         # Fast option should override custom poll rate
@@ -177,7 +177,7 @@ class TestPlottyMonitorCommand:
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, ["--poll-rate", "2.0", "--slow"])
+        result = self.runner.invoke(vfab_monitor, ["--poll-rate", "2.0", "--slow"])
 
         assert result.exit_code == 0
         # Slow option should override custom poll rate
@@ -190,7 +190,7 @@ class TestPlottyMonitorCommand:
         mock_monitor = Mock()
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, ["--slow", "--fast"])
+        result = self.runner.invoke(vfab_monitor, ["--slow", "--fast"])
 
         assert result.exit_code == 0
         # Fast option should take precedence over slow
@@ -204,7 +204,7 @@ class TestPlottyMonitorCommand:
         # Simulate exception from SimplePlottyMonitor
         mock_monitor_class.side_effect = Exception("Test error")
 
-        result = self.runner.invoke(plotty_monitor, [])
+        result = self.runner.invoke(vfab_monitor, [])
 
         assert result.exit_code != 0
         # Verify error was echoed
@@ -218,7 +218,7 @@ class TestPlottyMonitorCommand:
         mock_monitor.static_snapshot.side_effect = Exception("Monitor error")
         mock_monitor_class.return_value = mock_monitor
 
-        result = self.runner.invoke(plotty_monitor, [])
+        result = self.runner.invoke(vfab_monitor, [])
 
         assert result.exit_code != 0
         # Verify error was echoed
@@ -227,7 +227,7 @@ class TestPlottyMonitorCommand:
     @patch("vpype_vfab.monitor.SimplePlottyMonitor")
     def test_command_help_message(self, mock_monitor_class):
         """Test that command help is displayed correctly."""
-        result = self.runner.invoke(plotty_monitor, ["--help"])
+        result = self.runner.invoke(vfab_monitor, ["--help"])
 
         assert result.exit_code == 0
         assert "Monitor vfab jobs" in result.output
@@ -245,7 +245,7 @@ class TestPlottyMonitorCommand:
 
         workspace = "/test/workspace"
         result = self.runner.invoke(
-            plotty_monitor, ["--workspace", workspace, "--follow", "--fast"]
+            vfab_monitor, ["--workspace", workspace, "--follow", "--fast"]
         )
 
         assert result.exit_code == 0
@@ -264,7 +264,7 @@ class TestPlottyMonitorCommand:
             mock_doc = Mock()
             mock_processor.return_value = lambda f: f(mock_doc)
 
-            result = self.runner.invoke(plotty_monitor, [])
+            result = self.runner.invoke(vfab_monitor, [])
 
             assert result.exit_code == 0
             # The command should return the document unchanged

@@ -18,19 +18,19 @@ sys.modules["vpype.Document"] = MagicMock()
 sys.modules["click"] = MagicMock()
 
 # Import after mocking
-from vpype_vfab.base import StreamlinedPlottyCommand
+from vpype_vfab.base import StreamlinedVfabCommand
 from vpype_vfab.commands import (
-    plotty_add,
-    plotty_list,
-    plotty_queue,
-    plotty_status,
-    plotty_delete,
+    vfab_add,
+    vfab_list,
+    vfab_queue,
+    vfab_status,
+    vfab_delete,
 )
 from vpype_vfab.exceptions import VfabJobError
 
 
-class TestStreamlinedPlottyCommand:
-    """Test cases for StreamlinedPlottyCommand base class."""
+class TestStreamlinedVfabCommand:
+    """Test cases for StreamlinedVfabCommand base class."""
 
     @pytest.fixture
     def temp_workspace(self):
@@ -41,7 +41,7 @@ class TestStreamlinedPlottyCommand:
     @pytest.fixture
     def command(self, temp_workspace):
         """Create command instance with temporary workspace."""
-        return StreamlinedPlottyCommand(str(temp_workspace))
+        return StreamlinedVfabCommand(str(temp_workspace))
 
     @pytest.fixture
     def mock_document(self):
@@ -50,13 +50,13 @@ class TestStreamlinedPlottyCommand:
 
     def test_init_default_workspace(self):
         """Test initialization with default workspace."""
-        cmd = StreamlinedPlottyCommand()
+        cmd = StreamlinedVfabCommand()
         assert cmd.plotty is not None
         assert cmd.plotty.workspace.exists()
 
     def test_init_custom_workspace(self, temp_workspace):
         """Test initialization with custom workspace."""
-        cmd = StreamlinedPlottyCommand(str(temp_workspace))
+        cmd = StreamlinedVfabCommand(str(temp_workspace))
         assert cmd.plotty.workspace == temp_workspace
 
     def test_handle_error_without_context(self, command):
@@ -106,7 +106,7 @@ class TestPenMappingPresets:
 
     def test_command_get_pen_mapping_auto(self):
         """Test auto pen mapping preset through command."""
-        cmd = StreamlinedPlottyCommand()
+        cmd = StreamlinedVfabCommand()
         doc = MagicMock()
         doc.layers = [1, 2, 3, 4, 5]  # 5 layers
 
@@ -116,7 +116,7 @@ class TestPenMappingPresets:
 
     def test_command_get_pen_mapping_sequential(self):
         """Test sequential pen mapping preset through command."""
-        cmd = StreamlinedPlottyCommand()
+        cmd = StreamlinedVfabCommand()
         doc = MagicMock()
         doc.layers = [1, 2, 3]
 
@@ -126,7 +126,7 @@ class TestPenMappingPresets:
 
     def test_command_get_pen_mapping_single_layer(self):
         """Test single layer returns None."""
-        cmd = StreamlinedPlottyCommand()
+        cmd = StreamlinedVfabCommand()
         doc = MagicMock()
         doc.layers = [1]  # Single layer
 
@@ -135,7 +135,7 @@ class TestPenMappingPresets:
 
     def test_command_get_pen_mapping_invalid(self):
         """Test invalid pen mapping preset through command."""
-        cmd = StreamlinedPlottyCommand()
+        cmd = StreamlinedVfabCommand()
         doc = MagicMock()
         doc.layers = [1, 2]
 
@@ -167,18 +167,16 @@ class TestPlottyCommands:
         return doc
 
     def test_vfab_add_command_success(self, runner, mock_document, temp_workspace):
-        """Test successful plotty_add command."""
+        """Test successful vfab_add command."""
         with patch("vpype_vfab.commands.load_document") as mock_load:
             mock_load.return_value = mock_document
 
-            with patch(
-                "vpype_vfab.commands.StreamlinedPlottyCommand"
-            ) as mock_cmd_class:
+            with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
                 mock_cmd = MagicMock()
                 mock_cmd_class.return_value = mock_cmd
 
                 result = runner.invoke(
-                    plotty_add,
+                    vfab_add,
                     [
                         "--name",
                         "test_job",
@@ -197,18 +195,16 @@ class TestPlottyCommands:
     def test_vfab_add_command_with_pen_mapping(
         self, runner, mock_document, temp_workspace
     ):
-        """Test plotty_add command with pen mapping."""
+        """Test vfab_add command with pen mapping."""
         with patch("vpype_vfab.commands.load_document") as mock_load:
             mock_load.return_value = mock_document
 
-            with patch(
-                "vpype_vfab.commands.StreamlinedPlottyCommand"
-            ) as mock_cmd_class:
+            with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
                 mock_cmd = MagicMock()
                 mock_cmd_class.return_value = mock_cmd
 
                 result = runner.invoke(
-                    plotty_add,
+                    vfab_add,
                     [
                         "--name",
                         "test_job",
@@ -223,8 +219,8 @@ class TestPlottyCommands:
                 assert result.exit_code == 0 or result.exception is None
 
     def test_vfab_list_command_success(self, runner, temp_workspace):
-        """Test successful plotty_list command."""
-        with patch("vpype_vfab.commands.StreamlinedPlottyCommand") as mock_cmd_class:
+        """Test successful vfab_list command."""
+        with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
             mock_cmd.plotty.list_jobs.return_value = [
                 {"name": "job1", "state": "NEW"},
@@ -232,14 +228,14 @@ class TestPlottyCommands:
             ]
             mock_cmd_class.return_value = mock_cmd
 
-            result = runner.invoke(plotty_list, ["--workspace", str(temp_workspace)])
+            result = runner.invoke(vfab_list, ["--workspace", str(temp_workspace)])
 
             # Should not raise exception
             assert result.exit_code == 0 or result.exception is None
 
     def test_vfab_list_command_with_state_filter(self, runner, temp_workspace):
-        """Test plotty_list command with state filter."""
-        with patch("vpype_vfab.commands.StreamlinedPlottyCommand") as mock_cmd_class:
+        """Test vfab_list command with state filter."""
+        with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
             mock_cmd.plotty.list_jobs.return_value = [
                 {"name": "job1", "state": "QUEUED"}
@@ -247,33 +243,33 @@ class TestPlottyCommands:
             mock_cmd_class.return_value = mock_cmd
 
             result = runner.invoke(
-                plotty_list, ["--state", "QUEUED", "--workspace", str(temp_workspace)]
+                vfab_list, ["--state", "QUEUED", "--workspace", str(temp_workspace)]
             )
 
             # Should not raise exception
             assert result.exit_code == 0 or result.exception is None
 
     def test_vfab_queue_command_success(self, runner, temp_workspace):
-        """Test successful plotty_queue command."""
-        with patch("vpype_vfab.commands.StreamlinedPlottyCommand") as mock_cmd_class:
+        """Test successful vfab_queue command."""
+        with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
             mock_cmd_class.return_value = mock_cmd
 
             result = runner.invoke(
-                plotty_queue, ["test_job", "--workspace", str(temp_workspace)]
+                vfab_queue, ["test_job", "--workspace", str(temp_workspace)]
             )
 
             # Should not raise exception
             assert result.exit_code == 0 or result.exception is None
 
     def test_vfab_queue_command_with_priority(self, runner, temp_workspace):
-        """Test plotty_queue command with priority."""
-        with patch("vpype_vfab.commands.StreamlinedPlottyCommand") as mock_cmd_class:
+        """Test vfab_queue command with priority."""
+        with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
             mock_cmd_class.return_value = mock_cmd
 
             result = runner.invoke(
-                plotty_queue,
+                vfab_queue,
                 ["test_job", "--priority", "5", "--workspace", str(temp_workspace)],
             )
 
@@ -281,8 +277,8 @@ class TestPlottyCommands:
             assert result.exit_code == 0 or result.exception is None
 
     def test_vfab_status_command_success(self, runner, temp_workspace):
-        """Test successful plotty_status command."""
-        with patch("vpype_vfab.commands.StreamlinedPlottyCommand") as mock_cmd_class:
+        """Test successful vfab_status command."""
+        with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
             mock_cmd.plotty.get_job_status.return_value = {
                 "name": "test_job",
@@ -292,48 +288,48 @@ class TestPlottyCommands:
             mock_cmd_class.return_value = mock_cmd
 
             result = runner.invoke(
-                plotty_status, ["test_job", "--workspace", str(temp_workspace)]
+                vfab_status, ["test_job", "--workspace", str(temp_workspace)]
             )
 
             # Should not raise exception
             assert result.exit_code == 0 or result.exception is None
 
     def test_vfab_delete_command_success(self, runner, temp_workspace):
-        """Test successful plotty_delete command."""
-        with patch("vpype_vfab.commands.StreamlinedPlottyCommand") as mock_cmd_class:
+        """Test successful vfab_delete command."""
+        with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
             mock_cmd_class.return_value = mock_cmd
 
             with patch("click.confirm", return_value=True):
                 result = runner.invoke(
-                    plotty_delete, ["test_job", "--workspace", str(temp_workspace)]
+                    vfab_delete, ["test_job", "--workspace", str(temp_workspace)]
                 )
 
                 # Should not raise exception
                 assert result.exit_code == 0 or result.exception is None
 
     def test_vfab_delete_command_cancelled(self, runner, temp_workspace):
-        """Test plotty_delete command when cancelled."""
-        with patch("vpype_vfab.commands.StreamlinedPlottyCommand") as mock_cmd_class:
+        """Test vfab_delete command when cancelled."""
+        with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
             mock_cmd_class.return_value = mock_cmd
 
             with patch("click.confirm", return_value=False):
                 result = runner.invoke(
-                    plotty_delete, ["test_job", "--workspace", str(temp_workspace)]
+                    vfab_delete, ["test_job", "--workspace", str(temp_workspace)]
                 )
 
                 # Should not raise exception
                 assert result.exit_code == 0 or result.exception is None
 
     def test_vfab_delete_command_force(self, runner, temp_workspace):
-        """Test plotty_delete command with force flag."""
-        with patch("vpype_vfab.commands.StreamlinedPlottyCommand") as mock_cmd_class:
+        """Test vfab_delete command with force flag."""
+        with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
             mock_cmd_class.return_value = mock_cmd
 
             result = runner.invoke(
-                plotty_delete,
+                vfab_delete,
                 ["test_job", "--force", "--workspace", str(temp_workspace)],
             )
 
@@ -342,12 +338,12 @@ class TestPlottyCommands:
 
     def test_command_error_handling(self, runner, temp_workspace):
         """Test command error handling."""
-        with patch("vpype_vfab.commands.StreamlinedPlottyCommand") as mock_cmd_class:
+        with patch("vpype_vfab.commands.StreamlinedVfabCommand") as mock_cmd_class:
             mock_cmd = MagicMock()
             mock_cmd.plotty.list_jobs.side_effect = VfabJobError("Test error")
             mock_cmd_class.return_value = mock_cmd
 
-            result = runner.invoke(plotty_list, ["--workspace", str(temp_workspace)])
+            result = runner.invoke(vfab_list, ["--workspace", str(temp_workspace)])
 
             # Should handle error gracefully
             assert result.exception is not None
@@ -358,7 +354,7 @@ class TestPlottyCommands:
             mock_load.return_value = mock_document
 
             result = runner.invoke(
-                plotty_add,
+                vfab_add,
                 [
                     "--name",
                     "test_job",
@@ -380,7 +376,7 @@ class TestPlottyCommands:
             mock_load.return_value = mock_document
 
             result = runner.invoke(
-                plotty_add,
+                vfab_add,
                 [
                     "--name",
                     "test_job",

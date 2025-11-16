@@ -23,16 +23,7 @@ mock_utils.JobFormatter = mock_job_formatter
 sys.modules["vpype_vfab.utils"] = mock_utils
 
 # Now import monitor module
-import importlib.util
-
-spec = importlib.util.spec_from_file_location(
-    "monitor", "/home/bk/source/vpype-vfab/src/monitor.py"
-)
-if spec is None:
-    raise ImportError("Could not load monitor module")
-monitor = importlib.util.module_from_spec(spec)
-sys.modules["monitor"] = monitor  # Register in sys.modules for patching
-spec.loader.exec_module(monitor)
+from vpype_vfab import monitor
 
 
 class TestMonitorQtFree:

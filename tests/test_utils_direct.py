@@ -1,6 +1,5 @@
 """Direct utils test using importlib to avoid package init issues."""
 
-import importlib
 import json
 import os
 import sys
@@ -35,13 +34,14 @@ class BadParameter(Exception):
 mock_click.BadParameter = BadParameter
 sys.modules["click"] = mock_click
 
-# Import utils module directly using importlib
-import importlib.util
-
-spec = importlib.util.spec_from_file_location(
-    "vpype_vfab.utils", "/home/bk/source/vpype-vfab/src/utils.py"
+# Import utils module directly
+from vpype_vfab.utils import (
+    save_document_for_vfab,
+    generate_job_name,
+    validate_preset,
+    format_job_status,
+    format_job_list,
 )
-utils_module = importlib.util.module_from_spec(spec)
 
 # Mock the exceptions module for the import
 mock_exceptions = MagicMock()
@@ -53,16 +53,6 @@ class VfabJobError(Exception):
 
 mock_exceptions.VfabJobError = VfabJobError
 sys.modules["vpype_vfab.exceptions"] = mock_exceptions
-
-# Execute the module to load it
-spec.loader.exec_module(utils_module)
-
-# Get the functions we need to test
-save_document_for_vfab = utils_module.save_document_for_vfab
-generate_job_name = utils_module.generate_job_name
-validate_preset = utils_module.validate_preset
-format_job_status = utils_module.format_job_status
-format_job_list = utils_module.format_job_list
 
 
 class TestSaveDocumentForPlotty:
@@ -182,7 +172,7 @@ class TestGenerateJobName:
         """Test generating timestamp-based name."""
         mock_document.metadata = {}
 
-        with patch.object(utils_module, "datetime") as mock_datetime:
+        with patch("vpype_vfab.utils.datetime") as mock_datetime:
             mock_datetime.now.return_value.strftime.return_value = "20240101_120000"
 
             result = generate_job_name(mock_document)
