@@ -273,8 +273,8 @@ class TestStreamlinedPlottyIntegration:
         invalid_dir.mkdir(parents=True, exist_ok=True)
 
         # Create valid job
-        doc = Document()
-        doc.add(vpype.Line([(0, 0), (1, 1)]))
+        doc = MockDocument()
+        doc.add([(0, 0), (1, 1)])
         integration.add_job(doc, "valid")
 
         jobs = integration.list_jobs()
