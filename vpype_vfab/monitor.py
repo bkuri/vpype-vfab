@@ -26,7 +26,7 @@ class SimplePlottyMonitor:
         self.workspace = workspace
         self.poll_rate = max(0.1, min(10.0, poll_rate))  # Clamp between 0.1s and 10s
         self.plotty_integration = PlottyIntegration(workspace)
-        self.last_job_states = {}
+        self.last_job_states: Dict[str, str] = {}
         self.formatter = JobFormatter()
 
     def format_job_status(self, job: Dict[str, Any]) -> str:

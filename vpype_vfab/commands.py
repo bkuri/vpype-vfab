@@ -45,7 +45,7 @@ def _interactive_pen_mapping(
     pen_mapping_file = config_dir / "pen_mappings.yaml"
 
     # Load existing pen mappings if available
-    existing_mappings = {}
+    existing_mappings: Dict[str, Any] = {}
     if pen_mapping_file.exists():
         try:
             with open(pen_mapping_file, "r") as f:
